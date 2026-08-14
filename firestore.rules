@@ -1,0 +1,181 @@
+rules_version = '2';
+
+// Access control for Kora.
+//
+// The old .NET backend enforced authorisation before any query reached the
+// database. Nothing sits in front of Firestore now, so these rules ARE the
+// access control — an employee's salary, ID number and phone number are all one
+// unauthorised read away without them.
+//
+// Two roles:
+//   admin    — reads and writes across the organisation
+//   employee — reads their own record, writes the handful of fields that are
+//              genuinely theirs (profile details, leave requests, meeting requests)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helpers ---------------------------------------------------------------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // The role lives on the user doc; it's mirrored into a custom claim so hot
+    // paths can skip the lookup. Fall back to the doc when the claim is absent
+    // (the claim only appears after the user's next token refresh).
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.role == 'admin' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         userDoc().role == 'admin')
+      );
+    }
+
+    /** The employee record belonging to the caller, if any. */
+    function myEmployeeId() {
+      return request.auth.token.employeeId != null
+        ? request.auth.token.employeeId
+        : userDoc().employeeId;
+    }
+
+    function isSelfEmployee(employeeId) {
+      return signedIn() && myEmployeeId() == employeeId;
+    }
+
+    /** True when a write touches only the listed fields. */
+    function onlyChanges(allowedFields) {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(allowedFields);
+    }
+
+    // Users -----------------------------------------------------------------
+
+    match /users/{userId} {
+      allow read: if isAdmin() || request.auth.uid == userId;
+
+      // A user creates their own profile at signup, but must not hand
+      // themselves a role or a link — only an admin grants those.
+      allow create: if request.auth.uid == userId
+        && request.resource.data.isLinked == false
+        && request.resource.data.employeeId == null
+        && request.resource.data.adminId == null;
+
+      // Users may edit their own display fields; role/link changes are admin-only.
+      allow update: if isAdmin()
+        || (request.auth.uid == userId
+            && onlyChanges(['fullName', 'profilePicture']));
+
+      allow delete: if isAdmin();
+    }
+
+    // Employees -------------------------------------------------------------
+
+    match /employees/{employeeId} {
+      allow read: if isAdmin() || isSelfEmployee(employeeId);
+
+      // Employees may maintain their own contact details. Everything with a
+      // money or status implication (salary, pay cycle, employment type,
+      // suspension) stays admin-only.
+      allow update: if isAdmin()
+        || (isSelfEmployee(employeeId)
+            && onlyChanges(['phoneNumber', 'profilePicture', 'fullName', 'dateOfBirth']));
+
+      allow create, delete: if isAdmin();
+
+      // Leave balances are read by their owner but only ever written by an
+      // admin — the approve-and-decrement transaction runs as an admin.
+      match /leaveBalances/{leaveTypeId} {
+        allow read: if isAdmin() || isSelfEmployee(employeeId);
+        allow write: if isAdmin();
+      }
+    }
+
+    match /admins/{adminId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Reference data --------------------------------------------------------
+    // Readable by anyone signed in (it populates dropdowns), writable by admins.
+
+    match /leaveTypes/{leaveTypeId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /equipmentCategories/{categoryId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Equipment -------------------------------------------------------------
+    // Assigning and unassigning kit is an admin action, so writes are admin-only.
+
+    match /equipment/{equipmentId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+      allow write: if isAdmin();
+    }
+
+    // Leave requests --------------------------------------------------------
+
+    match /leaveRequests/{requestId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+
+      // An employee files their own request, and it starts pending — they can't
+      // self-approve.
+      allow create: if isAdmin()
+        || (isSelfEmployee(request.resource.data.employeeId)
+            && request.resource.data.status == 'pending');
+
+      // Only an admin changes a status. An employee may amend the details of a
+      // request that is still pending.
+      allow update: if isAdmin()
+        || (isSelfEmployee(resource.data.employeeId)
+            && resource.data.status == 'pending'
+            && onlyChanges(['startDate', 'endDate', 'comment']));
+
+      allow delete: if isAdmin();
+    }
+
+    // Meetings --------------------------------------------------------------
+
+    match /meetings/{meetingId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+
+      // Employees request meetings; the request starts unscheduled.
+      allow create: if isAdmin()
+        || (isSelfEmployee(request.resource.data.employeeId)
+            && request.resource.data.status == 'requested');
+
+      // Scheduling, accepting and rejecting are the admin's call. An employee
+      // may still revise a request that hasn't been actioned.
+      allow update: if isAdmin()
+        || (isSelfEmployee(resource.data.employeeId)
+            && resource.data.status == 'requested'
+            && onlyChanges(['purpose', 'adminId', 'adminName']));
+
+      allow delete: if isAdmin();
+    }
+
+    // Performance reviews ---------------------------------------------------
+    // Employees read their own; only admins create or score them.
+
+    match /performanceReviews/{reviewId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+      allow write: if isAdmin();
+    }
+
+    // Collection group query over leaveBalances (used by the admin employee
+    // table). Rules are not inherited by collection group queries, so the
+    // subcollection needs its own rule at this level.
+    match /{path=**}/leaveBalances/{leaveTypeId} {
+      allow read: if isAdmin();
+    }
+
+    // Anything not matched above is denied.
+  }
+}

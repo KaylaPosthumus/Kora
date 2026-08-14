@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Storage is not used by the app yet — uploads still go to Cloudinary, as the
+// migration plan decided. This locks the bucket down so nothing leaks in the
+// meantime; loosen it when profile pictures move over to Firebase Storage.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
