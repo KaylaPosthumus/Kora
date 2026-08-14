@@ -1,0 +1,32 @@
+.line-horisontal {
+  height: 1px;
+  background-color: black;
+}
+
+.AdminAddIcon {
+  width: auto;
+  height: 40px;
+}
+
+/* Calender Styling */
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+  font-weight: 600;
+  color: #444;
+}
+
+.react-calendar__month-view__days__day--weekend abbr {
+  color: #3f7106 !important;
+}
+
+.react-calendar__tile--active {
+  background-color: transparent !important;
+  border: 2px solid #88a764 !important;
+  border-radius: 6px;
+  color: #000000 !important;
+}
+
+.react-calendar__tile--now {
+  background-color: #88a764 !important;
+  border-radius: 6px;
+}
