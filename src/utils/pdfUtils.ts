@@ -4,12 +4,15 @@ import dayjs from "dayjs";
 import { EmpUser } from "../interfaces/people/empUser";
 import { GenderLabels, EmployTypeLabels, PayCycleLabels } from "../types/common";
 import { formatRandAmount } from "./formatUtils";
+import logoUrl from "../assets/logos/cori_logo_green.png";
 
 pdfMake.vfs = pdfFonts;
 
 export const generatePayrollPDF = async (empUser: EmpUser) => {
-  // Load image
-  const response = await fetch("/src/assets/logos/cori_logo_green.png");
+  // Load the logo. The URL has to come from the import rather than a literal path —
+  // the build content-hashes the file into /assets, so a hard-coded "/src/..." path
+  // resolves to the SPA fallback (index.html) in any production build.
+  const response = await fetch(logoUrl);
   const blob = await response.blob();
   const reader = new FileReader();
 
