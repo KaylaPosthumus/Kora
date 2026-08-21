@@ -63,7 +63,7 @@ service cloud.firestore {
       // The role is the privilege boundary: isAdmin() above trusts this field,
       // so a signup free to set it to 'admin' would be self-granted access to
       // every salary and ID number in the org. Signups are always unassigned;
-      // the real role arrives at link time via createEmployee/promoteUserToAdmin.
+      // the real role arrives at link time via setupUserAsEmployee/linkUserAsAdmin.
       //
       // Each test uses get() with a default rather than plain dot access:
       // reading a key the incoming document doesn't have errors out rule

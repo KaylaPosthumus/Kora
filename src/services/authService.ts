@@ -124,7 +124,7 @@ const createUserDoc = async (
       email: user.email,
       // Always unassigned. A signup must never grant its own role — whichever
       // form they used, the role is granted by an admin at link time (see
-      // employeeAPI.createEmployee / promoteUserToAdmin). Which form they used
+      // employeeAPI.setupUserAsEmployee / linkUserAsAdmin). Which form they used
       // is kept as `requestedRole` so the admin can see what they asked for.
       role: UserRole.Unassigned,
       requestedRole: input.requestedRole,
