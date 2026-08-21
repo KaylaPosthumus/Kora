@@ -3,7 +3,7 @@ import { Table, Dropdown, Tooltip, Button, message, Spin, Empty } from "antd";
 import type { TableProps, MenuProps } from "antd";
 import { Icons } from "../../constants/icons";
 import CoriBtn from "../../components/buttons/CoriBtn";
-import { gatheringAPI, meetingAPI } from "../../services/api.service";
+import { meetingAPI, subscribeToGatherings } from "../../services/api.service";
 import { GatheringType, MeetStatus, ReviewStatus } from "../../types/common";
 import GatheringStatusBadge from "../../components/badges/GatheringStatusBadge";
 import { formatTimestampToDate, formatTimestampToTime } from "../../utils/dateUtils";
@@ -17,6 +17,28 @@ import { getFullCurrentUser } from "../../services/authService";
 
 // Types for table
 type ColumnsType<T extends object = object> = TableProps<T>["columns"];
+
+/**
+ * Newest first, with anything undated ahead of the rest — a meeting request that
+ * has not been scheduled yet has no start date and is the row the employee most
+ * likely wants to see.
+ */
+const sortGatherings = (gatherings: Gathering[]): Gathering[] =>
+  [...gatherings].sort((a, b) => {
+    if (a.startDate && b.startDate) {
+      return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    }
+
+    if (!a.startDate && !b.startDate) {
+      if (!a.requestedAt || !b.requestedAt) return 0;
+      return new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime();
+    }
+
+    if (!a.startDate) return -1;
+    if (!b.startDate) return 1;
+
+    return 0;
+  });
 
 // State for data
 const EmployeeMeetings: React.FC = () => {
@@ -46,71 +68,30 @@ const EmployeeMeetings: React.FC = () => {
     fetchUserAndSetId();
   }, []);
 
+  // Live data. An admin scheduling, rejecting or completing one of these changes
+  // it underneath the employee, and a manual refresh used to be the only way to
+  // see that. The filter effect below derives everything from `allData`, so the
+  // whole page follows from this one subscription.
   useEffect(() => {
-    if (employeeId) {
-      fetchAndUpdateData();
-    }
-  }, [employeeId]);
-
-  useEffect(() => {
-    console.log("employeeId", employeeId);
-  }, [employeeId]);
-
-  // Function to fetch and update data
-  const fetchAndUpdateData = async () => {
-    console.log("EmployeeId right now is: ", employeeId);
-
-    let currentEmployeeId = employeeId;
-
-    // If employeeId is null, fetch it directly
-    if (!currentEmployeeId) {
-      console.log("EmployeeId is null, fetching from current user");
-      const user = await getFullCurrentUser();
-      currentEmployeeId = user?.employeeId || null;
-
-      if (!currentEmployeeId) {
-        console.log("Unable to get employeeId, skipping fetch");
-        return;
-      }
-    }
+    if (!employeeId) return;
 
     setLoading(true);
 
-    try {
-      console.log("Current employeeId", currentEmployeeId);
-      const response = await gatheringAPI.getAllGatheringsByEmpId(currentEmployeeId);
-      const gatherings = response.data;
+    const unsubscribe = subscribeToGatherings(
+      { field: "employeeId", id: employeeId },
+      (gatherings) => {
+        setAllData(sortGatherings(gatherings));
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error subscribing to gatherings:", error);
+        messageApi.error("Failed to load meetings. Please refresh the page.");
+        setLoading(false);
+      }
+    );
 
-      // Sort the gatherings: null dates first, then most recent to oldest
-      const sortedGatherings = [...gatherings].sort((a, b) => {
-        // If both have start dates, sort by start date (newest first)
-        if (a.startDate && b.startDate) {
-          return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
-        }
-
-        // If neither have start dates, sort by requestedAt (newest first)
-        if (!a.startDate && !b.startDate) {
-          if (!a.requestedAt || !b.requestedAt) return 0;
-          return new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime();
-        }
-
-        // If only one has a start date, the one without goes first
-        if (!a.startDate) return -1;
-        if (!b.startDate) return 1;
-
-        return 0;
-      });
-
-      setAllData(sortedGatherings);
-      setFilteredData(sortedGatherings);
-    } catch (error) {
-      console.error("Error fetching gatherings:", error);
-      messageApi.error("Failed to refresh data. Please try again.");
-      throw error; // Re-throw so calling functions know the refresh failed
-    } finally {
-      setLoading(false);
-    }
-  };
+    return unsubscribe;
+  }, [employeeId]);
 
   // Filter data when tab changes
   useEffect(() => {
@@ -158,22 +139,11 @@ const EmployeeMeetings: React.FC = () => {
   // Handle the deletion of a meeting request
   const handleDeleteMeetingRequest = async (meetingId: string) => {
     try {
-      console.log("deleting meeting request", meetingId);
       await meetingAPI.deleteMeetingRequest(meetingId);
+      // Firestore applies the delete to the local cache before the server
+      // confirms it, so the subscription drops the row immediately. There is
+      // nothing left to refresh, and no window in which the row lingers.
       messageApi.success("Meeting request deleted successfully");
-
-      // Add a small delay to ensure backend has processed the deletion
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Ensure data refresh completes
-      try {
-        console.log("refreshing data");
-        await fetchAndUpdateData();
-      } catch (refreshError) {
-        // If refresh fails, show a warning but don't override the success message
-        console.error("Failed to refresh data after deletion:", refreshError);
-        messageApi.warning("Request deleted but failed to refresh data. Please refresh the page.");
-      }
     } catch (error) {
       messageApi.error("Error deleting meeting request");
       console.error("Error deleting meeting request:", error);
@@ -605,10 +575,7 @@ const EmployeeMeetings: React.FC = () => {
           showModal={showRequestMeetingModal}
           setShowModal={setShowRequestMeetingModal}
           employeeId={employeeId || ""}
-          onSubmitSuccess={() => {
-            setShowRequestMeetingModal(false);
-            fetchAndUpdateData();
-          }}
+          onSubmitSuccess={() => setShowRequestMeetingModal(false)}
         />
 
         <EditMeetingRequestModal
@@ -618,7 +585,6 @@ const EmployeeMeetings: React.FC = () => {
           onSubmitSuccess={() => {
             setShowEditMeetingRequestModal(false);
             setSelectedGathering(null);
-            fetchAndUpdateData();
           }}
         />
       </div>

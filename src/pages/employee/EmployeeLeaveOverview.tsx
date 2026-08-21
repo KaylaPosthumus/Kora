@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LeaveStatus } from "../../types/common";
-import { pageAPI } from "../../services/api.service";
+import { subscribeToEmployeeLeave } from "../../services/api.service";
 
 // Icons
 import { ClockCircleOutlined } from "@ant-design/icons";
@@ -33,6 +33,7 @@ const getLeaveIcon = (type: string) => {
 type TabOption = "All" | "Approved" | "Pending" | "Rejected";
 
 const EmployeeLeaveOverview: React.FC = () => {
+  const [allRequests, setAllRequests] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
   const [balances, setBalances] = useState<any[]>([]);
   const [summary, setSummary] = useState<{
@@ -70,75 +71,60 @@ const EmployeeLeaveOverview: React.FC = () => {
     fetchUserAndSetId();
   }, []);
 
-  // Fetch data from backend
-  const fetchEmployeeData = async (isTabSwitch = false) => {
-    if (!employeeId) {
-      console.log("No employeeId available, skipping fetchEmployeeData");
-      return;
-    }
-
-    try {
-      // Use different loading states based on whether it's initial load or tab switch
-      if (hasInitiallyLoaded && isTabSwitch) {
-        setContentLoading(true);
-      } else {
-        setInitialLoading(true);
-      }
-
-      const user = await getFullCurrentUser();
-      if (!user?.employeeId) {
-        console.log("No user or employeeId found");
-        return;
-      }
-
-      const resp = await pageAPI.getEmployeeLeaveData(user.employeeId);
-      const leaveRequests = resp.data.leaveRequests || [];
-      const leaveBalances = resp.data.leaveBalances || [];
-
-      setBalances(
-        leaveBalances.map((b: any) => ({
-          leaveTypeId: b.leaveBalanceId,
-          leaveTypeName: b.leaveTypeName,
-          remainingDays: b.remainingDays,
-          defaultDays: b.defaultDays,
-        }))
-      );
-
-      const totalAllowed = leaveBalances.reduce((sum: number, b: any) => sum + b.defaultDays, 0);
-      const totalRemaining = leaveBalances.reduce(
-        (sum: number, b: any) => sum + b.remainingDays,
-        0
-      );
-      setSummary({ totalRemaining: totalRemaining, totalAllowed });
-
-      let filtered = leaveRequests;
-      if (activeTab === "Approved") {
-        filtered = leaveRequests.filter((r: any) => r.status === LeaveStatus.Approved);
-      } else if (activeTab === "Pending") {
-        filtered = leaveRequests.filter((r: any) => r.status === LeaveStatus.Pending);
-      } else if (activeTab === "Rejected") {
-        filtered = leaveRequests.filter((r: any) => r.status === LeaveStatus.Rejected);
-      }
-      setRequests(filtered);
-
-      if (!hasInitiallyLoaded) {
-        setHasInitiallyLoaded(true);
-      }
-    } catch (err) {
-      console.error("Error fetching employee leave data:", err);
-      setRequests([]);
-      setBalances([]);
-    } finally {
-      setInitialLoading(false);
-      setContentLoading(false);
-    }
-  };
-
+  // Live data. A leave request's status changes when an admin approves or
+  // rejects it, and the balance moves in the same transaction — both land here
+  // without a refresh, which is the pair the employee is most likely watching.
   useEffect(() => {
-    if (employeeId) {
-      fetchEmployeeData(hasInitiallyLoaded);
-    }
-  }, [employeeId, activeTab]);
+    if (!employeeId) return;
+
+    setInitialLoading(true);
+
+    const unsubscribe = subscribeToEmployeeLeave(
+      employeeId,
+      ({ leaveBalances, leaveRequests }) => {
+        setBalances(
+          leaveBalances.map((b: any) => ({
+            leaveTypeId: b.leaveBalanceId,
+            leaveTypeName: b.leaveTypeName,
+            remainingDays: b.remainingDays,
+            defaultDays: b.defaultDays,
+          }))
+        );
+
+        setSummary({
+          totalAllowed: leaveBalances.reduce((sum: number, b: any) => sum + b.defaultDays, 0),
+          totalRemaining: leaveBalances.reduce((sum: number, b: any) => sum + b.remainingDays, 0),
+        });
+
+        setAllRequests(leaveRequests);
+        setHasInitiallyLoaded(true);
+        setInitialLoading(false);
+        setContentLoading(false);
+      },
+      (error) => {
+        console.error("Error subscribing to employee leave data:", error);
+        setAllRequests([]);
+        setBalances([]);
+        setInitialLoading(false);
+        setContentLoading(false);
+      }
+    );
+
+    return unsubscribe;
+  }, [employeeId]);
+
+  // Tab filtering runs against data that is already in hand. It used to refetch
+  // the whole page on every tab switch.
+  useEffect(() => {
+    const statusForTab: Partial<Record<TabOption, LeaveStatus>> = {
+      Approved: LeaveStatus.Approved,
+      Pending: LeaveStatus.Pending,
+      Rejected: LeaveStatus.Rejected,
+    };
+
+    const status = statusForTab[activeTab];
+    setRequests(status ? allRequests.filter((r: any) => r.status === status) : allRequests);
+  }, [activeTab, allRequests]);
 
   // Read editable policy or fallback
   const policy =
@@ -300,7 +286,9 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
       <ApplyForLeaveModal
         showModal={showModal}
         setShowModal={setShowModal}
-        onSubmitSuccess={() => fetchEmployeeData(true)}
+        // The new request arrives through the subscription; closing is all that
+        // is left to do.
+        onSubmitSuccess={() => setShowModal(false)}
       />
     </>
   );

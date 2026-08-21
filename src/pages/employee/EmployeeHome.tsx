@@ -2,7 +2,11 @@ import { Container, Row, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import GaugeComponent from "react-gauge-component";
 import LeaveBalanceBlock from "../../components/leave/LeaveBalanceBlock";
-import { gatheringAPI, pageAPI } from "../../services/api.service";
+import {
+  pageAPI,
+  subscribeToGatherings,
+  UPCOMING_AND_COMPLETED,
+} from "../../services/api.service";
 import { EmpUser } from "../../interfaces/people/empUser";
 import { formatRandAmount } from "../../utils/formatUtils";
 import dayjs from "dayjs";
@@ -65,31 +69,29 @@ const EmployeeHome: React.FC = () => {
     }
   };
 
-  const fetchGatherings = async () => {
-    if (!employeeId) {
-      console.log("No employeeId available, skipping fetchGatherings");
-      return;
-    }
-
-    try {
-      const response = await gatheringAPI.getUpcomingAndCompletedGatheringsByEmpId(employeeId);
-      setGatherings(response.data || []);
-    } catch (err) {
-      console.error("Error fetching gatherings:", err);
-      setGatherings([]);
-    }
-  };
-
   useEffect(() => {
     if (employeeId) {
       fetchEmployeeData();
     }
   }, [employeeId]);
 
+  // The meetings overview follows the same live subscription the meetings page
+  // uses, so a meeting scheduled or completed while this page is open shows up
+  // here too. Reversed to match the one-shot read this replaced, which returned
+  // newest first.
   useEffect(() => {
-    if (employeeId) {
-      fetchGatherings();
-    }
+    if (!employeeId) return;
+
+    const unsubscribe = subscribeToGatherings(
+      { field: "employeeId", id: employeeId, ...UPCOMING_AND_COMPLETED },
+      (data) => setGatherings([...data].reverse()),
+      (error) => {
+        console.error("Error subscribing to gatherings:", error);
+        setGatherings([]);
+      }
+    );
+
+    return unsubscribe;
   }, [employeeId]);
 
   //For the Quote of the day

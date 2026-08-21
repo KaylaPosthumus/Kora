@@ -57,6 +57,8 @@ vi.mock("firebase/firestore", () => {
     orderBy: (...args: unknown[]) => ({ type: "orderBy", args }),
     limit: (n: number) => ({ type: "limit", n }),
     documentId: () => "__name__",
+    // Unused here, but api.service imports it — keep the mock a faithful stand-in.
+    onSnapshot: vi.fn(() => () => undefined),
     serverTimestamp: () => "SERVER_TS",
     writeBatch: () => ({ set: vi.fn(), update: vi.fn(), delete: vi.fn(), commit: vi.fn() }),
     runTransaction: async (_db: unknown, cb: (t: unknown) => Promise<void>) =>

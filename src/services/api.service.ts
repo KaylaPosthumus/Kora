@@ -16,8 +16,12 @@ import {
   runTransaction,
   documentId,
   serverTimestamp,
+  onSnapshot,
   type DocumentData,
   type QueryDocumentSnapshot,
+  type Query,
+  type QuerySnapshot,
+  type FirestoreError,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import {
@@ -1017,10 +1021,118 @@ const getGatherings = async (options: {
   ].sort(byStartDate);
 };
 
-const UPCOMING_AND_COMPLETED = {
+export const UPCOMING_AND_COMPLETED = {
   meetStatuses: [MeetStatus.Upcoming, MeetStatus.Completed],
   reviewStatuses: [ReviewStatus.Upcoming, ReviewStatus.Completed],
 };
+
+// LIVE READS ---------------------------------------------------------------------------------------
+
+/**
+ * Live equivalents of the fan-out reads above.
+ *
+ * The one-shot reads stay: pages that only render once still use them, and the
+ * mutation helpers are unchanged. These exist for the employee screens, where a
+ * request's status changes underneath the user — an admin approves leave or
+ * schedules a meeting — and a manual refresh was the only way to see it.
+ *
+ * Each subscription spans two collections, mirroring the fan-out it replaces, so
+ * they wait for both listeners to deliver before emitting. Emitting on the first
+ * one would render an empty half for a frame.
+ */
+
+export type Unsubscribe = () => void;
+
+const subscribePair = <T>(
+  first: Query<DocumentData>,
+  second: Query<DocumentData>,
+  merge: (a: QuerySnapshot<DocumentData>, b: QuerySnapshot<DocumentData>) => T,
+  onData: (value: T) => void,
+  onError?: (error: FirestoreError) => void
+): Unsubscribe => {
+  let firstSnapshot: QuerySnapshot<DocumentData> | null = null;
+  let secondSnapshot: QuerySnapshot<DocumentData> | null = null;
+
+  const emit = () => {
+    if (firstSnapshot && secondSnapshot) onData(merge(firstSnapshot, secondSnapshot));
+  };
+
+  // A denied read or a missing index surfaces here rather than as a rejected
+  // promise, so an error callback is the only way a caller hears about it.
+  const handleError = (error: FirestoreError) => onError?.(error);
+
+  const unsubscribeFirst = onSnapshot(
+    first,
+    (snapshot) => {
+      firstSnapshot = snapshot;
+      emit();
+    },
+    handleError
+  );
+
+  const unsubscribeSecond = onSnapshot(
+    second,
+    (snapshot) => {
+      secondSnapshot = snapshot;
+      emit();
+    },
+    handleError
+  );
+
+  return () => {
+    unsubscribeFirst();
+    unsubscribeSecond();
+  };
+};
+
+/** Live version of `getGatherings` — same constraints, same merge and sort. */
+export const subscribeToGatherings = (
+  options: {
+    field: "employeeId" | "adminId";
+    id: string;
+    meetStatuses?: MeetStatus[];
+    reviewStatuses?: ReviewStatus[];
+  },
+  onData: (gatherings: Gathering[]) => void,
+  onError?: (error: FirestoreError) => void
+): Unsubscribe => {
+  const { field, id, meetStatuses, reviewStatuses } = options;
+
+  const meetingConstraints = [where(field, "==", id)];
+  if (meetStatuses) meetingConstraints.push(where("status", "in", meetStatuses));
+
+  const reviewConstraints = [where(field, "==", id)];
+  if (reviewStatuses) reviewConstraints.push(where("status", "in", reviewStatuses));
+
+  return subscribePair(
+    query(meetingsCol, ...meetingConstraints),
+    query(performanceReviewsCol, ...reviewConstraints),
+    (meetings, reviews) =>
+      [
+        ...meetings.docs.map((d) => meetingToGathering(d.id, d.data())),
+        ...reviews.docs.map((d) => reviewToGathering(d.id, d.data())),
+      ].sort(byStartDate),
+    onData,
+    onError
+  );
+};
+
+/** Live version of `pageAPI.getEmployeeLeaveData`. */
+export const subscribeToEmployeeLeave = (
+  employeeId: string,
+  onData: (data: { leaveBalances: LeaveBalance[]; leaveRequests: LeaveRequest[] }) => void,
+  onError?: (error: FirestoreError) => void
+): Unsubscribe =>
+  subscribePair(
+    leaveBalancesCol(employeeId),
+    query(leaveRequestsCol, where("employeeId", "==", employeeId), orderBy("createdAt", "desc")),
+    (balances, requests) => ({
+      leaveBalances: balances.docs.map((d) => toLeaveBalance(d.id, d.data())),
+      leaveRequests: requests.docs.map((d) => toLeaveRequest(d.id, d.data())),
+    }),
+    onData,
+    onError
+  );
 
 export const gatheringAPI = {
   getUpcomingAndCompletedGatheringsByEmpId: async (

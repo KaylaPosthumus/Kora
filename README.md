@@ -43,6 +43,11 @@ Two things are covered — the pieces where a silent regression is expensive:
   .NET service (200 ok / 300 signed-in-but-unlinked / 4xx-5xx failure) that the auth
   screens branch on, the redirect each role lands on, the user-doc cache, and the
   mapping from Firebase `auth/*` codes onto that contract.
+- **`liveReads.test.ts`** — the `onSnapshot` subscriptions. Each spans two
+  collections, so the tests pin that nothing is emitted until both have delivered
+  (emitting early renders an empty half), that both listeners are torn down on
+  unsubscribe, and that errors reach the caller rather than surfacing as an empty
+  list.
 
 ## Seeding
 
@@ -83,6 +88,12 @@ Two conventions worth knowing before you touch the data layer:
 Screens that used to hit a joined page-endpoint now fan out: `pageAPI` reads the pieces
 in parallel and stitches them in JS. Fields that appear in lists (`employeeName`,
 `leaveTypeName`, `equipmentCategoryName`) are denormalised onto the listed document.
+
+The employee screens read live instead. `subscribeToGatherings` and
+`subscribeToEmployeeLeave` mirror the fan-outs above but with `onSnapshot`, so a leave
+approval or a scheduled meeting appears without a refresh. Both span two collections
+and wait for both listeners before emitting; both return an unsubscribe the page calls
+on unmount. The one-shot reads stay for the admin screens, which render once.
 
 ## Still on the list
 
