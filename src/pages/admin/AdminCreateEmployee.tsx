@@ -340,8 +340,6 @@ const AdminCreateEmployee: React.FC = () => {
                         item={equip}
                         adminView
                         onDelete={() => handleRemoveEquipment(equip.equipmentId)}
-                        onEdit={() => {}}
-                        onUnlink={() => {}}
                       />
                     ))}
                   </div>
