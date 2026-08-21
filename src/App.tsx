@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import dayjs from "dayjs";
@@ -8,6 +8,7 @@ import "antd/dist/reset.css";
 import "./styles/table.css";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Configure day.js
 dayjs.locale("en");
@@ -27,13 +28,12 @@ import AdminIndividualEmployee from "./pages/admin/AdminIndividualEmployee";
 import AdminEquipmentManagement from "./pages/admin/AdminEquipmentManagement";
 import AdminLeaveRequests from "./pages/admin/AdminLeaveRequests";
 import AdminMeetings from "./pages/admin/AdminMeetings";
+import NotFound from "./pages/NotFound";
 
-// TODO: Delete these later
-import ReferencePage from "./pages/Reference";
-import TempModalsLeaveOverviewPage from "./pages/TempModalsLeaveOverviewPage";
-import TempModalsAdminDashPage from "./pages/TempModalsAdminDashPage";
-import ApiPlayground from "./pages/apiPlayground/ApiPlayground";
-import TempNewGatheringBoxPage from "./pages/TempNewGatheringBoxPage";
+// Dev-only scratch pages. Vite folds `import.meta.env.DEV` to `false` in a production
+// build, so Rollup drops this branch along with the module and chunks behind it —
+// verified by the absence of any dev chunk in `dist/assets`.
+const DevRoutes = import.meta.env.DEV ? lazy(() => import("./dev/DevRoutes")) : null;
 
 const adminOnly = (element: React.ReactNode) => (
   <ProtectedRoute requires="admin">{element}</ProtectedRoute>
@@ -62,41 +62,50 @@ const AppContent: React.FC = () => {
           isAuthPage ? "" : "pt-14 pb-16 lg:pt-0 lg:pb-0"
         }`}
       >
-        <Routes>
-          {/* Auth Routes */}
-          <Route path="/" element={<Login />} />
-          <Route path="/employee/signup" element={<EmployeeSignUp />} />
-          <Route path="/admin/signup" element={<AdminSignUp />} />
+        <ErrorBoundary>
+          <Routes>
+            {/* Auth Routes */}
+            <Route path="/" element={<Login />} />
+            <Route path="/employee/signup" element={<EmployeeSignUp />} />
+            <Route path="/admin/signup" element={<AdminSignUp />} />
 
-          {/* Employee Routes */}
-          <Route path="/employee/home" element={employeeOnly(<EmployeeHome />)} />
-          <Route
-            path="/employee/leave-overview"
-            element={employeeOnly(<EmployeeLeaveOverview />)}
-          />
-          <Route path="/employee/profile" element={employeeOnly(<EmployeeProfile />)} />
-          <Route path="/employee/meetings" element={employeeOnly(<EmployeeMeetings />)} />
+            {/* Employee Routes */}
+            <Route path="/employee/home" element={employeeOnly(<EmployeeHome />)} />
+            <Route
+              path="/employee/leave-overview"
+              element={employeeOnly(<EmployeeLeaveOverview />)}
+            />
+            <Route path="/employee/profile" element={employeeOnly(<EmployeeProfile />)} />
+            <Route path="/employee/meetings" element={employeeOnly(<EmployeeMeetings />)} />
 
-          {/* Admin Routes */}
-          <Route path="/admin/dashboard" element={adminOnly(<AdminDashboard />)} />
-          <Route path="/admin/employees" element={adminOnly(<AdminEmployeeManagement />)} />
-          <Route path="/admin/equipment" element={adminOnly(<AdminEquipmentManagement />)} />
-          <Route path="/admin/create-employee" element={adminOnly(<AdminCreateEmployee />)} />
-          <Route
-            path="/admin/individual-employee/:employeeId?"
-            element={adminOnly(<AdminIndividualEmployee />)}
-          />
-          <Route path="/admin/leave-requests" element={adminOnly(<AdminLeaveRequests />)} />
-          <Route path="/admin/meetings" element={adminOnly(<AdminMeetings />)} />
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={adminOnly(<AdminDashboard />)} />
+            <Route path="/admin/employees" element={adminOnly(<AdminEmployeeManagement />)} />
+            <Route path="/admin/equipment" element={adminOnly(<AdminEquipmentManagement />)} />
+            <Route path="/admin/create-employee" element={adminOnly(<AdminCreateEmployee />)} />
+            <Route
+              path="/admin/individual-employee/:employeeId?"
+              element={adminOnly(<AdminIndividualEmployee />)}
+            />
+            <Route path="/admin/leave-requests" element={adminOnly(<AdminLeaveRequests />)} />
+            <Route path="/admin/meetings" element={adminOnly(<AdminMeetings />)} />
 
-          {/* Temporary Reference Route */}
-          {/* TODO: Delete this later */}
-          <Route path="/reference" element={<ReferencePage />} />
-          <Route path="/temp-modals/leave-overview" element={<TempModalsLeaveOverviewPage />} />
-          <Route path="/temp-modals/admin-dash" element={<TempModalsAdminDashPage />} />
-          <Route path="/apiplayground" element={<ApiPlayground />} />
-          <Route path="/temp-new-gathering-box" element={<TempNewGatheringBoxPage />} />
-        </Routes>
+            {/* Dev-only scratch pages — stripped from production builds */}
+            {DevRoutes && (
+              <Route
+                path="/dev/*"
+                element={
+                  <Suspense fallback={null}>
+                    <DevRoutes />
+                  </Suspense>
+                }
+              />
+            )}
+
+            {/* Anything unmatched */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   );
