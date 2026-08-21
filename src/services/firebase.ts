@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { getStorage, connectStorageEmulator } from "firebase/storage";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 /**
  * Firebase config comes from Vite env vars (see .env.example).
@@ -26,12 +26,5 @@ export const storage = getStorage(app);
 /** Google sign-in provider — replaces the old Electron BrowserWindow OAuth hack. */
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
-
-// Point the SDK at the local emulator suite when asked to.
-if (import.meta.env.VITE_USE_FIREBASE_EMULATORS === "true") {
-  connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
-  connectFirestoreEmulator(db, "127.0.0.1", 8080);
-  connectStorageEmulator(storage, "127.0.0.1", 9199);
-}
 
 export default app;
