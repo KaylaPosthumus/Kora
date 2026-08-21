@@ -362,3 +362,70 @@ describe("fullGoogleSignIn", () => {
     expect((await fullGoogleSignIn()).errorCode).toBe(499);
   });
 });
+
+describe("signup writes a safe user doc", () => {
+  /** The payload handed to setDoc for `users/{uid}`. */
+  const writtenDoc = () => setDoc.mock.calls[0][1] as Record<string, unknown>;
+
+  beforeEach(() => {
+    createUserWithEmailAndPassword.mockResolvedValue({ user: firebaseUser("new-uid") });
+  });
+
+  const form = {
+    fullName: "Nadia New",
+    email: "nadia@kora.test",
+    password: "Password123!",
+  };
+
+  it("never lets an admin signup grant itself the admin role", async () => {
+    // The privilege boundary: isAdmin() in firestore.rules trusts users/{uid}.role,
+    // and /admin/signup is a public route. If this ever writes 'admin', anyone who
+    // finds the URL gets read/write over every salary and ID number in the org.
+    const { adminSignUp } = await loadAuthService();
+    const result = await adminSignUp(form);
+
+    expect(result.errorCode).toBe(200);
+    expect(writtenDoc().role).toBe(UserRole.Unassigned);
+    expect(writtenDoc().role).not.toBe(UserRole.Admin);
+  });
+
+  it("records which form was used without granting it", async () => {
+    const { adminSignUp } = await loadAuthService();
+    await adminSignUp(form);
+
+    expect(writtenDoc()).toMatchObject({
+      role: UserRole.Unassigned,
+      requestedRole: UserRole.Admin,
+    });
+  });
+
+  it("starts an employee signup unassigned too — the admin grants the role at link time", async () => {
+    const { employeeSignUp } = await loadAuthService();
+    await employeeSignUp(form);
+
+    expect(writtenDoc()).toMatchObject({
+      role: UserRole.Unassigned,
+      requestedRole: UserRole.Employee,
+    });
+  });
+
+  it("writes employeeId and adminId as explicit nulls rather than omitting them", async () => {
+    // A rule that reads a key the document doesn't have errors out, and an
+    // errored rule denies the write — which is what blocked every signup.
+    const { employeeSignUp } = await loadAuthService();
+    await employeeSignUp(form);
+
+    const doc = writtenDoc();
+    expect(doc).toHaveProperty("employeeId", null);
+    expect(doc).toHaveProperty("adminId", null);
+    expect(doc.isLinked).toBe(false);
+  });
+
+  it("leaves a brand new account unlinked, so the guards send it to notlinked", async () => {
+    userDocs["new-uid"] = undefined;
+    const { employeeSignUp } = await loadAuthService();
+
+    expect((await employeeSignUp(form)).errorCode).toBe(200);
+    expect(sendEmailVerification).toHaveBeenCalled();
+  });
+});
