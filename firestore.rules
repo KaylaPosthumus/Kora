@@ -92,7 +92,8 @@ service cloud.firestore {
       // suspension) stays admin-only.
       allow update: if isAdmin()
         || (isSelfEmployee(employeeId)
-            && onlyChanges(['phoneNumber', 'profilePicture', 'fullName', 'dateOfBirth']));
+            && onlyChanges(['phoneNumber', 'profilePicture', 'fullName',
+                            'dateOfBirth', 'gender']));
 
       allow create, delete: if isAdmin();
 
@@ -168,7 +169,12 @@ service cloud.firestore {
             && resource.data.status == 'requested'
             && onlyChanges(['purpose', 'adminId', 'adminName']));
 
-      allow delete: if isAdmin();
+      // Withdrawing a request the admin hasn't actioned yet is the employee's
+      // own call — same privilege level as revising it above. Once it has been
+      // scheduled or rejected it is part of the admin's record, so it stays.
+      allow delete: if isAdmin()
+        || (isSelfEmployee(resource.data.employeeId)
+            && resource.data.status == 'requested');
     }
 
     // Performance reviews ---------------------------------------------------
