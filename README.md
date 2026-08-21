@@ -181,9 +181,10 @@ document read. Closing that is what phase 3's Cloud Function is for.
 
 ## Verifying against the live project
 
-The data layer compiles and the offline suite passes, but Firestore query shapes,
-missing composite indexes, and security rules only fail at runtime — against a real
-project. Work through this before building anything new on top:
+**See `docs/phase-2-verification.md`** for the full runbook — a static pre-flight
+audit that is already done, a screen-by-screen click-through matrix, the three things
+static analysis could not settle, and the rule and transaction proofs. The short
+version:
 
 ```bash
 firebase login
