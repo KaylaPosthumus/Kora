@@ -67,15 +67,23 @@ Three things are covered — the pieces where a silent regression is expensive:
 
 ## Seeding
 
-The seed script creates the reference data (leave types, equipment categories) plus a
-test admin and employee. It needs a service account key — download one from
-**Project settings → Service accounts** and point `GOOGLE_APPLICATION_CREDENTIALS` at it.
+The seed script creates the reference data (leave types, equipment categories), two
+pieces of equipment and a sample leave request, plus a test admin and employee.
+
+It runs as `node --env-file=.env.local scripts/seed.mjs`, so its settings must live in
+`.env.local` — a shell export is not picked up. It needs both
+`GOOGLE_APPLICATION_CREDENTIALS` (path to a service account key, downloaded from
+**Project settings → Service accounts**) and `FIREBASE_PROJECT_ID`.
 
 ```bash
 npm run seed
 ```
 
-It is safe to re-run: every document is written with a deterministic id and merged.
+It is safe to re-run: every document is written with a deterministic id and merged, and
+auth users are looked up by email before being created.
+
+The seeded accounts are also the only users that ever get **custom claims** — see the
+note under Data model.
 
 ## Installing on a phone
 
@@ -102,11 +110,16 @@ logo arrives, regenerate them and bump `CACHE` in `public/sw.js`:
 ## Deploying
 
 ```bash
-firebase deploy      # or: npm run deploy
+npm run deploy       # builds, then deploys
 ```
 
+`npm run deploy` is `npm run build && firebase deploy`. Bare `firebase deploy` skips the
+build and ships whatever is already in `dist/`, which is usually stale — reach for it
+only with `--only` for rules and indexes.
+
 `firebase.json` publishes `dist/` to Hosting with an SPA rewrite, and deploys
-`firestore.rules`, `firestore.indexes.json`, and `storage.rules`.
+`firestore.rules`, `firestore.indexes.json`, and `storage.rules`. There is no
+`functions` block — the app has no server-side code.
 
 ## Data model
 
@@ -127,11 +140,22 @@ Screens that used to hit a joined page-endpoint now fan out: `pageAPI` reads the
 in parallel and stitches them in JS. Fields that appear in lists (`employeeName`,
 `leaveTypeName`, `equipmentCategoryName`) are denormalised onto the listed document.
 
-The employee screens read live instead. `subscribeToGatherings` and
-`subscribeToEmployeeLeave` mirror the fan-outs above but with `onSnapshot`, so a leave
-approval or a scheduled meeting appears without a refresh. Both span two collections
-and wait for both listeners before emitting; both return an unsubscribe the page calls
-on unmount. The one-shot reads stay for the admin screens, which render once.
+The employee screens read live where the data moves underneath the user.
+`subscribeToGatherings` and `subscribeToEmployeeLeave` mirror the fan-outs above but
+with `onSnapshot`, so a leave approval or a scheduled meeting appears without a refresh.
+Each spans two sources — `subscribeToEmployeeLeave` the `leaveBalances` subcollection
+plus top-level `leaveRequests` — and waits for both listeners before emitting; both
+return an unsubscribe the page calls on unmount. The one-shot reads stay for the admin
+screens and for the employee views that don't change on their own: `EmployeeProfile` and
+the detail card on `EmployeeHome` still call `pageAPI`.
+
+**Roles and custom claims.** `firestore.rules` reads a caller's role from
+`request.auth.token.role` and falls back to a `get()` on `users/{uid}`. Only the seed
+script ever calls `setCustomUserClaims` — the in-app linking actions
+(`employeeAPI.setupUserAsEmployee`, `linkUserAsAdmin`) write the role onto the user doc
+and nothing else, because a browser client cannot mint its own claims. So for every user
+created through the UI the fallback is the only path, and each rule evaluation costs a
+document read. Closing that is what phase 3's Cloud Function is for.
 
 ## Still on the list
 
@@ -140,8 +164,16 @@ on unmount. The one-shot reads stay for the admin screens, which render once.
 - Admin dashboard aggregates are computed client-side. If the employee count grows,
   move them into a Cloud Function or precomputed aggregate documents.
 - The old Jest suite was not carried over — its mocks targeted the axios API. The
-  Vitest suite above covers the leave transaction and the auth flow; the page-level
-  fan-outs in `pageAPI` are still untested.
+  Vitest suite above covers the leave transaction, the auth flow and the live-read
+  subscriptions; the page-level fan-outs in `pageAPI` are still untested.
+- No Cloud Function sets custom claims, so users created through the UI are authorised
+  through a document read on every rule evaluation (see Data model).
+- Email verification is sent but never enforced — nothing reads `isVerified`. Access is
+  gated on an admin having linked the account.
+- The mobile pass covered the employee side only; admin pages have essentially no
+  breakpoints.
+- `npm run lint` exits clean, with 205 `no-explicit-any`-style warnings left from the
+  port still to chip at.
 - The rebrand has not happened: the Tailwind palette is still `corigreen`/`sakura`/
   `warmstone`, the logo and the PWA icons are still the Coriander wordmark, and
   `CoriBtn`/`CoriBadge`/`CoriCircleBtn` keep the old name. That phase needs brand
@@ -172,8 +204,12 @@ Then, with the dev server up:
 3. Approve a real leave request and confirm the balance decrements exactly once.
 
 The declared indexes in `firestore.indexes.json` cover every composite query currently
-in `api.service.ts`, so step 1 should turn up nothing — but it is the cheapest place
-to find out otherwise.
+in `api.service.ts`, so step 1 should turn up nothing. One caveat: the equality-only
+pairs — `meetings` on `adminId` + `status`, and the `adminId` variants of
+`getGatherings` / `subscribeToGatherings` — have no index of their own and rely on being
+a prefix of the three-field `(adminId, status, startDate)` index. That normally works,
+but it is untested rather than proven, and step 1 is the cheapest place to find out
+otherwise.
 
 ### Static audit already done
 

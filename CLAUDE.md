@@ -28,16 +28,22 @@ separate config file. It only picks up `src/**/*.test.ts(x)`.
 `npm run build` runs `tsc --noEmit` first, so a type error fails the build even
 though Vite itself would transpile past it.
 
-`npm run lint` does not currently exit clean — it reports 2 errors and ~205
-warnings (mostly `no-explicit-any` carried over from the port). Treat new lint
-output as a diff against that baseline, not as a pass/fail gate.
+`npm run lint` exits clean: 0 errors and 205 warnings (mostly `no-explicit-any`
+carried over from the port). The exit code is a real gate — a new *error* fails
+CI — but treat the warning count as a baseline to chip at, not a pass/fail line.
+
+`tsconfig.json` runs `strict: true`, and `@/*` is aliased to `src/*` in both
+`tsconfig.json` and `vite.config.ts` (Vitest inherits it). Existing imports are
+still relative; the rewrite is Phase 4 work.
 
 ## Environment
 
 Copy `.env.example` to `.env.local` and fill it in. Three groups of vars:
 `VITE_FIREBASE_*` (web app config, read by `src/services/firebase.ts`),
 `VITE_CLOUDINARY_*` (the upload widgets still use Cloudinary), and the
-`GOOGLE_APPLICATION_CREDENTIALS` / `SEED_*` group used only by `scripts/seed.mjs`.
+`GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_PROJECT_ID` / `SEED_*` group used only
+by `scripts/seed.mjs`. The seed script runs via `node --env-file=.env.local`, so its
+vars must be in that file — a shell export is not read.
 
 There is no emulator setup in this repo. `firebase.json` declares no `emulators`
 block and nothing in `src/` connects to one — development and tests run against
@@ -47,10 +53,13 @@ the Firebase SDK at the module boundary, so it is offline and touches nothing.
 ## Architecture
 
 A React 19 + TypeScript + Vite SPA on Firebase (Auth + Firestore + Storage),
-ported from an Electron + .NET version. `MIGRATION_PLAN.md` records the decisions
-behind the data model; `README.md` covers setup, seeding and the verification
-checklist. Two files carry nearly all the non-UI logic:
-`src/services/api.service.ts` (~1500 lines) and `src/services/authService.ts`.
+ported from an Electron + .NET version. `MIGRATION_PLAN.md` records the phase 1
+decisions behind the data model (it is a pre-work plan, not a description of the
+code — see its status header); `NEXT_MIGRATION_PLAN.md.pdf` is the phase 2 plan;
+`README.md` covers setup, seeding and the live-project verification checklist.
+
+Two files carry nearly all the non-UI logic: `src/services/api.service.ts`
+(~1500 lines) and `src/services/authService.ts`.
 
 ### There is no backend — the security rules are the access control
 
@@ -99,12 +108,18 @@ destructured off axios, so call sites did not change during the port.
 
 ### Live reads vs one-shot reads
 
-Employee screens subscribe (`subscribeToGatherings`, `subscribeToEmployeeLeave`);
-admin screens use the one-shot `pageAPI` reads. Both subscriptions go through
-`subscribePair`, which spans two collections and **waits for both listeners
-before emitting** — emitting on the first would render an empty half. They return
-an unsubscribe the page must call on unmount, and errors (a denied read, a
-missing index) arrive on the error callback, not as a rejected promise.
+Employee screens subscribe where data moves underneath the user
+(`subscribeToGatherings`, `subscribeToEmployeeLeave`). Everything else — all admin
+screens, plus `EmployeeProfile` and the detail card on `EmployeeHome` — still uses
+the one-shot `pageAPI` reads, so a page having a live sibling does not mean it is
+live itself.
+
+Both subscriptions go through `subscribePair`, which spans two sources
+(`subscribeToEmployeeLeave` pairs the `leaveBalances` subcollection with top-level
+`leaveRequests`) and **waits for both listeners before emitting** — emitting on the
+first would render an empty half. They return an unsubscribe the page must call on
+unmount, and errors (a denied read, a missing index) arrive on the error callback,
+not as a rejected promise.
 
 ### Auth
 
@@ -119,6 +134,12 @@ page load; guards that skip it will bounce a signed-in user to the login screen.
 `ProtectedRoute` (`requires: "admin" | "employee" | "any"`) reads role off the
 context. A signed-in but unlinked user is redirected to `/#notlinked`.
 
+Signup always writes `role: "unassigned"` and records what the user asked for as
+`requestedRole` — the `users` create rule rejects any self-granted role or link, which
+is the privilege boundary the whole rule set rests on. Email verification is sent but
+**never enforced**: `isVerified` is carried on `CurrentUserDTO` and read by nothing.
+Access is gated purely on an admin having linked the account.
+
 ### Firestore query changes need an index
 
 Any new composite query (a `where` plus an `orderBy`, or `where` clauses on
@@ -126,15 +147,42 @@ different fields) needs an entry in `firestore.indexes.json`. At runtime a
 missing one throws `failed-precondition` with a link that creates the index —
 add it to the JSON file too, or it will be missing on the next project.
 
+### PWA shell
+
+The employee app is installable: `public/manifest.webmanifest`, `public/icons/`, and
+`public/sw.js`, registered from `src/main.tsx` **only under `import.meta.env.PROD`** —
+a service worker in front of the dev server breaks hot reload, so PWA behaviour can
+only be tested against `npm run build` + `npm run preview`.
+
+The service worker ignores cross-origin requests entirely, which is what keeps
+Firestore's own persistence and Cloudinary out of a second cache. Build assets are
+content-hashed so they are cache-first; navigations are network-first with the cached
+shell as fallback. **If you change `public/sw.js`, bump the `CACHE` constant** or
+clients keep the old worker's cache. `firebase.json` marks `/sw.js` and
+`/manifest.webmanifest` `no-cache` so Hosting cannot pin an old shell after a deploy.
+
+The icons are generated from `src/assets/logos/cori_logo_green.png` and still read
+"Coriander"; `scripts/generate-icons.sh` regenerates them once a Kora logo exists.
+
 ## Conventions
 
 - Ant Design is the component library; the theme token block lives in `App.tsx`.
   Tailwind and Bootstrap are also present, plus hand-written CSS in `src/styles/`.
-- `src/pages/Temp*.tsx`, `src/pages/Reference.tsx` and
-  `src/pages/apiPlayground/ApiPlayground.tsx` are unguarded dev-only routes
-  registered in `App.tsx` — not part of the product surface.
-- `old-coriander-code/` holds zipped snapshots of the pre-migration Electron
-  source, kept locally for reference. It is gitignored and untracked — nothing
+- `src/dev/` holds unguarded dev-only scratch pages, served under `/dev/*`.
+  `App.tsx` reaches them through a single lazy import on the
+  `import.meta.env.DEV` branch, so Rollup drops the whole subtree from a
+  production build — verified by no dev chunk appearing in `dist/assets`. Keep
+  that shape: importing anything from `src/dev/` outside that branch ships it.
+- `old-coriander-code/` holds a zipped snapshot of the pre-migration Electron
+  frontend, kept locally for reference. The .NET backend was a separate repo and is
+  not in it. It is gitignored and untracked — nothing
   builds from it.
-- `.eslintrc.json` still extends `plugin:import/electron`, left over from the
-  Electron app.
+- ESLint is still v8 with `.eslintrc.json`, and `@typescript-eslint` is pinned at
+  v5. That blocks `eslint-import-resolver-typescript`, whose current release needs
+  `@typescript-eslint/utils@^8`, so `import/no-unresolved` is configured to ignore
+  `^@/` instead — `tsc` already resolves those paths, so nothing is lost. Moving to
+  ESLint 9 flat config means upgrading both together.
+- The rebrand is name-only so far. The components carry the Kora name (`KoraBtn`,
+  `KoraBadge`, `KoraCircleBtn`) but the Tailwind palette and the logo are still
+  Coriander's (`corigreen`/`sakura`/`warmstone`, `cori_logo_green.png`), as is
+  user-facing copy in `UnlinkedMessage`.

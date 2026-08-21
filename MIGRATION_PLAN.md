@@ -1,5 +1,34 @@
 # Migration Plan — Coriander HR → Web App + Firebase
 
+> **Status: executed. This is the plan as written *before* the work, kept as the
+> record of why the data model looks the way it does. It is not a description of
+> the current codebase** — read `README.md` and `CLAUDE.md` for that, and
+> `NEXT_MIGRATION_PLAN.md.pdf` for the phase 2 plan that follows it.
+>
+> All eight sequenced steps below landed, except that step 8 (deploying to Hosting)
+> is configured but not yet run against the live project. Four things the plan says
+> are now wrong or settled differently:
+>
+> - **Custom claims were never built.** The plan assumes a Cloud Function sets a
+>   `role` claim at link time. There is no `functions/` directory. `setCustomUserClaims`
+>   is called only by `scripts/seed.mjs`, so for every user created through the UI the
+>   role lives only on `users/{uid}` and `firestore.rules` reaches it through a
+>   document `get()` fallback. This is the largest gap between plan and code.
+> - **`leaveBalances` is settled**, not the open question it reads as here: a
+>   subcollection at `employees/{id}/leaveBalances/{leaveTypeId}`, where the document
+>   id *is* the leave type id. The approve-and-decrement `runTransaction` structurally
+>   depends on that, because the client SDK cannot query inside a transaction.
+> - **`onSnapshot` shipped.** The plan calls it optional and "not required for parity";
+>   the employee screens now subscribe through `subscribeToGatherings` and
+>   `subscribeToEmployeeLeave`.
+> - **The old Jest suite was deleted, not reworked**, and `VeriCodeForm` was never
+>   ported rather than becoming dead code. A narrower Vitest suite replaced them, and
+>   `VerifyEmailNotice` replaced the 6-digit code form.
+>
+> Of the four items under "What's explicitly NOT in this first migration", the mobile
+> employee experience has since been done (employee side only) and the rebrand is
+> name-only; Cloudinary and Cloud Functions are untouched, as planned.
+
 **Goal of this first migration:** Take the existing Electron + React + TypeScript app and stand it up in a **new repo** as a plain **Vite web app**, with **Firebase** (Auth + Firestore + Storage) replacing the .NET/Render backend — in one pass.
 
 **Reality check up front:** This is a *port*, not an edit. The React components are reusable. The entire data layer (auth + api services) is rewritten. Budget accordingly.
