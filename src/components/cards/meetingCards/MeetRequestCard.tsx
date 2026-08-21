@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MeetingRequestCard } from "../../../interfaces/meetings/meetingRequestCard";
-import CoriBtn from "../../buttons/CoriBtn";
+import KoraBtn from "../../buttons/KoraBtn";
 import dayjs from "dayjs";
 import { Avatar } from "antd";
 import { Icons } from "../../../constants/icons";
@@ -35,12 +35,12 @@ function MeetRequestCard({ meetRequest, onApprove, onReject }: MeetRequestCardPr
           <p className="text-zinc-500 text-sm mt-3">No purpose provided</p>
         )}
         <div className="flex gap-2 w-full max-h-0 overflow-hidden group-hover:max-h-20 group-hover:mt-3 transition-all duration-300">
-          <CoriBtn className="w-full" onClick={onApprove}>
+          <KoraBtn className="w-full" onClick={onApprove}>
             Accept
-          </CoriBtn>
-          <CoriBtn secondary style="red" className="w-full" onClick={onReject}>
+          </KoraBtn>
+          <KoraBtn secondary style="red" className="w-full" onClick={onReject}>
             Reject
-          </CoriBtn>
+          </KoraBtn>
         </div>
       </div>
     </>

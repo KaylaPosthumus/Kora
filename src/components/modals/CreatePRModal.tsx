@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "antd";
 import dayjs from "dayjs";
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 import { empUserAPI } from "../../services/api.service";
 import { EmployType, Gender, PayCycle, UserRole } from "../../types/common";
 import { Icons } from "../../constants/icons";

@@ -19,7 +19,7 @@ interface PrimaryBtnProps {
 }
 
 // Add props using destructuring
-const CoriCircleBtn = ({
+const KoraCircleBtn = ({
   onClick,
   className,
   style,
@@ -83,7 +83,7 @@ const CoriCircleBtn = ({
       variant={btnVariant}
       onClick={onClick}
       type={type}
-      className={`${btnStyles} flex items-center justify-center h-8 w-8 rounded-full cori-btn ${className}`}
+      className={`${btnStyles} flex items-center justify-center h-8 w-8 rounded-full kora-btn ${className}`}
       disabled={disabled}
       aria-label={ariaLabel}
     >
@@ -92,4 +92,4 @@ const CoriCircleBtn = ({
   );
 };
 
-export default CoriCircleBtn;
+export default KoraCircleBtn;

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { message } from "antd";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 import { resendVerificationEmail } from "../../services/authService";
 
 /**
@@ -60,7 +60,7 @@ function VerifyEmailNotice({ email, onBack }: { email: string; onBack: () => voi
       </div>
 
       <div className="flex flex-col w-full">
-        <CoriBtn
+        <KoraBtn
           type="button"
           style="black"
           className="w-full mt-3"
@@ -68,10 +68,10 @@ function VerifyEmailNotice({ email, onBack }: { email: string; onBack: () => voi
           onClick={handleResend}
         >
           {secondsUntilResend > 0 ? `Resend in ${secondsUntilResend}s` : "Resend email"}
-        </CoriBtn>
-        <CoriBtn secondary type="button" style="black" className="w-full mt-3" onClick={onBack}>
+        </KoraBtn>
+        <KoraBtn secondary type="button" style="black" className="w-full mt-3" onClick={onBack}>
           Back
-        </CoriBtn>
+        </KoraBtn>
       </div>
     </div>
   );

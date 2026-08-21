@@ -1,7 +1,7 @@
 // Unlinked / Unactivated message
 
 import React, { useEffect } from "react";
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 import { checkIfUserIsLinked, logout } from "../../services/authService";
 import { message } from "antd";
 
@@ -42,13 +42,13 @@ function UnlinkedMessage({ onLogOut }: { onLogOut: () => void }) {
           <span className="font-bold text-corigreen-500">Almost</span> there!
         </h1>
         <p className="text-zinc-500 text-center">
-          Your Coriander account was created successfully, but still needs to be
+          Your Kora account was created successfully, but still needs to be
           linked to your organisation. Please ask your admin to activate your
           account.
         </p>
       </div>
       <div className="flex flex-col w-full">
-        <CoriBtn
+        <KoraBtn
           primary
           type="submit"
           style="black"
@@ -56,8 +56,8 @@ function UnlinkedMessage({ onLogOut }: { onLogOut: () => void }) {
           onClick={checkUserLinkStatus}
         >
           Refresh Page
-        </CoriBtn>
-        <CoriBtn
+        </KoraBtn>
+        <KoraBtn
           secondary
           type="submit"
           style="black"
@@ -65,7 +65,7 @@ function UnlinkedMessage({ onLogOut }: { onLogOut: () => void }) {
           onClick={logout}
         >
           Logout
-        </CoriBtn>
+        </KoraBtn>
       </div>
     </div>
   );

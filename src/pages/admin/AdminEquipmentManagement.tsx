@@ -11,7 +11,7 @@ import { getFullImageUrl } from "../../utils/imageUtils";
 import { Icons } from "../../constants/icons";
 
 // Import Components
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 import EquipCondiBadge from "../../components/badges/EquipCondiBadge";
 import EquipmentTypeAvatar from "../../components/avatars/EquipmentTypeAvatar";
 
@@ -435,10 +435,10 @@ const AdminEquipmentManagement: React.FC = () => {
             <Icons.Construction fontSize="large" className="text-zinc-900" />
             <h1 className="text-3xl font-bold text-zinc-900">Equipment</h1>
           </div>
-          <CoriBtn style="black" onClick={() => setShowCreateUnlinkedEquipModal(true)}>
+          <KoraBtn style="black" onClick={() => setShowCreateUnlinkedEquipModal(true)}>
             Create
             <Icons.Add />
-          </CoriBtn>
+          </KoraBtn>
         </div>
         {allData.length === 0 ? (
           <div className="flex justify-center items-center h-64">

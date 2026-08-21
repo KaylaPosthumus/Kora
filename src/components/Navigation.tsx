@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import CoriBtn from "./buttons/CoriBtn";
+import KoraBtn from "./buttons/KoraBtn";
 import { Icons } from "../constants/icons";
 import { logout, navbarUserStatus } from "../services/authService";
 import logo from "../assets/logos/cori_logo_green.png";
@@ -179,9 +179,9 @@ const Navigation: React.FC = () => {
               {renderGroups()}
             </div>
 
-            <CoriBtn style="black" className="w-full" onClick={logout}>
+            <KoraBtn style="black" className="w-full" onClick={logout}>
               Logout
-            </CoriBtn>
+            </KoraBtn>
           </div>
         </div>
       </div>
@@ -229,9 +229,9 @@ const Navigation: React.FC = () => {
             <div className="flex-1 overflow-y-auto px-6 pb-6">{renderGroups()}</div>
 
             <div className="p-6 pt-0">
-              <CoriBtn style="black" className="w-full" onClick={logout}>
+              <KoraBtn style="black" className="w-full" onClick={logout}>
                 Logout
-              </CoriBtn>
+              </KoraBtn>
             </div>
           </div>
         </div>

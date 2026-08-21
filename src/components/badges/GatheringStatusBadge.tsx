@@ -1,6 +1,6 @@
 import React from "react";
 import { MeetStatus } from "../../types/common";
-import CoriBadge from "./CoriBadge";
+import KoraBadge from "./KoraBadge";
 
 interface GatheringStatusBadgeProps {
   status: MeetStatus | string;
@@ -39,7 +39,7 @@ function GatheringStatusBadge({ status, className }: GatheringStatusBadgeProps) 
   }
 
   return (
-    <CoriBadge
+    <KoraBadge
       text={text}
       color={color as "red" | "green" | "orange" | "blue" | "black" | "white"}
       size="small"

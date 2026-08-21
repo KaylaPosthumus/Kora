@@ -10,8 +10,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 // Import React Components
-import CoriBtn from "../../components/buttons/CoriBtn";
-import CoriCircleBtn from "../../components/buttons/CoriCircleBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
+import KoraCircleBtn from "../../components/buttons/KoraCircleBtn";
 import EquipmentListItem from "../../components/equipment/EquipmentListItem";
 import LeaveBalanceBlock from "../../components/leave/LeaveBalanceBlock";
 import EmployTypeBadge from "../../components/badges/EmployTypeBadge";
@@ -284,22 +284,22 @@ const AdminIndividualEmployee: React.FC = () => {
         {/* Top Heading with buttons */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4 items-center">
-            <CoriBtn style="black" iconOnly onClick={() => navigate("/admin/employees")}>
+            <KoraBtn style="black" iconOnly onClick={() => navigate("/admin/employees")}>
               <Icons.ArrowBack />
-            </CoriBtn>
+            </KoraBtn>
             <h1 className="text-3xl font-bold text-zinc-900">Employee Details</h1>
           </div>
           <div className="flex gap-2">
-            <CoriBtn secondary style="black" onClick={() => setShowEditDetailsModal(true)}>
+            <KoraBtn secondary style="black" onClick={() => setShowEditDetailsModal(true)}>
               <Icons.Edit />
               Edit Details
-            </CoriBtn>
-            <CoriBtn style="black" onClick={toggleEmpSuspension}>
+            </KoraBtn>
+            <KoraBtn style="black" onClick={toggleEmpSuspension}>
               {empUser?.isSuspended ? "Unsuspend" : "Suspend"}
-            </CoriBtn>
-            <CoriBtn style="red" onClick={() => setShowTerminateEmployeeModal(true)}>
+            </KoraBtn>
+            <KoraBtn style="red" onClick={() => setShowTerminateEmployeeModal(true)}>
               Terminate
-            </CoriBtn>
+            </KoraBtn>
           </div>
         </div>
         {/* Page Body */}
@@ -442,7 +442,7 @@ const AdminIndividualEmployee: React.FC = () => {
                         : "weekly"}
                     </p>
                   </div>
-                  <CoriCircleBtn
+                  <KoraCircleBtn
                     secondary
                     icon={<Icons.Edit />}
                     onClick={() => setShowEditPayrollModal(true)}
@@ -456,7 +456,7 @@ const AdminIndividualEmployee: React.FC = () => {
                         <DatePicker
                           value={dayjs(empUser.lastPaidDate)}
                           format="DD MMM YYYY"
-                          suffixIcon={<CoriCircleBtn secondary icon={<Icons.Edit />} />}
+                          suffixIcon={<KoraCircleBtn secondary icon={<Icons.Edit />} />}
                           allowClear={false}
                           variant="borderless"
                           className="hover:cursor-pointer"
@@ -469,7 +469,7 @@ const AdminIndividualEmployee: React.FC = () => {
                         <DatePicker
                           placeholder="Set First Payment"
                           format="DD MMM YYYY"
-                          suffixIcon={<CoriCircleBtn secondary icon={<Icons.Add />} />}
+                          suffixIcon={<KoraCircleBtn secondary icon={<Icons.Add />} />}
                           allowClear={false}
                           variant="borderless"
                           className="hover:cursor-pointer w-full"
@@ -510,7 +510,7 @@ const AdminIndividualEmployee: React.FC = () => {
                     }`}
                   >
                     <div>
-                      <CoriBtn
+                      <KoraBtn
                         secondary
                         style="black"
                         onClick={onUndoPayment}
@@ -518,12 +518,12 @@ const AdminIndividualEmployee: React.FC = () => {
                         iconOnly
                       >
                         <Icons.Undo />
-                      </CoriBtn>
+                      </KoraBtn>
                     </div>
                   </Tooltip>
-                  <CoriBtn style="black" onClick={onPayNow}>
+                  <KoraBtn style="black" onClick={onPayNow}>
                     Pay Today
-                  </CoriBtn>
+                  </KoraBtn>
                 </div>
               </div>
             </div>

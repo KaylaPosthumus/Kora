@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { Icons } from "../../../constants/icons";
 
 // Badges
-import CoriBadge from "../../../components/badges/CoriBadge";
+import KoraBadge from "../../../components/badges/KoraBadge";
 import { LeaveStatus, LeaveStatusLabels } from "../../../types/common";
 
 const getStatusBadgeColor = (status: string) => {
@@ -64,7 +64,7 @@ function LeaveRequestCard({ req }: LeaveRequestCardProps) {
             <p className="text-sm text-zinc-600">{duration} days</p>
           </div>
         </div>
-        <CoriBadge
+        <KoraBadge
           text={LeaveStatusLabels[req.status]}
           size="x-small"
           color={getStatusBadgeColor(LeaveStatusLabels[req.status])}

@@ -18,7 +18,7 @@ interface BtnProps {
 }
 
 // Add props using destructuring
-const CoriBtn = ({
+const KoraBtn = ({
   onClick,
   children,
   className,
@@ -82,7 +82,7 @@ const CoriBtn = ({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className={`${btnStyles} text-[14px] font-semibold flex items-center justify-center h-10 px-3 gap-2 rounded-xl cori-btn ${className}
+      className={`${btnStyles} text-[14px] font-semibold flex items-center justify-center h-10 px-3 gap-2 rounded-xl kora-btn ${className}
       ${iconOnly ? "w-10" : ""}`}
     >
       {children}
@@ -90,4 +90,4 @@ const CoriBtn = ({
   );
 };
 
-export default CoriBtn;
+export default KoraBtn;

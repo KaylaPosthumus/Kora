@@ -28,7 +28,7 @@ import AdminAddIcon from "../../assets/icons/AdminAddIcon.png";
 import { Spin } from "antd";
 import dayjs from "dayjs";
 import { Icons } from "../../constants/icons";
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";

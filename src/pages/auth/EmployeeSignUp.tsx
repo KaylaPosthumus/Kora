@@ -9,7 +9,7 @@ import {
   Tooltip,
   Upload,
 } from "antd";
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -173,16 +173,16 @@ const EmployeeSignUp: React.FC = () => {
                   >
                     <Input type="password" />
                   </Form.Item>
-                  <CoriBtn
+                  <KoraBtn
                     type="submit"
                     style="black"
                     className="mt-2"
                     onClick={handleSignUp}
                   >
                     Sign Up
-                  </CoriBtn>
+                  </KoraBtn>
                 </Form>
-                <CoriBtn
+                <KoraBtn
                   type="button"
                   secondary
                   style="black"
@@ -191,7 +191,7 @@ const EmployeeSignUp: React.FC = () => {
                 >
                   <GoogleIcon fontSize="small" />
                   Sign up with Google
-                </CoriBtn>
+                </KoraBtn>
                 <p className="mt-4 text-zinc-500">
                   Already have an account?{" "}
                   <Link

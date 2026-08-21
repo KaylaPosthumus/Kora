@@ -11,9 +11,9 @@ import { ClockCircleOutlined, CheckOutlined, CloseOutlined } from "@ant-design/i
 import { Icons } from "../../constants/icons";
 
 // Badges & Buttons
-import CoriBadge from "../../components/badges/CoriBadge";
-import CoriCircleBtn from "../../components/buttons/CoriCircleBtn";
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBadge from "../../components/badges/KoraBadge";
+import KoraCircleBtn from "../../components/buttons/KoraCircleBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 
 // Table
 import { Table } from "antd";
@@ -215,7 +215,7 @@ const AdminLeaveRequests: React.FC = () => {
         const badgeColor = activeTab === "Pending" ? (isOverBalance ? "red" : "green") : "blue";
 
         const badge = (
-          <CoriBadge text={`${r.remainingDays} days`} size="x-small" color={badgeColor} />
+          <KoraBadge text={`${r.remainingDays} days`} size="x-small" color={badgeColor} />
         );
 
         return (
@@ -254,10 +254,10 @@ const AdminLeaveRequests: React.FC = () => {
         <div className="flex justify-end gap-2">
           {r.status === 0 && (
             <>
-              <CoriBtn iconOnly disabled={loading} onClick={() => handleApprove(r.leaveRequestId)}>
+              <KoraBtn iconOnly disabled={loading} onClick={() => handleApprove(r.leaveRequestId)}>
                 <CheckOutlined />
-              </CoriBtn>
-              <CoriBtn
+              </KoraBtn>
+              <KoraBtn
                 secondary
                 style="red"
                 iconOnly
@@ -265,21 +265,21 @@ const AdminLeaveRequests: React.FC = () => {
                 onClick={() => handleReject(r.leaveRequestId)}
               >
                 <CloseOutlined />
-              </CoriBtn>
+              </KoraBtn>
             </>
           )}
           {r.status === 1 && (
-            <CoriBtn
+            <KoraBtn
               secondary
               iconOnly
               disabled={loading}
               onClick={() => handleUndo(r.leaveRequestId)}
             >
               <Icons.Undo />
-            </CoriBtn>
+            </KoraBtn>
           )}
           {r.status === 2 && (
-            <CoriBtn
+            <KoraBtn
               secondary
               style="red"
               iconOnly
@@ -287,7 +287,7 @@ const AdminLeaveRequests: React.FC = () => {
               onClick={() => handleUndo(r.leaveRequestId)}
             >
               <Icons.Undo />
-            </CoriBtn>
+            </KoraBtn>
           )}
         </div>
       ),
@@ -304,27 +304,27 @@ const AdminLeaveRequests: React.FC = () => {
             <ClockCircleOutlined className="text-3xl text-zinc-900" />
             <h1 className="text-3xl font-bold text-zinc-900">Leave Requests</h1>
           </div>
-          <CoriBtn style="black" onClick={() => setShowPolicyModal(true)}>
+          <KoraBtn style="black" onClick={() => setShowPolicyModal(true)}>
             Edit Policy
-          </CoriBtn>
+          </KoraBtn>
         </div>
 
         {/* Tabs */}
         <div className="flex gap-2 mb-4">
           {(["Pending", "Approved", "Rejected"] as const).map((tab) => (
-            <CoriBtn
+            <KoraBtn
               key={tab}
               onClick={() => setActiveTab(tab)}
               secondary
               disabled={loading}
-              className={`btn cori-btn ${
+              className={`btn kora-btn ${
                 activeTab === tab
                   ? "bg-zinc-900 text-white border-none"
                   : "border-zinc-900 text-zinc-900"
               }`}
             >
               {tab}
-            </CoriBtn>
+            </KoraBtn>
           ))}
         </div>
 

@@ -1,6 +1,6 @@
 import React, { JSX } from "react";
 import { EmployType } from "../../types/common";
-import CoriBadge from "./CoriBadge";
+import KoraBadge from "./KoraBadge";
 
 interface EmployTypeBadgeProps {
   status: EmployType | "suspended";
@@ -39,7 +39,7 @@ function EmployTypeBadge({ status }: EmployTypeBadgeProps) {
   }
 
   return (
-    <CoriBadge
+    <KoraBadge
       text={text}
       color={color as "red" | "green" | "orange" | "blue" | "yellow" | "white"}
       size="small"

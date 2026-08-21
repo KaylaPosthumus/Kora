@@ -1,5 +1,5 @@
 import React from "react";
-import CoriBadge from "./CoriBadge";
+import KoraBadge from "./KoraBadge";
 import dayjs from "dayjs";
 import { isDateInPast } from "../../utils/dateUtils";
 
@@ -18,7 +18,7 @@ function TimeTodayBadge({ date }: TimeTodayBadgeProps) {
     color = "green";
   }
   return (
-    <CoriBadge
+    <KoraBadge
       text={dayjs(date).fromNow()}
       color={color as "red" | "green"}
       size="x-small"

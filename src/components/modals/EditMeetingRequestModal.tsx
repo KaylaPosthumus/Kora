@@ -14,7 +14,7 @@ import {
   Spin,
 } from "antd";
 import dayjs from "dayjs";
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 import TextArea from "antd/es/input/TextArea";
 import { Icons } from "../../constants/icons";
 import { AdminUser } from "../../interfaces/people/adminUser";

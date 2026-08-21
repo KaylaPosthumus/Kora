@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import { employeeAPI, pageAPI } from "../../services/api.service";
 
 // Import Components
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 import EmployTypeBadge from "../../components/badges/EmployTypeBadge";
 
 // Import Constants
@@ -428,10 +428,10 @@ const AdminEmployeeManagement: React.FC = () => {
             value={searchValue}
             onChange={(e) => handleSearch(e.target.value)}
           />
-          <CoriBtn style="black" onClick={() => navigate("/admin/create-employee")}>
+          <KoraBtn style="black" onClick={() => navigate("/admin/create-employee")}>
             New
             <Icons.Add />
-          </CoriBtn>
+          </KoraBtn>
         </div>
       </div>
       {allData.length === 0 ? (

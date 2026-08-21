@@ -1,7 +1,7 @@
 import React from "react";
 
 // Import React Components
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 
 // Import 3rd party components
 import { Button, Dropdown, Tooltip } from "antd";
@@ -153,9 +153,9 @@ function EmpGatheringBox({ gathering }: GatheringBoxProps) {
             <p className="text-zinc-500 text-[12px]">{gathering.meetLink}</p>
           </div>
           {gathering.meetingStatus === MeetStatus.Upcoming && (
-            <CoriBtn primary style="black" onClick={handleJoinClick}>
+            <KoraBtn primary style="black" onClick={handleJoinClick}>
               Join
-            </CoriBtn>
+            </KoraBtn>
           )}
         </div>
       ) : (

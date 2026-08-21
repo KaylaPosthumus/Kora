@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 // Custom React Components
-import CoriBtn from "../../components/buttons/CoriBtn";
-import CoriCircleBtn from "../../components/buttons/CoriCircleBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
+import KoraCircleBtn from "../../components/buttons/KoraCircleBtn";
 import EquipmentListItem from "../../components/equipment/EquipmentListItem";
 import EmpEditEmpDetailsModal from "../../components/modals/EmpEditEmpDetailsModal";
 import ProfilePicUploadBtn from "../../components/uploading/ProfilePicUploadBtn";
@@ -126,14 +126,14 @@ const EmployeeProfile: React.FC = () => {
         {/* Top buttons */}
         <div className="flex justify-end items-center">
           <div className="flex gap-2 z-10">
-            <CoriBtn secondary style="black" onClick={() => setShowEditDetailsModal(true)}>
+            <KoraBtn secondary style="black" onClick={() => setShowEditDetailsModal(true)}>
               <Icons.Edit />
               Edit Details
-            </CoriBtn>
-            <CoriBtn style="black" onClick={() => generatePayrollPDF(empUser)}>
+            </KoraBtn>
+            <KoraBtn style="black" onClick={() => generatePayrollPDF(empUser)}>
               <Icons.Download />
               Payroll PDF
-            </CoriBtn>
+            </KoraBtn>
           </div>
         </div>
         {/* Page Content */}
@@ -156,7 +156,7 @@ const EmployeeProfile: React.FC = () => {
                       className="absolute bottom-0 right-0"
                     />
                   ) : (
-                    <CoriCircleBtn
+                    <KoraCircleBtn
                       icon={<Icons.Google />}
                       style="black"
                       className="absolute bottom-0 right-0"
@@ -177,7 +177,7 @@ const EmployeeProfile: React.FC = () => {
                       className="absolute bottom-0 right-0"
                     />
                   ) : (
-                    <CoriCircleBtn
+                    <KoraCircleBtn
                       icon={<Icons.Google />}
                       style="black"
                       className="absolute bottom-0 right-0"

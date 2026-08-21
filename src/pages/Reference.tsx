@@ -1,7 +1,7 @@
 // Import components
-import CoriBtn from "../components/buttons/CoriBtn";
-import CoriCircleBtn from "../components/buttons/CoriCircleBtn";
-import CoriBadge from "../components/badges/CoriBadge";
+import KoraBtn from "../components/buttons/KoraBtn";
+import KoraCircleBtn from "../components/buttons/KoraCircleBtn";
+import KoraBadge from "../components/badges/KoraBadge";
 
 // Import Icons
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -15,61 +15,61 @@ function ReferencePage() {
     <div className="max-w-7xl mx-auto m-4">
       <h1 className="text-3xl font-bold mb-6 text-zinc-900">Custom Components Reference</h1>
 
-      {/* CoriBtns */}
+      {/* KoraBtns */}
       <div>
-        <h3 className="text-xl font-bold mb-2">CoriBtn</h3>
+        <h3 className="text-xl font-bold mb-2">KoraBtn</h3>
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
-              <CoriBtn primary style="default">
+              <KoraBtn primary style="default">
                 Primary Default
-              </CoriBtn>
-              <CoriBtn primary style="black">
+              </KoraBtn>
+              <KoraBtn primary style="black">
                 Primary Black
-              </CoriBtn>
-              <CoriBtn primary style="red">
+              </KoraBtn>
+              <KoraBtn primary style="red">
                 Primary Red with Icon <DeleteIcon />
-              </CoriBtn>
-              <CoriBtn primary iconOnly>
+              </KoraBtn>
+              <KoraBtn primary iconOnly>
                 <ArrowBackIcon />
-              </CoriBtn>
+              </KoraBtn>
             </div>
             <div className="flex gap-2">
-              <CoriBtn secondary>
+              <KoraBtn secondary>
                 <InsertEmoticonIcon /> Secondary Default with Icon
-              </CoriBtn>
-              <CoriBtn secondary style="black">
+              </KoraBtn>
+              <KoraBtn secondary style="black">
                 Secondary Black
-              </CoriBtn>
-              <CoriBtn secondary style="red">
+              </KoraBtn>
+              <KoraBtn secondary style="red">
                 Secondary Red
-              </CoriBtn>
-              <CoriCircleBtn icon={<AddIcon />} />
-              <CoriCircleBtn style="black" icon={<AddIcon />} />
-              <CoriCircleBtn style="red" icon={<AddIcon />} />
+              </KoraBtn>
+              <KoraCircleBtn icon={<AddIcon />} />
+              <KoraCircleBtn style="black" icon={<AddIcon />} />
+              <KoraCircleBtn style="red" icon={<AddIcon />} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-xl font-bold mb-2">CoriBadge</h3>
+            <h3 className="text-xl font-bold mb-2">KoraBadge</h3>
             <div className="flex gap-2">
-              <CoriBadge text="Large" size="large" />
-              <CoriBadge text="Medium" size="medium" />
-              <CoriBadge text="Small" size="small" />
-              <CoriBadge text="X-Small" size="x-small" />
-              <CoriBadge text="Green" size="small" color="green" />
-              <CoriBadge text="Black" size="small" color="black" />
-              <CoriBadge text="Yellow" size="small" color="yellow" />
-              <CoriBadge text="Red" size="small" color="red" />
-              <CoriBadge text="Blue" size="small" color="blue" />
-              <CoriBadge text="White" size="small" color="white" />
-              <CoriBadge text="Orange" size="small" color="orange" />
+              <KoraBadge text="Large" size="large" />
+              <KoraBadge text="Medium" size="medium" />
+              <KoraBadge text="Small" size="small" />
+              <KoraBadge text="X-Small" size="x-small" />
+              <KoraBadge text="Green" size="small" color="green" />
+              <KoraBadge text="Black" size="small" color="black" />
+              <KoraBadge text="Yellow" size="small" color="yellow" />
+              <KoraBadge text="Red" size="small" color="red" />
+              <KoraBadge text="Blue" size="small" color="blue" />
+              <KoraBadge text="White" size="small" color="white" />
+              <KoraBadge text="Orange" size="small" color="orange" />
             </div>
           </div>
         </div>
       </div>
-      <CoriBtn secondary style="red" iconOnly>
+      <KoraBtn secondary style="red" iconOnly>
         <ShoppingCartIcon />
-      </CoriBtn>
+      </KoraBtn>
     </div>
   );
 }

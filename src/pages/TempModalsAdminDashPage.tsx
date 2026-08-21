@@ -5,7 +5,7 @@ import CreatePRModal from "../components/modals/CreatePRModal";
 import EditPRModal from "../components/modals/EditPRModal";
 
 // Import Components
-import CoriBtn from "../components/buttons/CoriBtn";
+import KoraBtn from "../components/buttons/KoraBtn";
 
 function TempModalsAdminDashPage() {
   // State for the modals
@@ -16,8 +16,8 @@ function TempModalsAdminDashPage() {
     <div className="max-w-7xl mx-auto m-4">
       <h1 className="text-3xl font-bold mb-6 text-zinc-900">Modals on the Admin Dash</h1>
       <div className="flex gap-4">
-        <CoriBtn onClick={() => setShowCreatePRModal(true)}>Open Create PR Modal</CoriBtn>
-        <CoriBtn onClick={() => setShowEditPRModal(true)}>Open Edit PR Modal</CoriBtn>
+        <KoraBtn onClick={() => setShowCreatePRModal(true)}>Open Create PR Modal</KoraBtn>
+        <KoraBtn onClick={() => setShowEditPRModal(true)}>Open Edit PR Modal</KoraBtn>
       </div>
       <CreatePRModal
         showModal={showCreatePRModal}

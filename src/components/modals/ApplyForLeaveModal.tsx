@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { empLeaveRequestsAPI, leaveTypesAPI } from "../../services/api.service";
 
 import dayjs from "dayjs";
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 import TextArea from "antd/es/input/TextArea";
 import { Icons } from "../../constants/icons";
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Icons } from "../../constants/icons";
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 import MeetRequestsBadge from "../../components/badges/MeetRequestsBadge";
 import MeetRequestsDrawer from "../../components/drawers/MeetRequestsDrawer";
 import { gatheringAPI, meetingAPI } from "../../services/api.service";
@@ -196,19 +196,19 @@ const AdminMeetings: React.FC = () => {
           <MeetRequestsBadge requests={meetRequests.length} onClick={() => setDrawerOpen(true)} />
         </div>
         <div className="flex items-center gap-2">
-          <CoriBtn secondary onClick={() => setShowCreatePRModal(true)}>
+          <KoraBtn secondary onClick={() => setShowCreatePRModal(true)}>
             New Review Meet
-          </CoriBtn>
+          </KoraBtn>
           {meetRequests.length > 0 ? (
-            <CoriBtn style="red" onClick={() => setDrawerOpen(true)}>
+            <KoraBtn style="red" onClick={() => setDrawerOpen(true)}>
               {meetRequests.length} Request{meetRequests.length === 1 ? "" : "s"}
               <Icons.MarkChatUnread />
-            </CoriBtn>
+            </KoraBtn>
           ) : (
-            <CoriBtn onClick={() => setDrawerOpen(true)}>
+            <KoraBtn onClick={() => setDrawerOpen(true)}>
               No Requests
               <Icons.MarkChatUnread />
-            </CoriBtn>
+            </KoraBtn>
           )}
         </div>
       </div>
@@ -216,18 +216,18 @@ const AdminMeetings: React.FC = () => {
       {/* Tab Buttons */}
       <div className="flex gap-2 mb-4">
         {tabOptions.map((tab) => (
-          <CoriBtn
+          <KoraBtn
             key={tab}
             onClick={() => handleTabChange(tab)}
             secondary
-            className={`btn cori-btn ${
+            className={`btn kora-btn ${
               activeTab === tab
                 ? "bg-zinc-900 text-white border-none"
                 : "border-zinc-900 text-zinc-900"
             }`}
           >
             {tab}
-          </CoriBtn>
+          </KoraBtn>
         ))}
       </div>
 

@@ -1,6 +1,6 @@
 import React, { JSX } from "react";
 import { EquipmentCondition } from "../../types/common";
-import CoriBadge from "./CoriBadge";
+import KoraBadge from "./KoraBadge";
 
 interface EquipCondiBadgeProps {
   condition: EquipmentCondition;
@@ -35,7 +35,7 @@ function EquipCondiBadge({ condition, className }: EquipCondiBadgeProps) {
   }
 
   return (
-    <CoriBadge
+    <KoraBadge
       text={text}
       color={color as "gray" | "green" | "blue" | "white" | "orange"}
       size="small"

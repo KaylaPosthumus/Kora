@@ -1,7 +1,7 @@
 import React, { useState, JSX } from "react";
 
 // Import Components
-import CoriCircleBtn from "../buttons/CoriCircleBtn";
+import KoraCircleBtn from "../buttons/KoraCircleBtn";
 import EquipCondiBadge from "../badges/EquipCondiBadge";
 
 // Functions
@@ -82,14 +82,14 @@ function EquipmentListItem({
           {/* Edit button only for admins */}
           {adminView && (
             <>
-              <CoriCircleBtn
+              <KoraCircleBtn
                 style="black"
                 icon={<Icons.Edit />}
                 onClick={onEdit}
                 className="hidden group-hover:flex transition-all duration-300"
                 aria-label="edit"
               />
-              <CoriCircleBtn
+              <KoraCircleBtn
                 secondary
                 style="red"
                 icon={<Icons.LinkOff />}
@@ -97,7 +97,7 @@ function EquipmentListItem({
                 className="hidden group-hover:flex transition-all duration-300"
                 aria-label="unlink"
               />
-              <CoriCircleBtn
+              <KoraCircleBtn
                 style="red"
                 icon={<Icons.Delete />}
                 onClick={onDelete}

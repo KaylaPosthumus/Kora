@@ -1,4 +1,4 @@
-/* Manual Override for Active States of CoriButtons */
+/* Manual Override for Active States of KoraButtons */
 /* (Overriding bootstrap's default states) */
 
 /* PRIMARY BUTTONS */
@@ -6,19 +6,19 @@
 /* Active State */
 /* -------------------------------------------------------- */
 /* Green / Default */
-.btn.cori-btn.btn-primary[class*="bg-corigreen"]:active {
+.btn.kora-btn.btn-primary[class*="bg-corigreen"]:active {
   background-color: #b5c89f !important; /* corigreen-300 */
   border-color: #b5c89f !important;
 }
 
 /* Black */
-.btn.cori-btn.btn-primary[class*="bg-zinc"]:active {
+.btn.kora-btn.btn-primary[class*="bg-zinc"]:active {
   background-color: #71717a !important; /* zinc-400 */
   border-color: #71717a !important;
 }
 
 /* Red */
-.btn.cori-btn.btn-primary[class*="bg-red"]:active {
+.btn.kora-btn.btn-primary[class*="bg-red"]:active {
   background-color: #fca5a5 !important; /* red-300 */
   border-color: #fca5a5 !important;
 }
@@ -27,7 +27,7 @@
 /* Focus State */
 /* -------------------------------------------------------- */
 /* All Primary Buttons */
-.btn.cori-btn.btn-primary:focus {
+.btn.kora-btn.btn-primary:focus {
   background-color: #f4b8d9 !important; /* sakura-500 */
   border-color: #f4b8d9 !important;
   box-shadow: 0 0 0 0.25rem rgba(244, 184, 217, 0.5) !important;
@@ -37,7 +37,7 @@
 /* Disabled State */
 /* -------------------------------------------------------- */
 /* All Primary Buttons */
-.btn.cori-btn.btn-primary:disabled {
+.btn.kora-btn.btn-primary:disabled {
   background-color: #a1a1aa !important; /* zinc-400 */
   border-color: #a1a1aa !important;
 }
@@ -49,21 +49,21 @@
 /* Active State */
 /* -------------------------------------------------------- */
 /* Green / Default */
-.btn.cori-btn.btn-outline-primary[class*="border-corigreen"]:active {
+.btn.kora-btn.btn-outline-primary[class*="border-corigreen"]:active {
   background-color: #b5c89f !important; /* corigreen-300 */
   border-color: #b5c89f !important;
   color: #fafafa !important;
 }
 
 /* Black */
-.btn.cori-btn.btn-outline-primary[class*="border-zinc"]:active {
+.btn.kora-btn.btn-outline-primary[class*="border-zinc"]:active {
   background-color: #71717a !important; /* zinc-400 */
   border-color: #71717a !important;
   color: #fafafa !important;
 }
 
 /* Red */
-.btn.cori-btn.btn-outline-primary[class*="border-red"]:active {
+.btn.kora-btn.btn-outline-primary[class*="border-red"]:active {
   background-color: #fca5a5 !important; /* red-300 */
   border-color: #fca5a5 !important;
   color: #fafafa !important;
@@ -73,7 +73,7 @@
 /* Focus State */
 /* -------------------------------------------------------- */
 /* All Secondary Buttons */
-.btn.cori-btn.btn-outline-primary:focus {
+.btn.kora-btn.btn-outline-primary:focus {
   background-color: transparent !important;
   border-color: #f4b8d9 !important; /* sakura-500 */
   box-shadow: 0 0 0 0.25rem rgba(244, 184, 217, 0.5) !important;
@@ -84,7 +84,7 @@
 /* Disabled State */
 /* -------------------------------------------------------- */
 /* All Secondary Buttons */
-.btn.cori-btn.btn-outline-primary:disabled {
+.btn.kora-btn.btn-outline-primary:disabled {
   border-color: #a1a1aa !important; /* zinc-500 */
   color: #a1a1aa !important;
 }

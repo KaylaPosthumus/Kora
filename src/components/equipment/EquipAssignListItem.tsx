@@ -1,7 +1,7 @@
 import React, { useState, JSX } from "react";
 
 // Import Components
-import CoriCircleBtn from "../buttons/CoriCircleBtn";
+import KoraCircleBtn from "../buttons/KoraCircleBtn";
 import EquipCondiBadge from "../badges/EquipCondiBadge";
 
 // Functions
@@ -80,7 +80,7 @@ function EquipAssignListItem({
           {/* Edit button only for admins */}
           {adminView && (
             <>
-              <CoriCircleBtn
+              <KoraCircleBtn
                 style="red"
                 icon={<Icons.Delete />}
                 onClick={onDelete}

@@ -10,15 +10,15 @@ import { Icons } from "../../constants/icons";
 import { Progress, Tooltip, Spin } from "antd";
 
 // Badge
-import CoriBadge from "../../components/badges/CoriBadge";
+import KoraBadge from "../../components/badges/KoraBadge";
 import LeaveRequestCard from "../../components/cards/empCards/LeaveRequestCard";
 
 // Apply-for-leave modal
 import ApplyForLeaveModal from "../../components/modals/ApplyForLeaveModal";
 import { getFullCurrentUser } from "../../services/authService";
 
-// CoriBtn component
-import CoriBtn from "../../components/buttons/CoriBtn";
+// KoraBtn component
+import KoraBtn from "../../components/buttons/KoraBtn";
 
 const getLeaveIcon = (type: string) => {
   if (type.toLowerCase().includes("annual")) return <Icons.BeachAccess fontSize="large" />;
@@ -151,24 +151,24 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
                 <ClockCircleOutlined className="text-2xl sm:text-3xl text-zinc-900" />
                 <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">Leave Overview</h1>
               </div>
-              <CoriBtn onClick={() => setShowModal(true)}>Apply For Leave</CoriBtn>
+              <KoraBtn onClick={() => setShowModal(true)}>Apply For Leave</KoraBtn>
             </div>
 
             {/* Tabs */}
             <div className="flex gap-2 mb-4 overflow-x-auto -mx-1 px-1 pb-1">
               {tabOptions.map((tab) => (
-                <CoriBtn
+                <KoraBtn
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   secondary
-                  className={`btn cori-btn flex-shrink-0 ${
+                  className={`btn kora-btn flex-shrink-0 ${
                     activeTab === tab
                       ? "bg-zinc-900 text-white border-none"
                       : "border-zinc-900 text-zinc-900"
                   }`}
                 >
                   {tab}
-                </CoriBtn>
+                </KoraBtn>
               ))}
             </div>
 

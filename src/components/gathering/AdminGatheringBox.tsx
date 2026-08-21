@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 // Import React Components
-import CoriBtn from "../buttons/CoriBtn";
+import KoraBtn from "../buttons/KoraBtn";
 import EditPRModal from "../modals/EditPRModal";
 import { PerformanceReviewDTO } from "../modals/EditPRModal";
 import EditMeetingModal from "../modals/EditMeetingModal";
@@ -293,7 +293,7 @@ function AdminGatheringBox({
 
         {shouldShowReviewBtn && (
           <>
-            <CoriBtn
+            <KoraBtn
               primary
               style="default"
               onClick={() => setShowEditPRModal(true)}
@@ -301,7 +301,7 @@ function AdminGatheringBox({
             >
               Review Employee
               <Icons.StarRounded />
-            </CoriBtn>
+            </KoraBtn>
             <EditPRModal
               showModal={showEditPRModal}
               setShowModal={setShowEditPRModal}
@@ -400,9 +400,9 @@ function AdminGatheringBox({
     return (
       <div className="flex items-center gap-3">
         {gatheringStatus.isUpcoming && gathering.isOnline && (
-          <CoriBtn primary style="black" onClick={handleJoinClick}>
+          <KoraBtn primary style="black" onClick={handleJoinClick}>
             Join
-          </CoriBtn>
+          </KoraBtn>
         )}
         <Dropdown
           menu={{ items: getDropdownMenuItems() }}

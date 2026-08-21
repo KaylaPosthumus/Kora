@@ -16,7 +16,7 @@ import Logo from "../../assets/logos/cori_logo_green.png";
 
 // Child Components
 import UnlinkedMessage from "../../components/auth/UnlinkedMessage";
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -217,11 +217,11 @@ const Login: React.FC = () => {
                   >
                     <Input.Password />
                   </Form.Item>
-                  <CoriBtn type="submit" style="black">
+                  <KoraBtn type="submit" style="black">
                     Log In
-                  </CoriBtn>
+                  </KoraBtn>
                 </Form>
-                <CoriBtn
+                <KoraBtn
                   type="button"
                   secondary
                   style="black"
@@ -230,7 +230,7 @@ const Login: React.FC = () => {
                 >
                   <GoogleIcon fontSize="small" />
                   Log In with Google
-                </CoriBtn>
+                </KoraBtn>
 
                 <p className="mt-4 text-zinc-500">
                   New employee?{" "}

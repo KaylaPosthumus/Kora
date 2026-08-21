@@ -7,7 +7,7 @@ interface BadgeProps {
   className?: string;
 }
 
-function CoriBadge({ color, size, text, className }: BadgeProps) {
+function KoraBadge({ color, size, text, className }: BadgeProps) {
   let textSize: string;
   let pSize: string;
   let bgColor = "bg-corigreen-500";
@@ -85,4 +85,4 @@ function CoriBadge({ color, size, text, className }: BadgeProps) {
   
 }
 
-export default CoriBadge;
+export default KoraBadge;

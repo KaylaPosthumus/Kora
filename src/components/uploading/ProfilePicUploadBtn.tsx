@@ -1,6 +1,6 @@
 import React from "react";
 import { Icons } from "../../constants/icons";
-import CoriCircleBtn from "../buttons/CoriCircleBtn";
+import KoraCircleBtn from "../buttons/KoraCircleBtn";
 
 // Cloudinary Upload Widget (For Uploading Profile Pictures)
 
@@ -41,7 +41,7 @@ const ProfilePicUploadBtn: React.FC<ProfilePicUploadBtnProps> = ({
     widget.open();
   };
 
-  return <CoriCircleBtn icon={<Icons.Edit />} className={className} onClick={openWidget} />;
+  return <KoraCircleBtn icon={<Icons.Edit />} className={className} onClick={openWidget} />;
 };
 
 export default ProfilePicUploadBtn;

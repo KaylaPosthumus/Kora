@@ -11,7 +11,7 @@ import {
   Typography,
 } from "antd";
 const { Title, Text } = Typography;
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 import EquipAssignListItem from "../../components/equipment/EquipAssignListItem";
 import AssignEmpToOneOrManyEquipsModal from "../../components/modals/AssignEmpToOneOrManyEquipsModal";
 import { Icons } from "../../constants/icons";
@@ -209,12 +209,12 @@ const AdminCreateEmployee: React.FC = () => {
         </div>
         {selectedUser && (
           <div className="flex gap-2">
-            <CoriBtn secondary style="black" type="button" onClick={handleLinkAsAdmin}>
+            <KoraBtn secondary style="black" type="button" onClick={handleLinkAsAdmin}>
               Link as Admin
-            </CoriBtn>
-            <CoriBtn style="black" type="submit" onClick={() => form.submit()}>
+            </KoraBtn>
+            <KoraBtn style="black" type="submit" onClick={() => form.submit()}>
               Create Employee
-            </CoriBtn>
+            </KoraBtn>
           </div>
         )}
       </div>
@@ -349,13 +349,13 @@ const AdminCreateEmployee: React.FC = () => {
               </div>
 
               <div className="mt-4">
-                <CoriBtn
+                <KoraBtn
                   style="default"
                   type="button"
                   onClick={() => setShowAssignEmpToEquipsModal(true)}
                 >
                   Add Equipment
-                </CoriBtn>
+                </KoraBtn>
               </div>
             </div>
           </div>
@@ -378,12 +378,12 @@ const AdminCreateEmployee: React.FC = () => {
 
 export default AdminCreateEmployee;
 
-// <CoriBtn
+// <KoraBtn
 //   style="black"
 //   onClick={() => setShowAssignEmpToEquipsModal(true)}
 // >
 //   Assign 1 or Multiple Equipments
-// </CoriBtn>
+// </KoraBtn>
 // {/* Assign Multiple Existing Equipments Modal */}
 // {/* TODO: Will probably create a copy of this modal, since this modal assigns immediately on press of Assign Button. */}
 // <AssignEmpToOneOrManyEquipsModal

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Table, Dropdown, Tooltip, Button, message, Spin, Empty } from "antd";
 import type { TableProps, MenuProps } from "antd";
 import { Icons } from "../../constants/icons";
-import CoriBtn from "../../components/buttons/CoriBtn";
+import KoraBtn from "../../components/buttons/KoraBtn";
 import { meetingAPI, subscribeToGatherings } from "../../services/api.service";
 import { GatheringType, MeetStatus, ReviewStatus } from "../../types/common";
 import GatheringStatusBadge from "../../components/badges/GatheringStatusBadge";
@@ -482,28 +482,28 @@ const EmployeeMeetings: React.FC = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <CoriBtn onClick={() => setShowRequestMeetingModal(true)}>
+            <KoraBtn onClick={() => setShowRequestMeetingModal(true)}>
               <Icons.Add />
               Request a Meeting
-            </CoriBtn>
+            </KoraBtn>
           </div>
         </div>
 
         {/* Tab Buttons */}
         <div className="flex gap-2 mb-4 overflow-x-auto -mx-1 px-1 pb-1">
           {tabOptions.map((tab) => (
-            <CoriBtn
+            <KoraBtn
               key={tab}
               onClick={() => setActiveTab(tab)}
               secondary
-              className={`btn cori-btn flex-shrink-0 ${
+              className={`btn kora-btn flex-shrink-0 ${
                 activeTab === tab
                   ? "bg-zinc-900 text-white border-none"
                   : "border-zinc-900 text-zinc-900"
               }`}
             >
               {tab}
-            </CoriBtn>
+            </KoraBtn>
           ))}
         </div>
 
