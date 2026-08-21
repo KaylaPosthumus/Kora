@@ -2,18 +2,32 @@
 
 HR management system — React + TypeScript + Vite, backed by Firebase (Auth + Firestore).
 
-Ported from the Electron/.NET version of Coriander. See `MIGRATION_PLAN.md` for the
-decisions behind the data model.
+Ported from the Electron/.NET version of Coriander. `MIGRATION_PLAN.md` records the
+decisions behind the data model (phase 1); `NEXT_MIGRATION_PLAN.md.pdf` is the phase 2
+plan that drives the work after it. `CLAUDE.md` is the orientation doc for the
+architecture and its invariants.
 
 ## Setup
 
 ```bash
 npm install
-cp .env.example .env.local     # fill in your Firebase web app config
+cp .env.example .env.local     # fill this in — see below
 ```
 
-Create a Firebase project and enable **Authentication** (Email/Password + Google),
-**Firestore**, and **Storage**. Copy the web app config into `.env.local`.
+Create a Firebase project and enable **Authentication** (Email/Password + Google) and
+**Firestore**. Storage does not need enabling yet: nothing writes to it, and
+`storage.rules` denies everything — uploads still go to Cloudinary.
+
+`.env.local` has three groups, and the app needs the first two to run:
+
+- `VITE_FIREBASE_*` — the web app config, from **Project settings → Your apps**.
+- `VITE_CLOUDINARY_*` — cloud name plus the two unsigned presets. Without them the
+  profile-picture and review-document upload widgets fail.
+- `GOOGLE_APPLICATION_CREDENTIALS`, `FIREBASE_PROJECT_ID`, `SEED_*` — read only by
+  the seed script (see Seeding).
+
+There is no emulator setup — development runs against the real project, pinned in
+`.firebaserc`. The test suite mocks Firebase and touches nothing.
 
 ## Running
 
@@ -31,7 +45,7 @@ npm run test:watch   # vitest, watch mode
 Vitest, in `src/services/__tests__/`. Firebase is mocked at the module boundary, so
 the suite runs offline and does not touch the live project.
 
-Two things are covered — the pieces where a silent regression is expensive:
+Three things are covered — the pieces where a silent regression is expensive:
 
 - **`leaveTransaction.test.ts`** — approve-and-decrement. The balance moves exactly
   once, in the right direction, and only when the status crosses the approved
@@ -43,11 +57,13 @@ Two things are covered — the pieces where a silent regression is expensive:
   .NET service (200 ok / 300 signed-in-but-unlinked / 4xx-5xx failure) that the auth
   screens branch on, the redirect each role lands on, the user-doc cache, and the
   mapping from Firebase `auth/*` codes onto that contract.
-- **`liveReads.test.ts`** — the `onSnapshot` subscriptions. Each spans two
-  collections, so the tests pin that nothing is emitted until both have delivered
-  (emitting early renders an empty half), that both listeners are torn down on
-  unsubscribe, and that errors reach the caller rather than surfacing as an empty
-  list.
+- **`liveReads.test.ts`** — the `onSnapshot` subscriptions. Each spans two sources
+  (`subscribeToGatherings` two top-level collections, `subscribeToEmployeeLeave` the
+  `leaveBalances` subcollection plus `leaveRequests`), so the tests pin that nothing
+  is emitted until both have delivered — emitting early renders an empty half. The
+  teardown-on-unsubscribe and error-reaches-the-caller cases are asserted on
+  `subscribeToGatherings` only; the equivalents for `subscribeToEmployeeLeave` are
+  not covered.
 
 ## Seeding
 
@@ -60,6 +76,28 @@ npm run seed
 ```
 
 It is safe to re-run: every document is written with a deterministic id and merged.
+
+## Installing on a phone
+
+The employee app is a PWA — `public/manifest.webmanifest` plus a small service
+worker, so employees can add it to their home screen and open it without browser
+chrome. Both only take effect in a real build (`npm run build`); the service
+worker is not registered in dev, where it would sit between Vite and the browser
+and break hot reload.
+
+The service worker is deliberately minimal. It ignores cross-origin requests
+entirely, so Firestore keeps its own persistence and nothing serves stale HR data.
+Vite's build assets are content-hashed, so those are cache-first — a new build
+produces new URLs. Navigations are network-first with the cached shell as a
+fallback, so a cold spot opens the app rather than a browser error page.
+
+**The icons still say "Coriander."** They are generated from
+`src/assets/logos/cori_logo_green.png`, the only logo in the repo. When the Kora
+logo arrives, regenerate them and bump `CACHE` in `public/sw.js`:
+
+```bash
+./scripts/generate-icons.sh path/to/kora-logo.png
+```
 
 ## Deploying
 
@@ -104,7 +142,10 @@ on unmount. The one-shot reads stay for the admin screens, which render once.
 - The old Jest suite was not carried over — its mocks targeted the axios API. The
   Vitest suite above covers the leave transaction and the auth flow; the page-level
   fan-outs in `pageAPI` are still untested.
-- Employee pages have had no real responsive pass yet — that is the mobile phase.
+- The rebrand has not happened: the Tailwind palette is still `corigreen`/`sakura`/
+  `warmstone`, the logo and the PWA icons are still the Coriander wordmark, and
+  `CoriBtn`/`CoriBadge`/`CoriCircleBtn` keep the old name. That phase needs brand
+  assets, not code.
 
 ## Verifying against the live project
 
