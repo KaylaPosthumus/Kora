@@ -59,10 +59,20 @@ service cloud.firestore {
 
       // A user creates their own profile at signup, but must not hand
       // themselves a role or a link — only an admin grants those.
+      //
+      // The role is the privilege boundary: isAdmin() above trusts this field,
+      // so a signup free to set it to 'admin' would be self-granted access to
+      // every salary and ID number in the org. Signups are always unassigned;
+      // the real role arrives at link time via createEmployee/promoteUserToAdmin.
+      //
+      // Each test uses get() with a default rather than plain dot access:
+      // reading a key the incoming document doesn't have errors out rule
+      // evaluation, which denies the write.
       allow create: if request.auth.uid == userId
-        && request.resource.data.isLinked == false
-        && request.resource.data.employeeId == null
-        && request.resource.data.adminId == null;
+        && request.resource.data.get('role', '') == 'unassigned'
+        && request.resource.data.get('isLinked', true) == false
+        && request.resource.data.get('employeeId', null) == null
+        && request.resource.data.get('adminId', null) == null;
 
       // Users may edit their own display fields; role/link changes are admin-only.
       allow update: if isAdmin()

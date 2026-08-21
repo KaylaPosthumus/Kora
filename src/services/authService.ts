@@ -41,9 +41,11 @@ interface UserDoc {
   fullName: string;
   email: string;
   role: UserRole;
+  /** What the signup form asked for. Advisory only — never grants anything. */
+  requestedRole?: UserRole;
   isLinked: boolean;
-  employeeId?: string;
-  adminId?: string;
+  employeeId?: string | null;
+  adminId?: string | null;
   profilePicture?: string | null;
 }
 
@@ -103,8 +105,8 @@ const readUserDoc = async (user: User): Promise<CurrentUserDTO | null> => {
     email: data.email,
     role: data.role,
     isLinked: data.isLinked,
-    employeeId: data.employeeId,
-    adminId: data.adminId,
+    employeeId: data.employeeId ?? undefined,
+    adminId: data.adminId ?? undefined,
     profilePicture: data.profilePicture || undefined,
     isVerified: user.emailVerified,
   };
@@ -113,16 +115,25 @@ const readUserDoc = async (user: User): Promise<CurrentUserDTO | null> => {
 /** Creates the `users/{uid}` doc for a brand new account. */
 const createUserDoc = async (
   user: User,
-  input: { fullName: string; role: UserRole; profilePicture?: string | null }
+  input: { fullName: string; requestedRole: UserRole; profilePicture?: string | null }
 ): Promise<void> => {
   await setDoc(
     doc(db, "users", user.uid),
     {
       fullName: input.fullName,
       email: user.email,
-      role: input.role,
+      // Always unassigned. A signup must never grant its own role — whichever
+      // form they used, the role is granted by an admin at link time (see
+      // employeeAPI.createEmployee / promoteUserToAdmin). Which form they used
+      // is kept as `requestedRole` so the admin can see what they asked for.
+      role: UserRole.Unassigned,
+      requestedRole: input.requestedRole,
       // A new signup is never linked — an admin links them to an employee record.
+      // These are written as explicit nulls rather than left absent: the create
+      // rule tests them, and a missing key errors out rule evaluation (= denied).
       isLinked: false,
+      employeeId: null,
+      adminId: null,
       profilePicture: input.profilePicture ?? null,
       createdAt: serverTimestamp(),
     },
@@ -148,7 +159,7 @@ const signUpWithRole = async (
     password: string;
     profilePicture?: string | null;
   },
-  role: UserRole
+  requestedRole: UserRole
 ): Promise<AuthResult> => {
   try {
     const credential = await createUserWithEmailAndPassword(auth, form.email, form.password);
@@ -156,7 +167,7 @@ const signUpWithRole = async (
     await updateProfile(credential.user, { displayName: form.fullName });
     await createUserDoc(credential.user, {
       fullName: form.fullName,
-      role,
+      requestedRole,
       profilePicture: form.profilePicture,
     });
     await sendEmailVerification(credential.user);
@@ -200,7 +211,7 @@ export const resendVerificationEmail = async (): Promise<AuthResult> => {
 };
 
 /** Google sign-up: same popup as sign-in, but seeds the user doc with a role. */
-const googleSignUpWithRole = async (role: UserRole): Promise<AuthResult> => {
+const googleSignUpWithRole = async (requestedRole: UserRole): Promise<AuthResult> => {
   try {
     const credential = await signInWithPopup(auth, googleProvider);
     const existing = await getDoc(doc(db, "users", credential.user.uid));
@@ -208,7 +219,7 @@ const googleSignUpWithRole = async (role: UserRole): Promise<AuthResult> => {
     if (!existing.exists()) {
       await createUserDoc(credential.user, {
         fullName: credential.user.displayName || "",
-        role,
+        requestedRole,
         profilePicture: credential.user.photoURL,
       });
     }
@@ -259,7 +270,7 @@ export const fullGoogleSignIn = async (): Promise<AuthResult> => {
       // admin can link them.
       await createUserDoc(credential.user, {
         fullName: credential.user.displayName || "",
-        role: UserRole.Unassigned,
+        requestedRole: UserRole.Unassigned,
         profilePicture: credential.user.photoURL,
       });
     }
