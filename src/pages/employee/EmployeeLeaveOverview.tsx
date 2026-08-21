@@ -156,26 +156,26 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
 
   return (
     <>
-      <div className="max-w-7xl mx-auto m-4 h-[calc(100vh-32px)]">
-        <div className="flex flex-col justify-between h-full">
+      <div className="max-w-7xl mx-auto m-4 lg:h-[calc(100vh-32px)]">
+        <div className="flex flex-col justify-between lg:h-full">
           <div>
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
               <div className="flex items-center gap-2">
-                <ClockCircleOutlined className="text-3xl text-zinc-900" />
-                <h1 className="text-3xl font-bold text-zinc-900">Leave Overview</h1>
+                <ClockCircleOutlined className="text-2xl sm:text-3xl text-zinc-900" />
+                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">Leave Overview</h1>
               </div>
               <CoriBtn onClick={() => setShowModal(true)}>Apply For Leave</CoriBtn>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 overflow-x-auto -mx-1 px-1 pb-1">
               {tabOptions.map((tab) => (
                 <CoriBtn
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   secondary
-                  className={`btn cori-btn ${
+                  className={`btn cori-btn flex-shrink-0 ${
                     activeTab === tab
                       ? "bg-zinc-900 text-white border-none"
                       : "border-zinc-900 text-zinc-900"
@@ -192,10 +192,12 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
                 <Spin size="large" />
               </div>
             ) : (
-              <div className="grid gap-4 grid-cols-3">
+              <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
                 <div
-                  className={`grid gap-3 h-fit ${
-                    activeTab === "All" ? "grid-cols-2 col-span-2" : "grid-cols-3 col-span-3"
+                  className={`grid gap-3 h-fit grid-cols-1 sm:grid-cols-2 ${
+                    activeTab === "All"
+                      ? "lg:col-span-2"
+                      : "lg:grid-cols-3 lg:col-span-3"
                   }`}
                 >
                   {requests.length === 0 ? (

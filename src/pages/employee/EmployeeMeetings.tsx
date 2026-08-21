@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Table, Dropdown, Tooltip, Button, message } from "antd";
+import { Table, Dropdown, Tooltip, Button, message, Spin, Empty } from "antd";
 import type { TableProps, MenuProps } from "antd";
 import { Icons } from "../../constants/icons";
 import CoriBtn from "../../components/buttons/CoriBtn";
@@ -478,16 +478,27 @@ const EmployeeMeetings: React.FC = () => {
     []
   );
 
+  /**
+   * Renders one table column's cell for a record, found by its key. The card
+   * view reuses the table's renderers this way rather than restating the status,
+   * location and action logic a second time.
+   */
+  const renderCell = (key: string, record: Gathering, index: number): React.ReactNode => {
+    const column = columns?.find((candidate) => "key" in candidate && candidate.key === key);
+    if (!column || !("render" in column) || typeof column.render !== "function") return null;
+    return column.render(undefined, record, index) as React.ReactNode;
+  };
+
   return (
     <>
       {contextHolder}
       <div className="max-w-7xl mx-auto m-4">
         {/* Page Header */}
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Icons.MeetingRoom fontSize="large" className="text-zinc-900" />
-              <h1 className="text-3xl font-bold text-zinc-900">My Meetings</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">My Meetings</h1>
             </div>
             <MeetRequestsBadge
               requests={
@@ -509,13 +520,13 @@ const EmployeeMeetings: React.FC = () => {
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4 overflow-x-auto -mx-1 px-1 pb-1">
           {tabOptions.map((tab) => (
             <CoriBtn
               key={tab}
               onClick={() => setActiveTab(tab)}
               secondary
-              className={`btn cori-btn ${
+              className={`btn cori-btn flex-shrink-0 ${
                 activeTab === tab
                   ? "bg-zinc-900 text-white border-none"
                   : "border-zinc-900 text-zinc-900"
@@ -526,15 +537,69 @@ const EmployeeMeetings: React.FC = () => {
           ))}
         </div>
 
-        {/* Table */}
-        <Table
-          columns={columns}
-          dataSource={filteredData}
-          rowKey={(record) => `${record.type}-${record.id}`}
-          loading={loading}
-          className="mt-4"
-          pagination={{ pageSize: 10 }}
-        />
+        {/* Table — lg and up. A six-column table is the main mobile pain point,
+            so below lg the same rows render as cards instead. */}
+        <div className="hidden lg:block">
+          <Table
+            columns={columns}
+            dataSource={filteredData}
+            rowKey={(record) => `${record.type}-${record.id}`}
+            loading={loading}
+            className="mt-4"
+            pagination={{ pageSize: 10 }}
+          />
+        </div>
+
+        {/* Cards — below lg. These call the same column renderers as the table
+            above, looked up by key, so the two views cannot drift apart. */}
+        <div className="lg:hidden mt-4">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Spin />
+            </div>
+          ) : filteredData.length === 0 ? (
+            <Empty description="No meetings" className="py-8" />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {filteredData.map((record, index) => (
+                <div
+                  key={`${record.type}-${record.id}`}
+                  className="rounded-2xl border-2 border-zinc-100 p-4"
+                >
+                  {/* Title carries its own icon, date and time; the action menu
+                      sits beside it exactly as it does in the table row. */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">{renderCell("startDate", record, index)}</div>
+                    <div className="flex-shrink-0 -mr-2">
+                      {renderCell("action", record, index)}
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {renderCell("status", record, index)}
+                  </div>
+
+                  <dl className="mt-3 grid grid-cols-[auto,1fr] gap-x-3 gap-y-2 text-sm">
+                    <dt className="text-zinc-500">Location</dt>
+                    <dd className="min-w-0 break-words">{renderCell("location", record, index)}</dd>
+
+                    {record.type !== GatheringType.Meeting && (
+                      <>
+                        <dt className="text-zinc-500">Rating</dt>
+                        <dd>{renderCell("rating", record, index)}</dd>
+                      </>
+                    )}
+
+                    <dt className="text-zinc-500">
+                      {record.type === GatheringType.Meeting ? "Purpose" : "Comment"}
+                    </dt>
+                    <dd className="min-w-0 break-words">{renderCell("comment", record, index)}</dd>
+                  </dl>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <RequestMeetingModal
           showModal={showRequestMeetingModal}

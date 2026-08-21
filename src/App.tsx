@@ -52,9 +52,16 @@ const AppContent: React.FC = () => {
     location.pathname === "/admin/signup";
 
   return (
-    <div className="flex h-screen mr-4">
+    <div className="flex h-screen lg:mr-4">
       {!isAuthPage && <Navigation />}
-      <main className="flex-grow-1">
+      {/* Below lg the nav is a fixed top bar plus a bottom nav, so the page has
+          to leave room for both. On lg and up the sidebar is in flow and the
+          padding goes away. */}
+      <main
+        className={`flex-grow-1 min-w-0 ${
+          isAuthPage ? "" : "pt-14 pb-16 lg:pt-0 lg:pb-0"
+        }`}
+      >
         <Routes>
           {/* Auth Routes */}
           <Route path="/" element={<Login />} />

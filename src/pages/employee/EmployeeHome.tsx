@@ -165,7 +165,7 @@ const EmployeeHome: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto m-4">
       {empUser && (
-        <h1 className="text-3xl font-bold mb-2 text-zinc-900">Welcome, {empUser.fullName}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-zinc-900">Welcome, {empUser.fullName}</h1>
       )}
       <h4 className="text-zinc-900 mb-3">Stay informed and manage your tasks effortlessly.</h4>
       <div className="line-horisontal mb-4 bg-black" style={{ height: "1px" }}></div>
@@ -270,8 +270,8 @@ const EmployeeHome: React.FC = () => {
                             : "weekly"}
                         </p>
                       </div>
-                      <div className="flex w-full mt-2 gap-2 h-fit">
-                        <div className="flex flex-col w-1/2 items-center">
+                      <div className="flex flex-wrap w-full mt-2 gap-2 h-fit">
+                        <div className="flex flex-col flex-1 basis-32 min-w-0 items-center">
                           <p className="text-zinc-500 text-sm mb-1">Last Paid</p>
                           <div className="flex justify-center items-center gap-2 p-3 bg-warmstone-200 rounded-2xl h-full w-full">
                             <p className="text-zinc-900">
@@ -281,7 +281,7 @@ const EmployeeHome: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="flex flex-col w-1/2 items-center">
+                        <div className="flex flex-col flex-1 basis-32 min-w-0 items-center">
                           <p className="text-zinc-500 text-sm mb-1">Next Pay Day</p>
                           <div className="flex justify-center items-center gap-2 p-4 bg-warmstone-200 w-full rounded-2xl h-full">
                             <p className="text-zinc-900">
@@ -289,7 +289,7 @@ const EmployeeHome: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="flex flex-col w-1/2 items-center">
+                        <div className="flex flex-col flex-1 basis-32 min-w-0 items-center">
                           <p className="text-transparent text-sm mb-1">..</p>
                           <div
                             className="flex justify-center items-center gap-2 p-4 hover:bg-corigreen-200 border-2 border-corigreen-500 rounded-2xl w-full cursor-pointer"

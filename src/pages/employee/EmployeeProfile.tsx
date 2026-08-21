@@ -138,7 +138,7 @@ const EmployeeProfile: React.FC = () => {
         </div>
         {/* Page Content */}
         <div className="flex flex-col items-center gap-3 z-0">
-          <div className="flex flex-col gap-7 items-center w-2/3">
+          <div className="flex flex-col gap-7 items-center w-full lg:w-2/3">
             {/* Profile Picture & Name */}
             <div className="flex flex-col gap-3 items-center">
               {/* If user has a profile picture */}
@@ -186,7 +186,7 @@ const EmployeeProfile: React.FC = () => {
                 </div>
               )}
               <div className="flex gap-3 items-center">
-                <h2 className="text-zinc-900 font-bold text-3xl">{empUser.fullName}</h2>
+                <h2 className="text-zinc-900 font-bold text-2xl sm:text-3xl break-words">{empUser.fullName}</h2>
                 {empUserRatingMetrics && (
                   <div className="flex items-center gap-1">
                     <Icons.StarRounded className="text-yellow-500" />
@@ -200,9 +200,9 @@ const EmployeeProfile: React.FC = () => {
 
             {/* Personal Details */}
             <div className="bg-warmstone-50 p-4 rounded-2xl flex flex-col w-full shadow-sm">
-              <div className="flex">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
                 {/* Left Side */}
-                <div className="flex flex-grow flex-col gap-4 w-1/2">
+                <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
                   <div className="flex gap-2 items-center">
                     {empUser.gender === Gender.Female ? (
                       <Icons.Female className="text-pink-500" />
@@ -230,7 +230,7 @@ const EmployeeProfile: React.FC = () => {
                   </div>
                 </div>
                 {/* Right Side */}
-                <div className="flex flex-grow flex-col gap-4 w-1/2">
+                <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
                   <div className="flex gap-2 items-center">
                     <Icons.Phone />
                     <p className="text-zinc-500">{formatPhone(empUser.phoneNumber)}</p>
@@ -250,9 +250,9 @@ const EmployeeProfile: React.FC = () => {
               </div>
               <div className="bg-warmstone-50 p-4 rounded-2xl flex flex-col w-full shadow-sm">
                 <div className="flex flex-col gap-4">
-                  <div className="flex">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
                     {/* Left Side */}
-                    <div className="flex flex-grow flex-col gap-4 w-1/2">
+                    <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
                       <div className="flex gap-2 items-center">
                         <Icons.Work />
                         <p className="text-zinc-500">{empUser.jobTitle}</p>
@@ -263,7 +263,7 @@ const EmployeeProfile: React.FC = () => {
                       </div>
                     </div>
                     {/* Right Side */}
-                    <div className="flex flex-grow flex-col gap-4 w-1/2">
+                    <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
                       <div className="flex gap-2 items-center">
                         <Icons.Schedule />
                         <p className="text-zinc-500">
