@@ -36,8 +36,6 @@ const AdminMeetings: React.FC = () => {
     "Completed",
   ];
 
-  // TODO: Get the actual admin ID from auth context
-
   const [adminId, setAdminId] = useState<string | null>(null);
   useEffect(() => {
     const fetchUserAndSetId = async () => {
@@ -183,6 +181,15 @@ const AdminMeetings: React.FC = () => {
     // Refresh current tab data immediately
     handleDataRefresh();
   }, [handleDataRefresh]);
+
+  // Everything below needs the admin id — the drawer and the create-review modal both
+  // take it as a required prop. Waiting for it here replaces handing them a null.
+  if (!adminId)
+    return (
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <div className="max-w-7xl mx-auto m-4">

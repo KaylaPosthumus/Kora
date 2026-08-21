@@ -179,7 +179,10 @@ const AdminDashboard: React.FC = () => {
     });
   }, [gatherings.all, selectedDate]);
 
-  if (loading)
+  // `adminId` is part of the gate, not just `loading`: every fetch below needs it, and
+  // it lands in the same effect that clears `loading`. Checking it here also narrows it
+  // to a string for the whole render, including the callbacks passed down as props.
+  if (loading || !adminId)
     return (
       <div className="w-full h-full flex flex-col justify-center items-center">
         <Spin size="large" />
