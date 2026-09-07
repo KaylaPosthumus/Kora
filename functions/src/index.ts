@@ -23,6 +23,12 @@ export { onAdminDeleted } from "./admins/onAdminDeleted";
 // Denormalisation: keeps equipment's copy of its category name current.
 export { onEquipmentCategoryWritten } from "./equipment/onEquipmentCategoryWritten";
 
+// Denormalisation: carries a renamed person down from users to their employee
+// and admin records, and on to every document that copied their name.
+export { onUserProfileWritten } from "./profile/onUserProfileWritten";
+export { onEmployeeProfileWritten } from "./profile/onEmployeeProfileWritten";
+export { onAdminProfileWritten } from "./profile/onAdminProfileWritten";
+
 // Referential integrity: removes the Firestore records a deleted auth
 // account would otherwise leave behind.
 export { onUserDeleted } from "./users/onUserDeleted";

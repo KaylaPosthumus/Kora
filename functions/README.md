@@ -23,6 +23,7 @@ functions/
 │   ├── employees/          # onEmployeeDeleted
 │   ├── admins/             # onAdminDeleted
 │   ├── equipment/          # onEquipmentCategoryWritten
+│   ├── profile/            # the name-propagation chain
 │   ├── users/              # onUserDeleted
 │   ├── leave/              # adjustLeaveBalance, onLeaveTypeWritten
 │   └── email/              # requestEmailVerification, confirmEmailVerification
@@ -41,6 +42,9 @@ suite run with no emulator — see "Tests" below.
 | `onEmployeeDeleted` | Firestore `employees/{id}` deleted | Cascades to dependents; unlinks equipment and users |
 | `onAdminDeleted` | Firestore `admins/{id}` deleted | Unlinks gatherings **without deleting them** |
 | `onEquipmentCategoryWritten` | Firestore `equipmentCategories/{id}` written | Mirrors a renamed category onto equipment |
+| `onUserProfileWritten` | Firestore `users/{uid}` written | Hands name/email/picture down to employee and admin records |
+| `onEmployeeProfileWritten` | Firestore `employees/{id}` written | Propagates a renamed employee to `employeeName` copies |
+| `onAdminProfileWritten` | Firestore `admins/{id}` written | Propagates a renamed admin to `adminName` copies |
 | `onUserDeleted` | Auth user deleted (**v1**) | Removes `users/{uid}` and side records; unlinks the employee |
 | `adjustLeaveBalance` | Callable (admin) | Corrects a balance, with a reason and an audit entry |
 | `onLeaveTypeWritten` | Firestore `leaveTypes/{id}` written | Backfills new types onto existing employees; mirrors renames |
@@ -81,6 +85,33 @@ The same trigger mirrors `leaveTypeName` / `description` / `defaultDays` onto
 existing balances when a leave type is edited. It never writes `remainingDays`:
 that is the employee's own consumed state, and refreshing it from `defaultDays`
 would hand back days already taken.
+
+## The name-propagation chain
+
+CLAUDE.md states the rule — mirror both sides of a denormalised pair — and
+`updateEmpUserById` follows it for the one pair it touches. Nothing kept the
+rest in step, and the chain is two hops deep:
+
+```
+users.fullName ─┬─> employees.fullName ──> leaveRequests.employeeName
+                │                          meetings.employeeName
+                │                          performanceReviews.employeeName
+                └─> admins.fullName ─────> meetings.adminName
+                                           performanceReviews.adminName
+```
+
+So an employee who changed their name kept the old one on every leave request an
+admin later reviewed, and `linkUserAsAdmin` copied `fullName` once at link time
+and never again.
+
+Three triggers, one per hop. Each gates on whether a watched field actually
+moved before issuing any query, so an unrelated write — a salary change, a
+suspension toggle — costs nothing. Nothing in the chain writes back to `users`,
+so it terminates.
+
+`users/{uid}` now has two triggers on it, `syncRoleClaim` and
+`onUserProfileWritten`. That is supported and deliberate: they watch different
+fields and write to different places.
 
 ## Why two deletions cascade differently
 
