@@ -185,6 +185,19 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Leave balance audit trail ---------------------------------------------
+    // One entry per manual correction, written by the adjustLeaveBalance
+    // callable. Admins read it; nobody writes it from a client.
+    //
+    // A balance is entitlement, and therefore money. The rules already let an
+    // admin write leaveBalances directly, so this trail is only complete for
+    // corrections that went through the callable — it is a record, not an
+    // enforcement boundary.
+    match /leaveBalanceAdjustments/{adjustmentId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
     // Email verification ----------------------------------------------------
     // Challenges for the 6-digit code, written and read only through the Admin
     // SDK by the requestEmailVerification / confirmEmailVerification callables.

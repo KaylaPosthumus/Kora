@@ -20,6 +20,11 @@ export { onEmployeeDeleted } from "./employees/onEmployeeDeleted";
 // account would otherwise leave behind.
 export { onUserDeleted } from "./users/onUserDeleted";
 
+// Leave balances: the admin correction path CoriCore's LeaveBalance API had,
+// and the propagation that keeps balances in step with their leave types.
+export { adjustLeaveBalance } from "./leave/adjustLeaveBalance";
+export { onLeaveTypeWritten } from "./leave/onLeaveTypeWritten";
+
 // Email verification: CoriCore's 6-digit code, rebuilt.
 export {
   requestEmailVerification,

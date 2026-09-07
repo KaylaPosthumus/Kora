@@ -22,6 +22,7 @@ functions/
 │   ├── claims/             # syncRoleClaim
 │   ├── employees/          # onEmployeeDeleted
 │   ├── users/              # onUserDeleted
+│   ├── leave/              # adjustLeaveBalance, onLeaveTypeWritten
 │   └── email/              # requestEmailVerification, confirmEmailVerification
 └── package.json            # its OWN deps — never shared with the app
 ```
@@ -37,6 +38,8 @@ suite run with no emulator — see "Tests" below.
 | `syncRoleClaim` | Firestore `users/{uid}` written | Mirrors `role`/`employeeId`/`adminId` into custom claims |
 | `onEmployeeDeleted` | Firestore `employees/{id}` deleted | Cascades to dependents; unlinks equipment and users |
 | `onUserDeleted` | Auth user deleted (**v1**) | Removes `users/{uid}` and side records; unlinks the employee |
+| `adjustLeaveBalance` | Callable (admin) | Corrects a balance, with a reason and an audit entry |
+| `onLeaveTypeWritten` | Firestore `leaveTypes/{id}` written | Backfills new types onto existing employees; mirrors renames |
 | `requestEmailVerification` | Callable | Issues a 6-digit code, queues the email |
 | `confirmEmailVerification` | Callable | Checks the code, flips Firebase's `emailVerified` |
 
@@ -58,6 +61,21 @@ equivalent — `firebase-functions/v2/identity` only offers the blocking
 
 `firebase deploy` from the repo root now ships functions too: `firebase.json`
 has a `functions` block whose `predeploy` runs `npm run build`.
+
+## The leave balance bug this closed
+
+`setupUserAsEmployee` seeds one balance per leave type **at the moment an
+employee is created**. Nothing kept that in step afterwards, so a leave type
+added later reached nobody — and `setLeaveRequestStatus` decrements only
+`if (delta !== 0 && balanceSnapshot.exists())`. An employee with no balance
+document for a leave type could therefore have leave **approved with the days
+silently never deducted**. `onLeaveTypeWritten` backfills, so the balance always
+exists.
+
+The same trigger mirrors `leaveTypeName` / `description` / `defaultDays` onto
+existing balances when a leave type is edited. It never writes `remainingDays`:
+that is the employee's own consumed state, and refreshing it from `defaultDays`
+would hand back days already taken.
 
 ## Two gotchas worth knowing
 
