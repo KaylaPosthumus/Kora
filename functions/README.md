@@ -202,7 +202,8 @@ up `functions/src`. The two suites are independent and can run side by side.
 - **No annual leave-balance reset.** Same reasoning: `defaultDays` exists, but
   nothing evidences a scheduled reset, and guessing an accrual policy is a
   business decision rather than a migration.
-- **No meeting/review status *transition* rules.** Enum validity is enforced,
+- **No meeting/review status *transition* rules.** Enum validity and date
+  ordering are enforced,
   but which transitions are legal is not. Employees are already confined by the
   existing `onlyChanges` clauses, admins are trusted, and no bug demonstrates a
   need — so tightening further would risk breaking flows that cannot currently

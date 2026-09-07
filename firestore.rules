@@ -97,15 +97,30 @@ service cloud.firestore {
     match /employees/{employeeId} {
       allow read: if isAdmin() || isSelfEmployee(employeeId);
 
+      // The stored values are the enums in src/types/common.ts. Each test reads
+      // through get() with an in-set default so an absent field passes: not
+      // every write carries every field, and a plain dot access on a missing key
+      // errors out rule evaluation, which denies the write outright.
+      function enumsValid() {
+        return request.resource.data.get('gender', 'male')
+                 in ['male', 'female', 'other']
+          && request.resource.data.get('payCycle', 'monthly')
+                 in ['monthly', 'biWeekly', 'weekly']
+          && request.resource.data.get('employType', 'fullTime')
+                 in ['fullTime', 'partTime', 'contract', 'intern'];
+      }
+
       // Employees may maintain their own contact details. Everything with a
       // money or status implication (salary, pay cycle, employment type,
       // suspension) stays admin-only.
-      allow update: if isAdmin()
-        || (isSelfEmployee(employeeId)
-            && onlyChanges(['phoneNumber', 'profilePicture', 'fullName',
-                            'dateOfBirth', 'gender']));
+      allow update: if enumsValid()
+        && (isAdmin()
+            || (isSelfEmployee(employeeId)
+                && onlyChanges(['phoneNumber', 'profilePicture', 'fullName',
+                                'dateOfBirth', 'gender'])));
 
-      allow create, delete: if isAdmin();
+      allow create: if isAdmin() && enumsValid();
+      allow delete: if isAdmin();
 
       // Leave balances are read by their owner but only ever written by an
       // admin — the approve-and-decrement transaction runs as an admin.
@@ -138,7 +153,12 @@ service cloud.firestore {
 
     match /equipment/{equipmentId} {
       allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
-      allow write: if isAdmin();
+
+      allow create, update: if isAdmin()
+        && request.resource.data.get('condition', 'new')
+               in ['new', 'good', 'decent', 'used'];
+
+      allow delete: if isAdmin();
     }
 
     // Leave requests --------------------------------------------------------
@@ -195,14 +215,27 @@ service cloud.firestore {
       allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
 
       // Employees request meetings; the request starts unscheduled.
-      allow create: if statusIn(['requested', 'upcoming', 'rejected', 'completed'])
+      // Ordered like a leave request's dates, but only when both are actually
+      // set. A meeting starts life as a request with no time on it —
+      // createMeetingRequest writes `startDate: data.startDate ?? null` — and
+      // the admin fills the dates in when they schedule it, so requiring them
+      // here would block every meeting request.
+      function datesOrderedIfSet() {
+        return !(request.resource.data.startDate is string)
+          || !(request.resource.data.endDate is string)
+          || request.resource.data.startDate <= request.resource.data.endDate;
+      }
+
+      allow create: if datesOrderedIfSet()
+        && statusIn(['requested', 'upcoming', 'rejected', 'completed'])
         && (isAdmin()
             || (isSelfEmployee(request.resource.data.employeeId)
                 && request.resource.data.status == 'requested'));
 
       // Scheduling, accepting and rejecting are the admin's call. An employee
       // may still revise a request that hasn't been actioned.
-      allow update: if statusIn(['requested', 'upcoming', 'rejected', 'completed'])
+      allow update: if datesOrderedIfSet()
+        && statusIn(['requested', 'upcoming', 'rejected', 'completed'])
         && (isAdmin()
             || (isSelfEmployee(resource.data.employeeId)
                 && resource.data.status == 'requested'
@@ -225,7 +258,14 @@ service cloud.firestore {
       // create/update rather than write: `write` also covers `delete`, where
       // request.resource is null and the status check would error instead of
       // simply not applying.
+      function datesOrderedIfSet() {
+        return !(request.resource.data.startDate is string)
+          || !(request.resource.data.endDate is string)
+          || request.resource.data.startDate <= request.resource.data.endDate;
+      }
+
       allow create, update: if isAdmin()
+        && datesOrderedIfSet()
         && statusIn(['pending', 'upcoming', 'completed']);
 
       allow delete: if isAdmin();
