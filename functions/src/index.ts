@@ -16,6 +16,13 @@ export { syncRoleClaim } from "./claims/syncRoleClaim";
 // Referential integrity: cleans up after a deleted employee record.
 export { onEmployeeDeleted } from "./employees/onEmployeeDeleted";
 
+// Referential integrity: unlinks a departed admin from their gatherings,
+// without destroying the employee review history attached to them.
+export { onAdminDeleted } from "./admins/onAdminDeleted";
+
+// Denormalisation: keeps equipment's copy of its category name current.
+export { onEquipmentCategoryWritten } from "./equipment/onEquipmentCategoryWritten";
+
 // Referential integrity: removes the Firestore records a deleted auth
 // account would otherwise leave behind.
 export { onUserDeleted } from "./users/onUserDeleted";

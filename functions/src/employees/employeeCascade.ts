@@ -23,16 +23,9 @@
  */
 
 import { chunk, MAX_BATCH_OPERATIONS } from "../shared/chunk";
+import { runSteps, type CascadeStep, type StepBackend } from "../shared/cascade";
 
-/** One step of a cascade, keyed on the field holding the departed id. */
-export type CascadeStep =
-  /** Remove the dependent documents outright. */
-  | { kind: "delete"; collection: string; field: string }
-  /**
-   * Keep the documents but null out the fields naming the departed record —
-   * equipment outlives the person it was issued to.
-   */
-  | { kind: "clear"; collection: string; field: string; fields: readonly string[] };
+export type { CascadeStep } from "../shared/cascade";
 
 /**
  * The cascade for a deleted `employees/{employeeId}`.
@@ -75,29 +68,19 @@ export interface CascadeTarget {
   id: string;
 }
 
-/** The Firestore operations a cascade needs, named for what it uses them for. */
-export interface CascadeBackend {
-  /** Ids of documents in `collection` whose `field` equals `value`. */
-  findByField(collection: string, field: string, value: string): Promise<string[]>;
-
+/**
+ * The generic cascade operations plus the two an employee needs for its
+ * `leaveBalances` subcollection, which no other subject has.
+ */
+export interface CascadeBackend extends StepBackend {
   /** Ids of every document in a subcollection under `employees/{employeeId}`. */
   listSubcollection(employeeId: string, subcollection: string): Promise<string[]>;
-
-  /** Deletes the given documents. Never called with more than 500 at a time. */
-  deleteAll(collection: string, ids: readonly string[]): Promise<void>;
 
   /** Deletes documents from a subcollection under an employee. */
   deleteSubcollectionDocs(
     employeeId: string,
     subcollection: string,
     ids: readonly string[]
-  ): Promise<void>;
-
-  /** Merges `data` into the given documents. Never called with more than 500 at a time. */
-  updateAll(
-    collection: string,
-    ids: readonly string[],
-    data: Record<string, unknown>
   ): Promise<void>;
 }
 
@@ -108,10 +91,6 @@ export interface CascadeReport {
   /** Documents removed from `employees/{id}/<sub>`. */
   subcollections: Record<string, number>;
 }
-
-/** Turns a step's `fields` list into the `{ field: null }` update it implies. */
-const nullsFor = (fields: readonly string[]): Record<string, null> =>
-  Object.fromEntries(fields.map((field) => [field, null]));
 
 /**
  * Runs a cascade for one departed employee.
@@ -126,23 +105,10 @@ export const runCascade = async (
   steps: readonly CascadeStep[] = EMPLOYEE_CASCADE,
   subcollections: readonly string[] = EMPLOYEE_SUBCOLLECTIONS
 ): Promise<CascadeReport> => {
-  const report: CascadeReport = { deleted: {}, cleared: {}, subcollections: {} };
-
-  for (const step of steps) {
-    const ids = await backend.findByField(step.collection, step.field, employeeId);
-    if (ids.length === 0) continue;
-
-    for (const batch of chunk(ids, MAX_BATCH_OPERATIONS)) {
-      if (step.kind === "delete") {
-        await backend.deleteAll(step.collection, batch);
-      } else {
-        await backend.updateAll(step.collection, batch, nullsFor(step.fields));
-      }
-    }
-
-    const tally = step.kind === "delete" ? report.deleted : report.cleared;
-    tally[step.collection] = (tally[step.collection] ?? 0) + ids.length;
-  }
+  const report: CascadeReport = {
+    ...(await runSteps(employeeId, backend, steps)),
+    subcollections: {},
+  };
 
   // Subcollections last: they hang off the deleted document itself, so nothing
   // else in the cascade depends on them still being there.

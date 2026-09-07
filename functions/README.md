@@ -18,9 +18,11 @@ controller.
 functions/
 ├── src/
 │   ├── index.ts            # the deploy surface: one export per function
-│   ├── shared/             # admin app singleton, batch chunking
+│   ├── shared/             # admin app singleton, chunking, cascade runner
 │   ├── claims/             # syncRoleClaim
 │   ├── employees/          # onEmployeeDeleted
+│   ├── admins/             # onAdminDeleted
+│   ├── equipment/          # onEquipmentCategoryWritten
 │   ├── users/              # onUserDeleted
 │   ├── leave/              # adjustLeaveBalance, onLeaveTypeWritten
 │   └── email/              # requestEmailVerification, confirmEmailVerification
@@ -37,6 +39,8 @@ suite run with no emulator — see "Tests" below.
 | --- | --- | --- |
 | `syncRoleClaim` | Firestore `users/{uid}` written | Mirrors `role`/`employeeId`/`adminId` into custom claims |
 | `onEmployeeDeleted` | Firestore `employees/{id}` deleted | Cascades to dependents; unlinks equipment and users |
+| `onAdminDeleted` | Firestore `admins/{id}` deleted | Unlinks gatherings **without deleting them** |
+| `onEquipmentCategoryWritten` | Firestore `equipmentCategories/{id}` written | Mirrors a renamed category onto equipment |
 | `onUserDeleted` | Auth user deleted (**v1**) | Removes `users/{uid}` and side records; unlinks the employee |
 | `adjustLeaveBalance` | Callable (admin) | Corrects a balance, with a reason and an audit entry |
 | `onLeaveTypeWritten` | Firestore `leaveTypes/{id}` written | Backfills new types onto existing employees; mirrors renames |
@@ -77,6 +81,25 @@ The same trigger mirrors `leaveTypeName` / `description` / `defaultDays` onto
 existing balances when a leave type is edited. It never writes `remainingDays`:
 that is the employee's own consumed state, and refreshing it from `defaultDays`
 would hand back days already taken.
+
+## Why two deletions cascade differently
+
+`onEmployeeDeleted` removes the dependents; `onAdminDeleted` keeps every one of
+them and only nulls `adminId`. A leave request has no meaning without the
+employee who filed it, but a performance review is a record **about the
+employee** — its rating, comment and document are their history, and the admin
+who ran it is incidental. Destroying an employee's review history because an
+admin left would lose the more valuable half. `adminName` survives too, as the
+historical fact of who conducted it.
+
+The same reasoning splits leave types from equipment categories.
+`onLeaveTypeWritten` deletes the balances of a removed leave type; leave types
+are genuine data with no enum behind them. Equipment categories are the
+opposite — `seed.mjs` creates them with ids matching the `EquipmentCategory`
+enum, and `EquipmentTypeAvatar` switches on that enum rather than reading the
+document. Equipment therefore keeps rendering with the category document gone,
+and nulling `equipmentCatId` to "tidy up" would break the avatar and lose which
+category an item is. That deletion is logged, not compensated for.
 
 ## Leave request validation, split two ways
 
