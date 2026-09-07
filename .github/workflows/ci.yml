@@ -40,3 +40,55 @@ jobs:
       # a dev-only import that survived tree-shaking.
       - name: Build
         run: npm run build
+
+  # functions/ is a separate package with its own dependency tree, tsconfig and
+  # Vitest config, and none of the steps above reach it: the root `typecheck`
+  # includes only `src`, `lint` globs only `src`, and the root Vitest `include`
+  # is anchored at the repo root so `functions/src` never matches. Without this
+  # job the backend is unguarded.
+  #
+  # A separate job rather than more steps on `verify`, so the two run in
+  # parallel and a failure names which half broke.
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: functions
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          # The root lockfile is a different tree; cache on this package's own.
+          cache-dependency-path: functions/package-lock.json
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Pure decision modules plus injected backends, so this needs no emulator,
+      # no credentials and no network — same as the app suite.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # tsc accepts a default import from a CommonJS module that has none:
+      # `import x from "firebase-functions/v1"` typechecks, then compiles to
+      # `undefined`. That only fails when the emitted bundle is required — which
+      # is what deploy-time analysis does — so require it here rather than
+      # discovering it mid-deploy.
+      - name: Load the deploy surface
+        run: |
+          node -e "
+            const fns = require('./lib/index.js');
+            const names = Object.keys(fns);
+            if (names.length === 0) throw new Error('index.ts exported no functions');
+            console.log('deploy surface:', names.join(', '));
+          "
+        env:
+          GCLOUD_PROJECT: kora-51711
