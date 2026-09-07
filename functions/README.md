@@ -51,6 +51,7 @@ suite run with no emulator — see "Tests" below.
 | `onLeaveRequestWritten` | Firestore `leaveRequests/{id}` written | Stamps a verdict: overlaps, balance, date sanity |
 | `requestEmailVerification` | Callable | Issues a 6-digit code, queues the email |
 | `confirmEmailVerification` | Callable | Checks the code, flips Firebase's `emailVerified` |
+| `cleanUpVerifications` | Scheduled, daily | Retires verification challenges nothing can use |
 
 `onUserDeleted` is a v1 trigger because auth-account deletion has no v2
 equivalent — `firebase-functions/v2/identity` only offers the blocking
@@ -59,7 +60,9 @@ equivalent — `firebase-functions/v2/identity` only offers the blocking
 ## Before this can deploy
 
 1. **The project must be on the Blaze plan.** Cloud Functions are not available
-   on Spark. Nothing here has been deployed or run against `kora-51711`.
+   on Spark, and `cleanUpVerifications` additionally needs Cloud Scheduler,
+   which is Blaze-only too. Nothing here has been deployed or run against
+   `kora-51711`.
 2. **`npm --prefix functions install`** — the functions package has its own
    dependency tree. The root `npm install` does not reach it.
 3. **For email to actually send, install the `firestore-send-email`
@@ -188,6 +191,22 @@ every test drives fakes — no credentials, no network, no emulator process.
 
 The root Vitest config globs `src/**` **from the repo root**, so it never picks
 up `functions/src`. The two suites are independent and can run side by side.
+
+## Deliberately not built
+
+- **No automated payroll advance.** `calculateNextPayDay` /
+  `calculatePreviousPayDay` are display helpers for the payroll modal and PDF;
+  `lastPaidDate` is set by an admin by hand. Nothing in the app or the surviving
+  CoriCore evidence suggests a scheduled pay run, so adding one would be
+  inventing a capability rather than migrating one.
+- **No annual leave-balance reset.** Same reasoning: `defaultDays` exists, but
+  nothing evidences a scheduled reset, and guessing an accrual policy is a
+  business decision rather than a migration.
+- **No meeting/review status *transition* rules.** Enum validity is enforced,
+  but which transitions are legal is not. Employees are already confined by the
+  existing `onlyChanges` clauses, admins are trusted, and no bug demonstrates a
+  need — so tightening further would risk breaking flows that cannot currently
+  be tested against a live project.
 
 ## Deliberately not done
 

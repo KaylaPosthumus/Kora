@@ -44,3 +44,6 @@ export {
   requestEmailVerification,
   confirmEmailVerification,
 } from "./email/verifyEmail";
+
+// Housekeeping: retires verification challenges nothing can use any more.
+export { cleanUpVerifications } from "./email/cleanUpVerifications";
