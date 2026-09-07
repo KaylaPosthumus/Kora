@@ -325,6 +325,7 @@ const AdminIndividualEmployee: React.FC = () => {
                   {/* If not google user */}
                   {empUser.googleId === null && (
                     <ProfilePicUploadBtn
+                      userId={empUser.userId}
                       onUploadSuccess={handleProfilePicUploadSuccess}
                       className="absolute bottom-0 right-0"
                     />

@@ -1,47 +1,92 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import { message } from "antd";
 import { Icons } from "../../constants/icons";
 import KoraCircleBtn from "../buttons/KoraCircleBtn";
+import { uploadProfilePicture, validateProfilePicture } from "../../services/storageService";
 
-// Cloudinary Upload Widget (For Uploading Profile Pictures)
-
-declare global {
-  interface Window {
-    cloudinary: any;
-  }
-}
-
+/**
+ * Profile picture upload, on Firebase Storage.
+ *
+ * Was a Cloudinary upload widget. The move to Storage means `storage.rules` is
+ * what authorises the write, so the file lands under
+ * `profilePictures/{userId}/…` — the prefix those rules grant.
+ *
+ * `userId` is the *owner's* auth uid, not the caller's: an admin editing an
+ * employee's profile uploads to that employee's prefix, which the rules allow
+ * (`isSelf(userId) || isAdmin()`).
+ *
+ * One capability is lost in the move: the Cloudinary widget offered cropping and
+ * a camera source, and a plain file input does not. Nothing in the app depended
+ * on either, and the alternative was keeping a second asset host wired up purely
+ * for a cropper.
+ */
 interface ProfilePicUploadBtnProps {
+  /** The auth uid of the person whose picture this is. */
+  userId: string;
   onUploadSuccess: (url: string) => void;
   className?: string;
 }
 
 const ProfilePicUploadBtn: React.FC<ProfilePicUploadBtnProps> = ({
+  userId,
   onUploadSuccess,
   className,
 }) => {
-  const openWidget = () => {
-    const widget = window.cloudinary.createUploadWidget(
-      {
-        cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
-        uploadPreset: import.meta.env.VITE_CLOUDINARY_PROFPICS_PRESET,
-        sources: ["local", "url", "camera"],
-        multiple: false,
-        cropping: true,
-        defaultSource: "local",
-        resourceType: "image",
-        maxFileSize: 2000000, // 2MB
-      },
-      (error: any, result: any) => {
-        if (!error && result && result.event === "success") {
-          console.log("Upload successful:", result.info);
-          onUploadSuccess(result.info.secure_url);
-        }
-      }
-    );
-    widget.open();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    // Clear immediately so picking the same file again still fires a change.
+    event.target.value = "";
+    if (!file) return;
+
+    const validation = validateProfilePicture(file);
+    if (!validation.ok) {
+      messageApi.error(validation.reason);
+      return;
+    }
+
+    if (!userId) {
+      messageApi.error("Cannot upload a picture before the account is linked.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      onUploadSuccess(await uploadProfilePicture(userId, file));
+    } catch (error) {
+      // Most often a rules rejection — an unlinked account, or a stale ID token
+      // whose role claim has not caught up yet.
+      console.error("Profile picture upload failed", error);
+      messageApi.error("Could not upload that picture. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   };
 
-  return <KoraCircleBtn icon={<Icons.Edit />} className={className} onClick={openWidget} />;
+  return (
+    <>
+      {contextHolder}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+        onChange={handleFile}
+      />
+      <KoraCircleBtn
+        icon={uploading ? <Icons.Upload /> : <Icons.Edit />}
+        className={className}
+        aria-label="Upload a profile picture"
+        disabled={uploading}
+        onClick={() => inputRef.current?.click()}
+      />
+    </>
+  );
 };
 
 export default ProfilePicUploadBtn;

@@ -152,6 +152,7 @@ const EmployeeProfile: React.FC = () => {
                   {/* If user is not a google user */}
                   {empUser.googleId === null ? (
                     <ProfilePicUploadBtn
+                      userId={empUser.userId}
                       onUploadSuccess={handleProfilePicUploadSuccess}
                       className="absolute bottom-0 right-0"
                     />
@@ -173,6 +174,7 @@ const EmployeeProfile: React.FC = () => {
                   {/* If user is not a google user */}
                   {empUser.googleId === null ? (
                     <ProfilePicUploadBtn
+                      userId={empUser.userId}
                       onUploadSuccess={handleProfilePicUploadSuccess}
                       className="absolute bottom-0 right-0"
                     />

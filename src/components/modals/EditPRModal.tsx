@@ -321,6 +321,7 @@ function EditPRModal({
 
           <Form.Item name="docUrl" label="Supporting Document (PDF only)">
             <DocUploadWidget
+              reviewId={performanceReview?.reviewId ?? ""}
               onUploadSuccess={handleDocUploadSuccess}
               uploadedFileUrl={uploadedFileUrl}
               onViewFile={handleViewDocument}
