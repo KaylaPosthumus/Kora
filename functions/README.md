@@ -40,6 +40,7 @@ suite run with no emulator — see "Tests" below.
 | `onUserDeleted` | Auth user deleted (**v1**) | Removes `users/{uid}` and side records; unlinks the employee |
 | `adjustLeaveBalance` | Callable (admin) | Corrects a balance, with a reason and an audit entry |
 | `onLeaveTypeWritten` | Firestore `leaveTypes/{id}` written | Backfills new types onto existing employees; mirrors renames |
+| `onLeaveRequestWritten` | Firestore `leaveRequests/{id}` written | Stamps a verdict: overlaps, balance, date sanity |
 | `requestEmailVerification` | Callable | Issues a 6-digit code, queues the email |
 | `confirmEmailVerification` | Callable | Checks the code, flips Firebase's `emailVerified` |
 
@@ -76,6 +77,32 @@ The same trigger mirrors `leaveTypeName` / `description` / `defaultDays` onto
 existing balances when a leave type is edited. It never writes `remainingDays`:
 that is the employee's own consumed state, and refreshing it from `defaultDays`
 would hand back days already taken.
+
+## Leave request validation, split two ways
+
+`firestore.rules` enforces what one document can prove about itself:
+`startDate <= endDate` (ISO strings sort lexicographically), and that
+`employeeId` / `leaveTypeId` never change after creation.
+
+The date ordering is not cosmetic. `calculateDurationInDays` is
+`end.diff(start, "day") + 1`, so an inverted range gives a **negative** duration
+— and `setLeaveRequestStatus` computes `delta = -days`, which for a negative
+duration **adds** days to the balance on approval. Employees may amend the dates
+of their own pending request, so before this rule that was a self-service way to
+grant yourself leave. It is enforced on update as well as create, or the
+amendment path reopens it.
+
+`onLeaveRequestWritten` covers the two checks that need *other* documents, which
+rules cannot query: overlapping requests, and whether the balance covers the
+request. Those are **advisory** — over-drawing is a supported flow with its own
+confirmation modal — so the verdict is written to the request's `validation`
+field rather than blocking anything.
+
+That trigger writes to the collection that fires it. The loop guard is that it
+writes only when the verdict actually differs from the stored one, so its own
+write causes exactly one more no-op invocation. The verdict deliberately holds
+no timestamp: anything varying between runs would make every comparison unequal
+and never terminate.
 
 ## Two gotchas worth knowing
 

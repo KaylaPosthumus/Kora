@@ -136,18 +136,43 @@ service cloud.firestore {
     match /leaveRequests/{requestId} {
       allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
 
+      // Dates are stored as ISO strings, which sort lexicographically, so the
+      // ordering is checkable here.
+      //
+      // This is not cosmetic. `calculateDurationInDays` is
+      // `end.diff(start, 'day') + 1`, so an inverted range yields a *negative*
+      // duration — and `setLeaveRequestStatus` computes `delta = -days`, which
+      // for a negative duration *adds* days to the balance on approval. Since
+      // an employee may amend the dates of a pending request (below), leaving
+      // this unchecked is a self-service way to grant yourself leave.
+      //
+      // Enforced on update as well as create, or the amendment path reopens it.
+      function datesOrdered() {
+        return request.resource.data.startDate is string
+          && request.resource.data.endDate is string
+          && request.resource.data.startDate <= request.resource.data.endDate;
+      }
+
       // An employee files their own request, and it starts pending — they can't
       // self-approve.
-      allow create: if isAdmin()
-        || (isSelfEmployee(request.resource.data.employeeId)
-            && request.resource.data.status == 'pending');
+      allow create: if datesOrdered()
+        && (isAdmin()
+            || (isSelfEmployee(request.resource.data.employeeId)
+                && request.resource.data.status == 'pending'));
 
       // Only an admin changes a status. An employee may amend the details of a
       // request that is still pending.
-      allow update: if isAdmin()
-        || (isSelfEmployee(resource.data.employeeId)
-            && resource.data.status == 'pending'
-            && onlyChanges(['startDate', 'endDate', 'comment']));
+      //
+      // The employee and leave type are fixed at creation: re-pointing a request
+      // at a different leave type after the fact would debit a balance that was
+      // never the one requested against.
+      allow update: if datesOrdered()
+        && request.resource.data.employeeId == resource.data.employeeId
+        && request.resource.data.leaveTypeId == resource.data.leaveTypeId
+        && (isAdmin()
+            || (isSelfEmployee(resource.data.employeeId)
+                && resource.data.status == 'pending'
+                && onlyChanges(['startDate', 'endDate', 'comment'])));
 
       allow delete: if isAdmin();
     }

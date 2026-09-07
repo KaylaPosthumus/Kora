@@ -24,6 +24,7 @@ export { onUserDeleted } from "./users/onUserDeleted";
 // and the propagation that keeps balances in step with their leave types.
 export { adjustLeaveBalance } from "./leave/adjustLeaveBalance";
 export { onLeaveTypeWritten } from "./leave/onLeaveTypeWritten";
+export { onLeaveRequestWritten } from "./leave/onLeaveRequestWritten";
 
 // Email verification: CoriCore's 6-digit code, rebuilt.
 export {
