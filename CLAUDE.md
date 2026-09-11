@@ -9,7 +9,9 @@ npm run dev          # Vite dev server on :5173
 npm run typecheck    # tsc --noEmit
 npm run lint         # eslint --ext .ts,.tsx src
 npm run build        # typecheck, then production build into dist/
-npm test             # vitest, single run
+npm test             # vitest, single run — unit + flow tests
+npm run test:unit    # unit tests only
+npm run test:flows   # flow tests only (*.flow.test.ts(x))
 npm run test:watch   # vitest, watch mode
 npm run seed         # seed the live Firestore project (see Seeding below)
 npm run deploy       # build + firebase deploy
@@ -22,14 +24,16 @@ npx vitest run src/services/__tests__/authService.test.ts
 npx vitest run -t "decrements the balance exactly once"
 ```
 
-Vitest is configured inside `vite.config.ts` (jsdom, `restoreMocks: true`), not a
-separate config file. It only picks up `src/**/*.test.ts(x)`.
+Vitest is configured inside `vite.config.ts` (jsdom, `restoreMocks: true`,
+`TZ=UTC`, `setupFiles: src/test/setup.ts`), not a separate config file. It only
+picks up `src/**/*.test.ts(x)`. See **Tests** below and `src/test/README.md`.
 
 `npm run build` runs `tsc --noEmit` first, so a type error fails the build even
 though Vite itself would transpile past it.
 
-`npm run lint` exits clean: 0 errors and 205 warnings (mostly `no-explicit-any`
-carried over from the port). The exit code is a real gate — a new *error* fails
+`npm run lint` exits clean: 0 errors and 221 warnings (mostly `no-explicit-any`,
+carried over from the port, plus the test doubles, which mirror Firestore's own
+`DocumentData`). The exit code is a real gate — a new *error* fails
 CI — but treat the warning count as a baseline to chip at, not a pass/fail line.
 
 `tsconfig.json` runs `strict: true`, and `@/*` is aliased to `src/*` in both
@@ -163,6 +167,36 @@ clients keep the old worker's cache. `firebase.json` marks `/sw.js` and
 
 The icons are generated from `src/assets/logos/cori_logo_green.png` and still read
 "Coriander"; `scripts/generate-icons.sh` regenerates them once a Kora logo exists.
+
+### Tests
+
+Two tiers, told apart by filename. **Unit tests** (`*.test.ts(x)`, in `__tests__/`
+beside the code) pin one function's decisions. **Flow tests**
+(`*.flow.test.ts(x)`, in `src/__tests__/flows/`) drive a whole journey across
+several modules — signup through linking through login, or a leave request from
+submission to approval and back out to the employee's live screen. The flow tier
+exists because every function it calls is already unit-tested and the seam
+between them still is not: the document one writes being the document the next
+one reads.
+
+There is no emulator, so the doubles in `src/test/` replace Firebase at the
+module boundary — `firestore.ts` is an in-memory Firestore (flat path→data map,
+so subcollections work for free; supports the `==` / `in` / `orderBy` / `limit` /
+`documentId()` subset `api.service.ts` uses and throws on anything else),
+`firebaseApp.ts` is Firebase Auth with a real account list, `navigation.ts`
+captures the `window.location.href` assignments `authService` navigates by, and
+`renderWithProviders.tsx` renders a screen under a `MemoryRouter` and the real
+`AuthProvider`. `src/test/README.md` has the usage, including the `vi.mock`
+hoisting pattern the doubles need and why `vi.resetModules()` is required around
+anything that touches `authService`.
+
+Two behaviours differ from the real SDK deliberately: auto-generated ids are
+sequential (`auto-1`, `auto-2`) so a test can assert on one, and `onSnapshot`
+emits synchronously rather than on a microtask.
+
+`npm test` at the repo root covers `src/` only. `functions/` is a separate
+package with its own Vitest config and its own `npm test` — running one does not
+run the other, and CI runs both.
 
 ## Conventions
 

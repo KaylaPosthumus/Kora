@@ -14,7 +14,9 @@
     "seed": "node --env-file=.env.local scripts/seed.mjs",
     "deploy": "npm run build && firebase deploy",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:unit": "vitest run --exclude \"**/node_modules/**\" --exclude \"**/*.flow.test.*\"",
+    "test:flows": "vitest run flow.test"
   },
   "license": "MIT",
   "dependencies": {
@@ -38,6 +40,10 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.17",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@types/pdfmake": "^0.2.11",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
