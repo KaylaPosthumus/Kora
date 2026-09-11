@@ -16,6 +16,9 @@ export { syncRoleClaim } from "./claims/syncRoleClaim";
 // Referential integrity: cleans up after a deleted employee record.
 export { onEmployeeDeleted } from "./employees/onEmployeeDeleted";
 
+// Authorisation: makes isSuspended enforceable by putting it on the token.
+export { onEmployeeSuspensionChanged } from "./employees/onEmployeeSuspensionChanged";
+
 // Referential integrity: unlinks a departed admin from their gatherings,
 // without destroying the employee review history attached to them.
 export { onAdminDeleted } from "./admins/onAdminDeleted";

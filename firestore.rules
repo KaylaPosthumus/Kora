@@ -46,6 +46,18 @@ service cloud.firestore {
       return signedIn() && myEmployeeId() == employeeId;
     }
 
+    // Suspension. An admin toggles employees.isSuspended, and
+    // onEmployeeSuspensionChanged mirrors it onto the token so this costs no
+    // document read. Deliberately gates WRITES only: a suspended employee can
+    // still see their own record, they just cannot file anything new. Admins are
+    // never gated — they have to be able to act on a suspended employee.
+    //
+    // `!= true` rather than `== false`: the claim is absent, not false, for
+    // everyone who has never been suspended.
+    function notSuspended() {
+      return request.auth.token.suspended != true;
+    }
+
     // The stored status strings are the enum values in src/types/common.ts, and
     // the security rules, the seed script and every `where("status", ...)` query
     // depend on those exact strings. A write with a status outside the set does
@@ -87,6 +99,7 @@ service cloud.firestore {
       // Users may edit their own display fields; role/link changes are admin-only.
       allow update: if isAdmin()
         || (request.auth.uid == userId
+            && notSuspended()
             && onlyChanges(['fullName', 'profilePicture']));
 
       allow delete: if isAdmin();
@@ -116,6 +129,7 @@ service cloud.firestore {
       allow update: if enumsValid()
         && (isAdmin()
             || (isSelfEmployee(employeeId)
+                && notSuspended()
                 && onlyChanges(['phoneNumber', 'profilePicture', 'fullName',
                                 'dateOfBirth', 'gender'])));
 
@@ -189,6 +203,7 @@ service cloud.firestore {
         && statusIn(['pending', 'approved', 'rejected'])
         && (isAdmin()
             || (isSelfEmployee(request.resource.data.employeeId)
+                && notSuspended()
                 && request.resource.data.status == 'pending'));
 
       // Only an admin changes a status. An employee may amend the details of a
@@ -203,6 +218,7 @@ service cloud.firestore {
         && request.resource.data.leaveTypeId == resource.data.leaveTypeId
         && (isAdmin()
             || (isSelfEmployee(resource.data.employeeId)
+                && notSuspended()
                 && resource.data.status == 'pending'
                 && onlyChanges(['startDate', 'endDate', 'comment'])));
 
@@ -230,6 +246,7 @@ service cloud.firestore {
         && statusIn(['requested', 'upcoming', 'rejected', 'completed'])
         && (isAdmin()
             || (isSelfEmployee(request.resource.data.employeeId)
+                && notSuspended()
                 && request.resource.data.status == 'requested'));
 
       // Scheduling, accepting and rejecting are the admin's call. An employee
@@ -238,6 +255,7 @@ service cloud.firestore {
         && statusIn(['requested', 'upcoming', 'rejected', 'completed'])
         && (isAdmin()
             || (isSelfEmployee(resource.data.employeeId)
+                && notSuspended()
                 && resource.data.status == 'requested'
                 && onlyChanges(['purpose', 'adminId', 'adminName'])));
 
@@ -246,6 +264,7 @@ service cloud.firestore {
       // scheduled or rejected it is part of the admin's record, so it stays.
       allow delete: if isAdmin()
         || (isSelfEmployee(resource.data.employeeId)
+            && notSuspended()
             && resource.data.status == 'requested');
     }
 

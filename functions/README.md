@@ -40,6 +40,7 @@ suite run with no emulator — see "Tests" below.
 | --- | --- | --- |
 | `syncRoleClaim` | Firestore `users/{uid}` written | Mirrors `role`/`employeeId`/`adminId` into custom claims |
 | `onEmployeeDeleted` | Firestore `employees/{id}` deleted | Cascades to dependents; unlinks equipment and users |
+| `onEmployeeSuspensionChanged` | Firestore `employees/{id}` written | Puts `isSuspended` on the token so the rules can act on it |
 | `onAdminDeleted` | Firestore `admins/{id}` deleted | Unlinks gatherings **without deleting them** |
 | `onEquipmentCategoryWritten` | Firestore `equipmentCategories/{id}` written | Mirrors a renamed category onto equipment |
 | `onUserProfileWritten` | Firestore `users/{uid}` written | Hands name/email/picture down to employee and admin records |
@@ -88,6 +89,31 @@ The same trigger mirrors `leaveTypeName` / `description` / `defaultDays` onto
 existing balances when a leave type is edited. It never writes `remainingDays`:
 that is the employee's own consumed state, and refreshing it from `defaultDays`
 would hand back days already taken.
+
+## Suspension was decorative
+
+`Employee.isSuspended` is in the ER diagram, an admin toggles it through
+`toggleEmpSuspension`, and the UI shows a "Suspended" badge — but nothing
+enforced it. Every reference in `src/` is display: a badge, a line in the
+payroll PDF, a dashboard tally. A suspended employee could still sign in, file
+leave requests, request meetings and edit their profile.
+
+**This one is inferred, not ported.** Without the CoriCore source there is no way
+to check whether its middleware refused suspended users. What is certain is that
+a button labelled "Suspend" that changes only a badge is not the intent.
+
+The reading taken is the narrow one: suspension blocks an employee's **writes**
+and leaves their **reads** alone, so they can still see their own record but
+cannot file anything new. Admins are never gated — they have to be able to act on
+a suspended employee. If that reading is wrong it is cheap to undo: one
+`notSuspended()` helper in `firestore.rules` and seven call sites, all on write
+branches.
+
+The flag rides on the ID token rather than being read from the employee document
+by the rules, because a `get()` on every evaluation is the cost `syncRoleClaim`
+exists to avoid. The claim key sits outside `MANAGED_CLAIMS` so the two claim
+writers compose rather than overwrite each other — there are tests for both
+orderings.
 
 ## The name-propagation chain
 
