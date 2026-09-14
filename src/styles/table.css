@@ -1,0 +1,37 @@
+/* Ant Design Overrides for Table Stylings */
+
+/* Main Table */
+.ant-table-wrapper .ant-table {
+  background-color: transparent;
+}
+
+/* Table Body */
+.ant-table-tbody {
+  border-radius: 16px;
+  background-color: transparent;
+}
+
+/* First Row, First Column (Rounded Corner) */
+.ant-table-tbody > tr:first-child > td:first-child {
+  border-top-left-radius: 16px;
+}
+/* First Row, Last Column (Rounded Corner) */
+.ant-table-tbody > tr:first-child > td:last-child {
+  border-top-right-radius: 16px;
+}
+
+/* All Rows, All Columns */
+.ant-table-tbody > tr > td {
+  background-color: #f8f7f4;
+}
+
+/* Table Header */
+.ant-table-column-title {
+  font-weight: 500;
+}
+
+/* Table Header - when active, change color to green */
+.ant-table-column-sort > div > .ant-table-column-title {
+  color: #88a764;
+  font-weight: 700;
+}

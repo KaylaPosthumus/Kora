@@ -1,0 +1,370 @@
+rules_version = '2';
+
+// Access control for Kora.
+//
+// The old .NET backend enforced authorisation before any query reached the
+// database. Nothing sits in front of Firestore now, so these rules ARE the
+// access control — an employee's salary, ID number and phone number are all one
+// unauthorised read away without them.
+//
+// Two roles:
+//   admin    — reads and writes across the organisation
+//   employee — reads their own record, writes the handful of fields that are
+//              genuinely theirs (profile details, leave requests, meeting requests)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helpers ---------------------------------------------------------------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Reading a custom claim.
+    //
+    // Every claim below goes through `.get(key, default)`, never dot access.
+    // Dot access on a key the token does not carry is an *evaluation error*,
+    // not a null — and it aborts the whole expression, including the other half
+    // of an `||`. That is not a hypothetical: `syncRoleClaim` only stamps these
+    // claims after the user's next token refresh, so "no custom claims at all"
+    // is the normal state of a freshly-linked account, and `suspended` is
+    // absent for everyone who has never been suspended.
+    //
+    // Dot access here denied every employee write, and made the document
+    // fallback in isAdmin() below unreachable — it errored on the claim before
+    // it could ever reach the get(). Covered by rules-tests/.
+    function claim(key, fallback) {
+      return request.auth.token.get(key, fallback);
+    }
+
+    // The role lives on the user doc; it's mirrored into a custom claim so hot
+    // paths can skip the lookup. Fall back to the doc when the claim is absent
+    // (the claim only appears after the user's next token refresh).
+    function isAdmin() {
+      return signedIn() && (
+        claim('role', '') == 'admin' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         userDoc().role == 'admin')
+      );
+    }
+
+    /** The employee record belonging to the caller, if any. */
+    function myEmployeeId() {
+      return claim('employeeId', null) != null
+        ? claim('employeeId', null)
+        : userDoc().employeeId;
+    }
+
+    function isSelfEmployee(employeeId) {
+      return signedIn() && myEmployeeId() == employeeId;
+    }
+
+    // Suspension. An admin toggles employees.isSuspended, and
+    // onEmployeeSuspensionChanged mirrors it onto the token so this costs no
+    // document read. Deliberately gates WRITES only: a suspended employee can
+    // still see their own record, they just cannot file anything new. Admins are
+    // never gated — they have to be able to act on a suspended employee.
+    //
+    // `!= true` rather than `== false`: the claim is absent, not false, for
+    // everyone who has never been suspended — which is why it is read through
+    // claim() with a default rather than by dot access. See claim() above.
+    function notSuspended() {
+      return claim('suspended', false) != true;
+    }
+
+    // The stored status strings are the enum values in src/types/common.ts, and
+    // the security rules, the seed script and every `where("status", ...)` query
+    // depend on those exact strings. A write with a status outside the set does
+    // not fail loudly — it silently drops the document out of every filtered
+    // list that should show it. Cheap to check here, so check it.
+    function statusIn(allowed) {
+      return request.resource.data.status is string
+        && request.resource.data.status in allowed;
+    }
+
+    /** True when a write touches only the listed fields. */
+    function onlyChanges(allowedFields) {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(allowedFields);
+    }
+
+    // Users -----------------------------------------------------------------
+
+    match /users/{userId} {
+      allow read: if isAdmin() || request.auth.uid == userId;
+
+      // A user creates their own profile at signup, but must not hand
+      // themselves a role or a link — only an admin grants those.
+      //
+      // The role is the privilege boundary: isAdmin() above trusts this field,
+      // so a signup free to set it to 'admin' would be self-granted access to
+      // every salary and ID number in the org. Signups are always unassigned;
+      // the real role arrives at link time via setupUserAsEmployee/linkUserAsAdmin.
+      //
+      // Each test uses get() with a default rather than plain dot access:
+      // reading a key the incoming document doesn't have errors out rule
+      // evaluation, which denies the write.
+      allow create: if request.auth.uid == userId
+        && request.resource.data.get('role', '') == 'unassigned'
+        && request.resource.data.get('isLinked', true) == false
+        && request.resource.data.get('employeeId', null) == null
+        && request.resource.data.get('adminId', null) == null;
+
+      // Users may edit their own display fields; role/link changes are admin-only.
+      allow update: if isAdmin()
+        || (request.auth.uid == userId
+            && notSuspended()
+            && onlyChanges(['fullName', 'profilePicture']));
+
+      allow delete: if isAdmin();
+    }
+
+    // Employees -------------------------------------------------------------
+
+    match /employees/{employeeId} {
+      allow read: if isAdmin() || isSelfEmployee(employeeId);
+
+      // The stored values are the enums in src/types/common.ts. Each test reads
+      // through get() with an in-set default so an absent field passes: not
+      // every write carries every field, and a plain dot access on a missing key
+      // errors out rule evaluation, which denies the write outright.
+      function enumsValid() {
+        return request.resource.data.get('gender', 'male')
+                 in ['male', 'female', 'other']
+          && request.resource.data.get('payCycle', 'monthly')
+                 in ['monthly', 'biWeekly', 'weekly']
+          && request.resource.data.get('employType', 'fullTime')
+                 in ['fullTime', 'partTime', 'contract', 'intern'];
+      }
+
+      // Employees may maintain their own contact details. Everything with a
+      // money or status implication (salary, pay cycle, employment type,
+      // suspension) stays admin-only.
+      allow update: if enumsValid()
+        && (isAdmin()
+            || (isSelfEmployee(employeeId)
+                && notSuspended()
+                && onlyChanges(['phoneNumber', 'profilePicture', 'fullName',
+                                'dateOfBirth', 'gender'])));
+
+      allow create: if isAdmin() && enumsValid();
+      allow delete: if isAdmin();
+
+      // Leave balances are read by their owner but only ever written by an
+      // admin — the approve-and-decrement transaction runs as an admin.
+      match /leaveBalances/{leaveTypeId} {
+        allow read: if isAdmin() || isSelfEmployee(employeeId);
+        allow write: if isAdmin();
+      }
+    }
+
+    match /admins/{adminId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Reference data --------------------------------------------------------
+    // Readable by anyone signed in (it populates dropdowns), writable by admins.
+
+    match /leaveTypes/{leaveTypeId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /equipmentCategories/{categoryId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Equipment -------------------------------------------------------------
+    // Assigning and unassigning kit is an admin action, so writes are admin-only.
+
+    match /equipment/{equipmentId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+
+      allow create, update: if isAdmin()
+        && request.resource.data.get('condition', 'new')
+               in ['new', 'good', 'decent', 'used'];
+
+      allow delete: if isAdmin();
+    }
+
+    // Leave requests --------------------------------------------------------
+
+    match /leaveRequests/{requestId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+
+      // Dates are stored as ISO strings, which sort lexicographically, so the
+      // ordering is checkable here.
+      //
+      // This is not cosmetic. `calculateDurationInDays` is
+      // `end.diff(start, 'day') + 1`, so an inverted range yields a *negative*
+      // duration — and `setLeaveRequestStatus` computes `delta = -days`, which
+      // for a negative duration *adds* days to the balance on approval. Since
+      // an employee may amend the dates of a pending request (below), leaving
+      // this unchecked is a self-service way to grant yourself leave.
+      //
+      // Enforced on update as well as create, or the amendment path reopens it.
+      function datesOrdered() {
+        return request.resource.data.startDate is string
+          && request.resource.data.endDate is string
+          && request.resource.data.startDate <= request.resource.data.endDate;
+      }
+
+      // An employee files their own request, and it starts pending — they can't
+      // self-approve.
+      allow create: if datesOrdered()
+        && statusIn(['pending', 'approved', 'rejected'])
+        && (isAdmin()
+            || (isSelfEmployee(request.resource.data.employeeId)
+                && notSuspended()
+                && request.resource.data.status == 'pending'));
+
+      // Only an admin changes a status. An employee may amend the details of a
+      // request that is still pending.
+      //
+      // The employee and leave type are fixed at creation: re-pointing a request
+      // at a different leave type after the fact would debit a balance that was
+      // never the one requested against.
+      allow update: if datesOrdered()
+        && statusIn(['pending', 'approved', 'rejected'])
+        && request.resource.data.employeeId == resource.data.employeeId
+        && request.resource.data.leaveTypeId == resource.data.leaveTypeId
+        && (isAdmin()
+            || (isSelfEmployee(resource.data.employeeId)
+                && notSuspended()
+                && resource.data.status == 'pending'
+                && onlyChanges(['startDate', 'endDate', 'comment'])));
+
+      allow delete: if isAdmin();
+    }
+
+    // Meetings --------------------------------------------------------------
+
+    match /meetings/{meetingId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+
+      // Employees request meetings; the request starts unscheduled.
+      // Ordered like a leave request's dates, but only when both are actually
+      // set. A meeting starts life as a request with no time on it —
+      // createMeetingRequest writes `startDate: data.startDate ?? null` — and
+      // the admin fills the dates in when they schedule it, so requiring them
+      // here would block every meeting request.
+      function datesOrderedIfSet() {
+        return !(request.resource.data.startDate is string)
+          || !(request.resource.data.endDate is string)
+          || request.resource.data.startDate <= request.resource.data.endDate;
+      }
+
+      allow create: if datesOrderedIfSet()
+        && statusIn(['requested', 'upcoming', 'rejected', 'completed'])
+        && (isAdmin()
+            || (isSelfEmployee(request.resource.data.employeeId)
+                && notSuspended()
+                && request.resource.data.status == 'requested'));
+
+      // Scheduling, accepting and rejecting are the admin's call. An employee
+      // may still revise a request that hasn't been actioned.
+      allow update: if datesOrderedIfSet()
+        && statusIn(['requested', 'upcoming', 'rejected', 'completed'])
+        && (isAdmin()
+            || (isSelfEmployee(resource.data.employeeId)
+                && notSuspended()
+                && resource.data.status == 'requested'
+                && onlyChanges(['purpose', 'adminId', 'adminName'])));
+
+      // Withdrawing a request the admin hasn't actioned yet is the employee's
+      // own call — same privilege level as revising it above. Once it has been
+      // scheduled or rejected it is part of the admin's record, so it stays.
+      allow delete: if isAdmin()
+        || (isSelfEmployee(resource.data.employeeId)
+            && notSuspended()
+            && resource.data.status == 'requested');
+    }
+
+    // Performance reviews ---------------------------------------------------
+    // Employees read their own; only admins create or score them.
+
+    match /performanceReviews/{reviewId} {
+      allow read: if isAdmin() || isSelfEmployee(resource.data.employeeId);
+
+      // create/update rather than write: `write` also covers `delete`, where
+      // request.resource is null and the status check would error instead of
+      // simply not applying.
+      function datesOrderedIfSet() {
+        return !(request.resource.data.startDate is string)
+          || !(request.resource.data.endDate is string)
+          || request.resource.data.startDate <= request.resource.data.endDate;
+      }
+
+      allow create, update: if isAdmin()
+        && datesOrderedIfSet()
+        && statusIn(['pending', 'upcoming', 'completed']);
+
+      allow delete: if isAdmin();
+    }
+
+    // Leave balance audit trail ---------------------------------------------
+    // One entry per manual correction, written by the adjustLeaveBalance
+    // callable. Admins read it; nobody writes it from a client.
+    //
+    // A balance is entitlement, and therefore money. The rules already let an
+    // admin write leaveBalances directly, so this trail is only complete for
+    // corrections that went through the callable — it is a record, not an
+    // enforcement boundary.
+    match /leaveBalanceAdjustments/{adjustmentId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Email verification ----------------------------------------------------
+    // Challenges for the 6-digit code, written and read only through the Admin
+    // SDK by the requestEmailVerification / confirmEmailVerification callables.
+    //
+    // Denied to clients outright. The stored code is hashed, so a read would not
+    // hand over a usable code — but a client that could write here could reset
+    // its own attempt counter and brute-force the code without limit.
+    //
+    // CoriCore stored this on the user row in plaintext. Here it is a separate,
+    // client-unreadable collection precisely because an admin may read every
+    // user document.
+    match /emailVerifications/{userId} {
+      allow read, write: if false;
+    }
+
+    // Outgoing mail queue ---------------------------------------------------
+    // Appended to by Cloud Functions and drained by the firestore-send-email
+    // extension. No client touches it: a client that could write here could send
+    // mail from the project's own address to anyone.
+    match /mail/{mailId} {
+      allow read, write: if false;
+    }
+
+    // Claim metadata --------------------------------------------------------
+    // `syncRoleClaim` stamps a refreshTime here whenever it rewrites a user's
+    // custom claims. The client watches its own document and calls
+    // getIdToken(true) when it changes, instead of waiting up to an hour for
+    // the token to rotate on its own.
+    //
+    // Read-your-own only, and no client writes at all: the Admin SDK bypasses
+    // these rules, so the function still writes it. A client that could write
+    // here could only lie to itself, but there is no reason to allow it.
+    match /userClaims/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    // Collection group query over leaveBalances (used by the admin employee
+    // table). Rules are not inherited by collection group queries, so the
+    // subcollection needs its own rule at this level.
+    match /{path=**}/leaveBalances/{leaveTypeId} {
+      allow read: if isAdmin();
+    }
+
+    // Anything not matched above is denied.
+  }
+}

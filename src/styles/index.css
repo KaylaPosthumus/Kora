@@ -1,0 +1,10 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-stone-200;
+  font-family: "Inter", sans-serif;
+}
