@@ -59,7 +59,18 @@ describe("ADMIN_CASCADE policy", () => {
   });
 
   it("unlinks the user without touching their employee link", () => {
-    expect(ADMIN_USER_UNLINK_FIELDS).toEqual({ isLinked: false, adminId: null });
+    expect(ADMIN_USER_UNLINK_FIELDS).toEqual({
+      isLinked: false,
+      adminId: null,
+      role: "unassigned",
+    });
+    expect(ADMIN_USER_UNLINK_FIELDS).not.toHaveProperty("employeeId");
+  });
+
+  // isAdmin() in firestore.rules reads users/{uid}.role as well as the claim,
+  // so leaving it as "admin" keeps a deleted admin's org-wide access alive.
+  it("strips the admin role rather than only the link", () => {
+    expect(ADMIN_USER_UNLINK_FIELDS.role).toBe("unassigned");
   });
 });
 

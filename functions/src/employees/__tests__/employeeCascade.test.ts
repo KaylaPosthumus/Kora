@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 
 import {
   EMPLOYEE_CASCADE,
+  USER_UNLINK_FIELDS,
   runCascade,
   type CascadeBackend,
   type CascadeStep,
@@ -90,6 +91,17 @@ describe("EMPLOYEE_CASCADE policy", () => {
 
   it("keys every step on employeeId", () => {
     expect(EMPLOYEE_CASCADE.every((step) => step.field === "employeeId")).toBe(true);
+  });
+
+  // Kept in step with ADMIN_USER_UNLINK_FIELDS: both cascades demote the user
+  // rather than leaving a role behind that firestore.rules still reads.
+  it("demotes the user's role along with the link", () => {
+    expect(USER_UNLINK_FIELDS).toEqual({
+      isLinked: false,
+      employeeId: null,
+      role: "unassigned",
+    });
+    expect(USER_UNLINK_FIELDS).not.toHaveProperty("adminId");
   });
 });
 

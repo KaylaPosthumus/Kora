@@ -54,10 +54,21 @@ export const EMPLOYEE_CASCADE: readonly CascadeStep[] = [
 
 /**
  * The user document pointing at the departed employee. Split out from
- * {@link EMPLOYEE_CASCADE} because it also has to flip `isLinked`, which is a
- * value rather than a null.
+ * {@link EMPLOYEE_CASCADE} because it also has to flip `isLinked` and `role`,
+ * values rather than nulls.
+ *
+ * `role` is cleared for the same reason as in `admins/adminCascade.ts`, though
+ * the stakes are lower here: a stale `role: "employee"` grants nothing on its
+ * own, because every employee rule is gated on `isSelfEmployee`, which resolves
+ * through the `employeeId` this also nulls. It is cleared anyway so the two
+ * cascades cannot drift, and so a terminated employee is not left looking like
+ * a linked one to anything that reads `role` directly.
  */
-export const USER_UNLINK_FIELDS = { isLinked: false, employeeId: null } as const;
+export const USER_UNLINK_FIELDS = {
+  isLinked: false,
+  employeeId: null,
+  role: "unassigned",
+} as const;
 
 /** The subcollections under `employees/{id}` that a document delete leaves behind. */
 export const EMPLOYEE_SUBCOLLECTIONS = ["leaveBalances"] as const;
