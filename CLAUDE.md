@@ -12,6 +12,7 @@ npm run build        # typecheck, then production build into dist/
 npm test             # vitest, single run — unit + flow tests
 npm run test:unit    # unit tests only
 npm run test:flows   # flow tests only (*.flow.test.ts(x))
+npm run test:rules   # firestore.rules against the emulator (needs Java 21+)
 npm run test:watch   # vitest, watch mode
 npm run seed         # seed the live Firestore project (see Seeding below)
 npm run deploy       # build + firebase deploy
@@ -49,10 +50,12 @@ Copy `.env.example` to `.env.local` and fill it in. Three groups of vars:
 by `scripts/seed.mjs`. The seed script runs via `node --env-file=.env.local`, so its
 vars must be in that file — a shell export is not read.
 
-There is no emulator setup in this repo. `firebase.json` declares no `emulators`
-block and nothing in `src/` connects to one — development and tests run against
-the real project (`kora-51711`, pinned in `.firebaserc`). The Vitest suite mocks
-the Firebase SDK at the module boundary, so it is offline and touches nothing.
+Nothing in `src/` connects to an emulator — the app always runs against the real
+project (`kora-51711`, pinned in `.firebaserc`), and the Vitest suite mocks the
+Firebase SDK at the module boundary, so it is offline and touches nothing.
+`firebase.json` declares a Firestore-only `emulators` block, used solely by
+`npm run test:rules` under the `demo-kora` project (see **Tests**). The emulator
+needs Java 21+, and the root suite needs Node 22+ (jsdom 30).
 
 ## Architecture
 
@@ -65,20 +68,32 @@ code — see its status header); `NEXT_MIGRATION_PLAN.md.pdf` is the phase 2 pla
 Two files carry nearly all the non-UI logic: `src/services/api.service.ts`
 (~1500 lines) and `src/services/authService.ts`.
 
-### There is no backend — the security rules are the access control
+### The security rules are the access control
 
-Nothing sits in front of Firestore. `firestore.rules` is the only thing stopping
-one employee reading another's salary, so any change to a read or write path has
-to be checked against it. Rules resolve a caller's role from
+Nothing sits in front of Firestore's client reads and writes. `firestore.rules`
+is the only thing stopping one employee reading another's salary, so any change
+to a read or write path has to be checked against it. Rules resolve a caller's role from
 `request.auth.token.role` (custom claim) and **fall back to a `get()` on
 `users/{uid}`** when the claim is absent.
 
-That fallback is load-bearing: custom claims are only ever set by
-`scripts/seed.mjs` (`setCustomUserClaims`). The in-app linking actions —
+That fallback is load-bearing. The in-app linking actions —
 `employeeAPI.setupUserAsEmployee` and `linkUserAsAdmin` in `api.service.ts` —
-write `role` onto the user doc and nothing else, because a browser client cannot
-mint claims. There is no Cloud Function in this repo. So users created through
-the UI are authorised entirely through the document lookup.
+write `role` onto the user doc only, because a browser cannot mint claims. The
+`syncRoleClaim` Cloud Function (`functions/`) then derives the `role` /
+`employeeId` / `adminId` claims from that doc, and `onEmployeeSuspensionChanged`
+adds `suspended`, but neither reaches the client until its ID token refreshes.
+Until then the user is authorised through the document lookup alone, so "no
+custom claims at all" is the normal state of a freshly-linked account.
+
+**Read claims with `claim(key, default)` in the rules, never dot access.**
+`request.auth.token.suspended` on a token without that claim is an evaluation
+error, not null. An error inside `||` is rescued only if the other side is true,
+and a ternary or `!=` is not rescued at all — dot access here once denied every
+employee write in production. `rules-tests/src/__tests__/claims.test.ts` pins it.
+
+When a cascade unlinks a user (`functions/src/*/…Cascade.ts`), it must also reset
+`role` to `unassigned`: `isAdmin()` reads the document, so a stale `role: "admin"`
+keeps a deleted admin's org-wide access.
 
 ### The read layer fans out; there are no joins
 
@@ -194,9 +209,16 @@ Two behaviours differ from the real SDK deliberately: auto-generated ids are
 sequential (`auto-1`, `auto-2`) so a test can assert on one, and `onSnapshot`
 emits synchronously rather than on a microtask.
 
+`rules-tests/` is a third tier and a separate package: it runs `firestore.rules`
+in the real rules engine. It needs no Firebase SDK — the emulator accepts an
+unsigned JWT (so custom claims are just payload fields, and the claim-absent case
+is testable) and `Bearer owner` bypasses rules for seeding. Any change to
+`firestore.rules` should come with a case there, including the negative one: a
+rules fix that over-permits is worse than the bug.
+
 `npm test` at the repo root covers `src/` only. `functions/` is a separate
-package with its own Vitest config and its own `npm test` — running one does not
-run the other, and CI runs both.
+package with its own Vitest config and its own `npm test`, as is `rules-tests/`
+— running one does not run the others, and CI runs all three as separate jobs.
 
 ## Conventions
 

@@ -92,3 +92,40 @@ jobs:
           "
         env:
           GCLOUD_PROJECT: kora-51711
+
+  # firestore.rules is the whole of Kora's access control — there is no backend
+  # in front of Firestore — so it gets its own job. These tests run the real
+  # rules engine in the emulator, which is the only thing that catches the class
+  # of bug they were written for: reading an absent custom claim by dot access
+  # raises an evaluation error rather than returning null, and no unit test or
+  # static check sees that.
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: rules-tests/package-lock.json
+
+      # The Firestore emulator is a Java process.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install firebase-tools
+        run: npm install --global firebase-tools
+
+      - run: npm ci --prefix rules-tests
+
+      - name: Typecheck
+        run: npm run typecheck --prefix rules-tests
+
+      # Starts the emulator, runs the suite against it, shuts it down. The
+      # project is `demo-kora`: the demo- prefix forces the emulator's offline
+      # mode, so this needs no credentials and cannot reach kora-51711.
+      - name: Test rules
+        run: npm run test:rules

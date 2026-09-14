@@ -24,12 +24,29 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
+    // Reading a custom claim.
+    //
+    // Every claim below goes through `.get(key, default)`, never dot access.
+    // Dot access on a key the token does not carry is an *evaluation error*,
+    // not a null — and it aborts the whole expression, including the other half
+    // of an `||`. That is not a hypothetical: `syncRoleClaim` only stamps these
+    // claims after the user's next token refresh, so "no custom claims at all"
+    // is the normal state of a freshly-linked account, and `suspended` is
+    // absent for everyone who has never been suspended.
+    //
+    // Dot access here denied every employee write, and made the document
+    // fallback in isAdmin() below unreachable — it errored on the claim before
+    // it could ever reach the get(). Covered by rules-tests/.
+    function claim(key, fallback) {
+      return request.auth.token.get(key, fallback);
+    }
+
     // The role lives on the user doc; it's mirrored into a custom claim so hot
     // paths can skip the lookup. Fall back to the doc when the claim is absent
     // (the claim only appears after the user's next token refresh).
     function isAdmin() {
       return signedIn() && (
-        request.auth.token.role == 'admin' ||
+        claim('role', '') == 'admin' ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
          userDoc().role == 'admin')
       );
@@ -37,8 +54,8 @@ service cloud.firestore {
 
     /** The employee record belonging to the caller, if any. */
     function myEmployeeId() {
-      return request.auth.token.employeeId != null
-        ? request.auth.token.employeeId
+      return claim('employeeId', null) != null
+        ? claim('employeeId', null)
         : userDoc().employeeId;
     }
 
@@ -53,9 +70,10 @@ service cloud.firestore {
     // never gated — they have to be able to act on a suspended employee.
     //
     // `!= true` rather than `== false`: the claim is absent, not false, for
-    // everyone who has never been suspended.
+    // everyone who has never been suspended — which is why it is read through
+    // claim() with a default rather than by dot access. See claim() above.
     function notSuspended() {
-      return request.auth.token.suspended != true;
+      return claim('suspended', false) != true;
     }
 
     // The stored status strings are the enum values in src/types/common.ts, and
