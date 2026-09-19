@@ -37,10 +37,12 @@ These read as "missing" in a name comparison and are not:
 | `components/calender.tsx` | `features/dashboard/components/AdminCalendar.tsx` |
 | `services/api.service.ts` | six feature `api/` modules + `shared/lib/firestore.ts` |
 | `App.tsx` (245 lines) | `app/App.tsx` + `router.tsx` + `providers.tsx` + `theme.ts` |
+| `src/renderer.tsx` | `src/main.tsx` — Electron called the React entry point the *renderer*; it is the same ten lines |
 
 `src/main.ts` in the archive is **Electron's main process** — window creation, IPC,
 and Google OAuth through a `BrowserWindow`. It shares a name with Kora's
-`src/main.tsx` but does a different job; the two are not counterparts.
+`src/main.tsx` but does a different job; the two are not counterparts. The actual
+counterpart of `main.tsx` is `renderer.tsx`, above.
 
 ---
 
@@ -61,6 +63,11 @@ retries — so everything built to report server health went with it.
 ### 2. There is no Electron
 
 - `src/main.ts` — the main process
+- `src/preload.ts` — the `contextBridge` exposing `startGoogleOAuth` / `onGoogleToken`
+  over IPC, which is how the old app did Google sign-in. `signInWithPopup` replaces
+  the whole mechanism.
+- `src/global.d.ts` — the `Window.electronAPI` declaration for that bridge; it dies
+  with `preload.ts`
 - `types/electron-squirrel-startup.d.ts`
 - `AppInitializationContext`
 
@@ -143,8 +150,12 @@ OLD=/tmp/cori/coriander-main/cori-app/src
 Then compare by declaration name rather than by file: the port renamed files freely,
 so a path diff reports noise. What the audit above did, in order —
 
-1. **Files by stem**, per category (`pages`, `components`, `services`, `interfaces`,
-   `types`, `utils`, `contexts`, `constants`), old against all of `src/`.
+1. **Files by stem**, across **all** of the old `src/`, against all of the new one.
+   The first run of this audit walked a list of category directories instead, and so
+   never looked at the four files sitting at `src/` root — `main.ts`, `renderer.tsx`,
+   `preload.ts` and `global.d.ts`. Three were genuinely dropped and one,
+   `renderer.tsx`, was a rename that went unrecorded for two commits. Walk the tree,
+   do not enumerate the folders you expect.
 2. **API functions**: parse `export const xAPI = { … }` out of the old
    `api.service.ts` and grep each member name across `src/`.
 3. **Declarations** in `authService`, `tokenService` and each `utils/*.ts`, including
