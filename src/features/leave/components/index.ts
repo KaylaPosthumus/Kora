@@ -12,4 +12,5 @@ export { default as EditPolicyModal } from "./EditPolicyModal";
 export { default as LeaveBalanceBlock } from "./LeaveBalanceBlock";
 export { default as LeaveCardAdminDash } from "./LeaveCardAdminDash";
 export { default as LeaveRequestCard } from "./LeaveRequestCard";
+export { default as LeaveValidationNotice } from "./LeaveValidationNotice";
 export { default as OverBalanceConfirmModal } from "./OverBalanceConfirmModal";

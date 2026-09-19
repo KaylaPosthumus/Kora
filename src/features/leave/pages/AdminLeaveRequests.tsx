@@ -5,6 +5,7 @@ import { calculateDurationInDays } from "@/utils/dateUtils";
 
 // Import Components
 import { Tooltip, Table, message } from "antd";
+import LeaveValidationNotice from "@/features/leave/components/LeaveValidationNotice";
 
 // Icons
 import { ClockCircleOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -196,7 +197,13 @@ const AdminLeaveRequests: React.FC = () => {
       className: "text-center",
       render: (_: any, r: any) => (
         <div className="flex flex-col items-center">
-          <p className="font-normal text-xs">{r.fullName}</p>
+          <div className="flex items-center gap-1">
+            <p className="font-normal text-xs">{r.fullName}</p>
+            {/* The backend's verdict. Its overlap check is the part no amount of
+                work on this row could find — it needs the employee's other
+                requests. Advisory: it warns, it never blocks. */}
+            <LeaveValidationNotice verdict={r.validation} />
+          </div>
           <p className="text-xs text-zinc-500">ID-00{r.employeeId}</p>
         </div>
       ),

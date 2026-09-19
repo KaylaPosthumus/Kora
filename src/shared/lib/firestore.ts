@@ -161,6 +161,8 @@ export const toLeaveRequest = (id: string, data: DocumentData): LeaveRequest => 
   leaveTypeName: data.leaveTypeName ?? "",
   description: data.description ?? "",
   defaultDays: data.defaultDays ?? 0,
+  // Written by the onLeaveRequestWritten trigger; absent until it has run.
+  validation: data.validation,
 });
 
 export const toMeeting = (id: string, data: DocumentData): MeetingDTO => ({
