@@ -13,7 +13,56 @@ thing standing between this and being a working app.
 
 ## 1. Only you can do these
 
-### Deploy it for the first time — the blocking one
+### Deployment status (2026-09-19)
+
+**Done, and verified by reading it back:**
+
+| | |
+| --- | --- |
+| `firestore.rules` | live on `kora-51711`, ruleset `8f146906…` |
+| `storage.rules` | live, ruleset `a8380240…` |
+| Composite indexes | all 7 declared already exist and report `READY` |
+
+Deployed with `scripts/deploy-rules.mjs`, not the Firebase CLI — see below.
+
+**Not done:** Cloud Functions and Hosting. Both need the CLI.
+
+### The Firebase CLI cannot authenticate on this machine
+
+`firebase deploy` with `GOOGLE_APPLICATION_CREDENTIALS` set fails with
+`Invalid response body … Premature close` fetching an OAuth token. Ruled out, each
+tested directly:
+
+- **The key** — `firebase-admin` and `google-auth-library` both get a token with it
+  in one call.
+- **The network and the endpoint** — `curl` POSTs a real JWT assertion to the same
+  legacy `oauth2/v4/token` endpoint and gets HTTP 200, with the CLI's exact scope
+  list including `openid` and `email`.
+- **The CLI version** — v15.22 and v13 fail identically.
+- **The Node version** — fails on both v26.3.1 and v24.17.0.
+- **A proxy** — none in the environment, none in npm, none in macOS system config.
+- **The sandbox** — fails outside it too.
+
+So it is firebase-tools' own HTTP client, and nothing upstream of it.
+
+**What to try, in order:**
+
+1. **`firebase login --no-localhost`.** Interactive login is a *completely different
+   code path* from the service-account JWT flow that is broken, so it has a real
+   chance even though the latter fails. The Sep 7 screenshot showed a rejection,
+   which may simply have been a cancelled consent screen.
+2. **Deploy from CI.** `.github/workflows/ci.yml` already exists; the CLI may work
+   fine on a Linux runner with a `FIREBASE_TOKEN` or the service account.
+3. **Not worth hand-rolling.** Functions deployment across v1 (`onUserDeleted`) and
+   v2 (the other eleven, which need Eventarc triggers) through the REST API is a
+   large, fragile job. The rules were worth scripting; functions are not.
+
+Note the service account is under-privileged for anything beyond rules: it cannot
+create indexes (`roles/datastore.indexAdmin`) or list enabled services
+(`serviceusage.services.list`). Granting Firebase Admin on it would cover both, if
+you go the service-account route.
+
+### Deploy the rest — the blocking one
 
 Everything below this is downstream. The data layer, the security rules, the twelve
 Cloud Functions and the Hosting config have never been exercised against real
