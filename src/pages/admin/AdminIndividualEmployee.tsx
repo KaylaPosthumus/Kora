@@ -10,23 +10,14 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 // Import React Components
-import KoraBtn from "../../components/buttons/KoraBtn";
-import KoraCircleBtn from "../../components/buttons/KoraCircleBtn";
-import EquipmentListItem from "../../components/equipment/EquipmentListItem";
-import LeaveBalanceBlock from "../../components/leave/LeaveBalanceBlock";
-import EmployTypeBadge from "../../components/badges/EmployTypeBadge";
-import TimeTodayBadge from "../../components/badges/TimeTodayBadge";
-import ProfilePicUploadBtn from "../../components/uploading/ProfilePicUploadBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
+import KoraCircleBtn from "@/shared/components/KoraCircleBtn";
+import { EquipmentListItem, CreateAssignedEquipModal, AssignEquipsToExistEmpModal, EditEquipDetailsModal, UnlinkEquipmentModal, DeleteEquipmentModal } from "@/features/equipment/components";
+import { LeaveBalanceBlock } from "@/features/leave/components";
+import { EmployTypeBadge, TimeTodayBadge, AdminEditEmpDetailsModal, AdminEditEmpPayrollModal, TerminateEmployeeModal } from "@/features/employees/components";
+import ProfilePicUploadBtn from "@/shared/components/ProfilePicUploadBtn";
 
 // Modals
-import AdminEditEmpDetailsModal from "../../components/modals/AdminEditEmpDetailsModal";
-import AdminEditEmpPayrollModal from "../../components/modals/AdminEditEmpPayrollModal";
-import CreateAssignedEquipModal from "../../components/modals/CreateAssignedEquipModal";
-import AssignEquipsToExistEmpModal from "../../components/modals/AssignEquipsToExistEmpModal";
-import EditEquipDetailsModal from "../../components/modals/EditEquipDetailsModal";
-import UnlinkEquipmentModal from "../../components/modals/UnlinkEquipmentModal";
-import DeleteEquipmentModal from "../../components/modals/DeleteEquipmentModal";
-import TerminateEmployeeModal from "../../components/modals/TerminateEmployeeModal";
 
 // Import Icons
 import { Icons } from "../../constants/icons";
@@ -51,7 +42,7 @@ import { LeaveBalance } from "@/shared/types/leaveBalance";
 import { EmpUserRatingMetrics } from "@/shared/types/empUserRatingMetrics";
 import { Equipment } from "@/shared/types/equipment";
 import { Gathering } from "@/shared/types/gathering";
-import AdminGatheringBox from "../../components/gathering/AdminGatheringBox";
+import { AdminGatheringBox } from "@/features/gatherings/components";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";

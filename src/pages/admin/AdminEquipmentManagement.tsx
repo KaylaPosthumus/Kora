@@ -11,15 +11,10 @@ import { getFullImageUrl } from "../../utils/imageUtils";
 import { Icons } from "../../constants/icons";
 
 // Import Components
-import KoraBtn from "../../components/buttons/KoraBtn";
-import EquipCondiBadge from "../../components/badges/EquipCondiBadge";
-import EquipmentTypeAvatar from "../../components/avatars/EquipmentTypeAvatar";
+import KoraBtn from "@/shared/components/KoraBtn";
+import { EquipCondiBadge, EquipmentTypeAvatar, CreateUnlinkedEquipModal, EditEquipDetailsModal, AssignSingleEquipToEmpModal, DeleteEquipmentModal } from "@/features/equipment/components";
 
 // Import Modals
-import CreateUnlinkedEquipModal from "../../components/modals/CreateUnlinkedEquipModal";
-import EditEquipDetailsModal from "../../components/modals/EditEquipDetailsModal";
-import AssignSingleEquipToEmpModal from "../../components/modals/AssignSingleEquipToEmpModal";
-import DeleteEquipmentModal from "../../components/modals/DeleteEquipmentModal";
 import dayjs from "dayjs";
 
 // Types

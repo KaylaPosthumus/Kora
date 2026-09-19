@@ -5,12 +5,11 @@ import "../../styles/adminDash.css";
 import { Col, Container, Row } from "react-bootstrap";
 
 //Custom Components
-import BarChartCard from "../../components/charts/BarChart";
-import DoughnutChartCard from "../../components/charts/DoughnutChart";
-import LeaveCardAdminDash from "../../components/leave/LeaveCardAdminDash";
-import TopRatedEmpCard from "../../components/cards/adminCards/TopRatedEmpAdm";
-import AdminCalendar from "../../components/calender";
-import AdminGatheringBox from "../../components/gathering/AdminGatheringBox";
+import BarChartCard from "@/shared/components/BarChart";
+import DoughnutChartCard from "@/shared/components/DoughnutChart";
+import { LeaveCardAdminDash } from "@/features/leave/components";
+import { TopRatedEmpAdm as TopRatedEmpCard, AdminCalendar } from "@/features/dashboard/components";
+import { AdminGatheringBox, CreatePRModal, EditPRModal } from "@/features/gatherings/components";
 
 //Functionality
 import { empLeaveRequestsAPI, gatheringAPI, pageAPI } from "../../services/api.service";
@@ -20,15 +19,13 @@ import { useNavigate } from "react-router-dom";
 import { Gathering } from "@/shared/types/gathering";
 
 //Modals
-import CreatePRModal from "../../components/modals/CreatePRModal";
-import EditPRModal from "../../components/modals/EditPRModal";
 
 //Assets
 import AdminAddIcon from "../../assets/icons/AdminAddIcon.png";
 import { Spin } from "antd";
 import dayjs from "dayjs";
 import { Icons } from "../../constants/icons";
-import KoraBtn from "../../components/buttons/KoraBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";

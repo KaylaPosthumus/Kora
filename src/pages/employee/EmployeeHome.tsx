@@ -1,7 +1,7 @@
 import { Container, Row, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import GaugeComponent from "react-gauge-component";
-import LeaveBalanceBlock from "../../components/leave/LeaveBalanceBlock";
+import { LeaveBalanceBlock } from "@/features/leave/components";
 import {
   pageAPI,
   subscribeToGatherings,
@@ -17,7 +17,7 @@ import { Gender, PayCycle } from "@/shared/types/common";
 
 import { useParams } from "react-router-dom";
 import { Spin } from "antd";
-import EmpGatheringBox from "../../components/gathering/EmpGatheringBox";
+import { EmpGatheringBox } from "@/features/gatherings/components";
 import { getFullCurrentUser } from "../../services/authService";
 
 const EmployeeHome: React.FC = () => {

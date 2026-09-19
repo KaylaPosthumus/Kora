@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 // Custom React Components
-import KoraBtn from "../../components/buttons/KoraBtn";
-import KoraCircleBtn from "../../components/buttons/KoraCircleBtn";
-import EquipmentListItem from "../../components/equipment/EquipmentListItem";
-import EmpEditEmpDetailsModal from "../../components/modals/EmpEditEmpDetailsModal";
-import ProfilePicUploadBtn from "../../components/uploading/ProfilePicUploadBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
+import KoraCircleBtn from "@/shared/components/KoraCircleBtn";
+import { EquipmentListItem } from "@/features/equipment/components";
+import { EmpEditEmpDetailsModal } from "@/features/employees/components";
+import ProfilePicUploadBtn from "@/shared/components/ProfilePicUploadBtn";
 
 // 3rd Party Components
 import { Avatar, message, Spin } from "antd";

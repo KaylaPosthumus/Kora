@@ -9,11 +9,11 @@ import {
   Tooltip,
   Upload,
 } from "antd";
-import KoraBtn from "../../components/buttons/KoraBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
 import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
-import VerifyEmailNotice from "../../components/auth/VerifyEmailNotice";
+import { VerifyEmailNotice } from "@/features/auth/components";
 import { adminSignUp, adminGoogleSignUp } from "../../services/authService";
 import { useEffect, useState } from "react";
 import BackgroundImage from "../../assets/images/Auth_Background.png";

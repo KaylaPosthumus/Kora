@@ -10,15 +10,14 @@ import { Icons } from "../../constants/icons";
 import { Progress, Tooltip, Spin } from "antd";
 
 // Badge
-import KoraBadge from "../../components/badges/KoraBadge";
-import LeaveRequestCard from "../../components/cards/empCards/LeaveRequestCard";
+import KoraBadge from "@/shared/components/KoraBadge";
+import { LeaveRequestCard, ApplyForLeaveModal } from "@/features/leave/components";
 
 // Apply-for-leave modal
-import ApplyForLeaveModal from "../../components/modals/ApplyForLeaveModal";
 import { getFullCurrentUser } from "../../services/authService";
 
 // KoraBtn component
-import KoraBtn from "../../components/buttons/KoraBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
 
 const getLeaveIcon = (type: string) => {
   if (type.toLowerCase().includes("annual")) return <Icons.BeachAccess fontSize="large" />;

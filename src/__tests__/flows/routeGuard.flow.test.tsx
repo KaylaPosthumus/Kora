@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import { firestoreMock } from "../../test/firestore";
 import { authMock } from "../../test/firebaseApp";
 import { renderWithProviders, screen, waitFor } from "../../test/renderWithProviders";
-import ProtectedRoute from "../../components/auth/ProtectedRoute";
+import { ProtectedRoute } from "@/features/auth/components";
 import { UserRole } from "@/shared/types/common";
 
 /**

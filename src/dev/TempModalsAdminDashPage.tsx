@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
 // Import Modals
-import CreatePRModal from "../components/modals/CreatePRModal";
-import EditPRModal from "../components/modals/EditPRModal";
+import { CreatePRModal, EditPRModal } from "@/features/gatherings/components";
 
 // Import Components
-import KoraBtn from "../components/buttons/KoraBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
 
 function TempModalsAdminDashPage() {
   // State for the modals

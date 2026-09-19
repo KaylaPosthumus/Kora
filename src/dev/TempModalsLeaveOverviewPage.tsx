@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import KoraBtn from "../components/buttons/KoraBtn";
-import ApplyForLeaveModal from "../components/modals/ApplyForLeaveModal";
+import KoraBtn from "@/shared/components/KoraBtn";
+import { ApplyForLeaveModal } from "@/features/leave/components";
 
 function TempModalsLeaveOverviewPage() {
   const [showApplyForLeaveModal, setShowApplyForLeaveModal] = useState(false);

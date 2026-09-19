@@ -15,8 +15,8 @@ import BackgroundImage from "../../assets/images/Auth_Background.png";
 import Logo from "../../assets/logos/cori_logo_green.png";
 
 // Child Components
-import UnlinkedMessage from "../../components/auth/UnlinkedMessage";
-import KoraBtn from "../../components/buttons/KoraBtn";
+import { UnlinkedMessage } from "@/features/auth/components";
+import KoraBtn from "@/shared/components/KoraBtn";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

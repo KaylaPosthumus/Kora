@@ -11,9 +11,8 @@ import {
   Typography,
 } from "antd";
 const { Title, Text } = Typography;
-import KoraBtn from "../../components/buttons/KoraBtn";
-import EquipAssignListItem from "../../components/equipment/EquipAssignListItem";
-import AssignEmpToOneOrManyEquipsModal from "../../components/modals/AssignEmpToOneOrManyEquipsModal";
+import KoraBtn from "@/shared/components/KoraBtn";
+import { EquipAssignListItem, AssignEmpToOneOrManyEquipsModal } from "@/features/equipment/components";
 import { Icons } from "../../constants/icons";
 import {
   EmployType,
@@ -22,7 +21,7 @@ import {
   Gender,
   PayCycle,
 } from "@/shared/types/common";
-import UnlinkedUserDropdown, { UnlinkedUser } from "../../components/dropdown/UnlinkedUserDropdown";
+import { UnlinkedUserDropdown, UnlinkedUser } from "@/features/employees/components";
 import { employeeAPI, linkUserAsAdmin, userAPI } from "../../services/api.service";
 import dayjs from "dayjs";
 

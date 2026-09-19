@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import KoraBtn from "../components/buttons/KoraBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
 
 /**
  * Catch-all for unmatched URLs. Without this an unknown path renders an empty

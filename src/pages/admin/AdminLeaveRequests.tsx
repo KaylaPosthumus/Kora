@@ -4,31 +4,28 @@ import dayjs from "dayjs";
 import { calculateDurationInDays } from "../../utils/dateUtils";
 
 // Import Components
-import { Tooltip } from "antd";
+import { Tooltip, Table, message } from "antd";
 
 // Icons
 import { ClockCircleOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Icons } from "../../constants/icons";
 
 // Badges & Buttons
-import KoraBadge from "../../components/badges/KoraBadge";
-import KoraCircleBtn from "../../components/buttons/KoraCircleBtn";
-import KoraBtn from "../../components/buttons/KoraBtn";
+import KoraBadge from "@/shared/components/KoraBadge";
+import KoraCircleBtn from "@/shared/components/KoraCircleBtn";
+import KoraBtn from "@/shared/components/KoraBtn";
 
 // Table
-import { Table } from "antd";
 
 // Edit Policy Modal
-import EditPolicyModal from "../../components/modals/EditPolicyModal";
+import { EditPolicyModal, OverBalanceConfirmModal } from "@/features/leave/components";
 
 // Over Balance Confirm Modal
-import OverBalanceConfirmModal from "../../components/modals/OverBalanceConfirmModal";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";
 
 // Message
-import { message } from "antd";
 
 const AdminLeaveRequests: React.FC = () => {
   const [displayingLeaveRequests, setDisplayingLeaveRequests] = useState<any[]>([]);

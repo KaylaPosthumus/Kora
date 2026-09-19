@@ -11,8 +11,8 @@ import dayjs from "dayjs";
 import { employeeAPI, pageAPI } from "../../services/api.service";
 
 // Import Components
-import KoraBtn from "../../components/buttons/KoraBtn";
-import EmployTypeBadge from "../../components/badges/EmployTypeBadge";
+import KoraBtn from "@/shared/components/KoraBtn";
+import { EmployTypeBadge } from "@/features/employees/components";
 
 // Import Constants
 import { Icons } from "../../constants/icons";

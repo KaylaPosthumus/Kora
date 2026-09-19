@@ -74,10 +74,12 @@ Adopt these before moving any file, so the restructure lands in one shape rather
 | Cloud Functions | `camelCase`, verb first | `syncRoleClaim` |
 | Root docs | `SCREAMING_SNAKE.md` — reserved for `README.md`, `CLAUDE.md` only | everything else goes in `docs/` as `kebab-case.md` |
 
-Three violations to fix on the way through. `src/interfaces/performance_reviews/` is
-**done** — Phase 4 step 1 dissolved it. Still open: `src/components/calender.tsx`
-(lowercase **and** misspelled), and `src/services/api.service.ts` vs `authService.ts`
-(two conventions in one folder).
+Three violations to fix on the way through. Two are **done**:
+`src/interfaces/performance_reviews/` (dissolved by step 1) and
+`src/components/calender.tsx` (step 4 moved it to
+`features/dashboard/components/AdminCalendar.tsx` — the component inside was already
+called `AdminCalendar`). Still open: `src/services/api.service.ts` vs `authService.ts`,
+which step 6 settles by deleting the barrel.
 
 ### Structural rules
 
@@ -85,8 +87,16 @@ Three violations to fix on the way through. `src/interfaces/performance_reviews/
    doing one job.~~ **Done** — both are now `src/shared/types/`, 17 files, flat.
 2. **A feature owns its vertical** — api, components, hooks, pages, types.
 3. **Import direction is one-way.** A feature may import from `shared/` freely, and from
-   another feature's `api/` or `types`. A feature may **never** import another feature's
-   `components/`. Enforce with `eslint-plugin-import`'s `no-restricted-paths`.
+   another feature's `api/`, `types`, or its `components/index.ts` **barrel** — never a
+   file beside that barrel. Enforce with `eslint-plugin-import`'s `no-restricted-paths`.
+
+   *Amended during step 4.* The rule originally banned cross-feature component imports
+   outright. Applied to the real dependency graph that pushed 20 of 54 components into
+   `shared/`, because the admin employee-detail screen and both dashboards legitimately
+   render gathering UI that `gatherings` owns. Ownership by domain with a published
+   surface keeps `shared/` for genuinely generic UI (9 components) and leaves each
+   feature owning its own; the boundary being enforced becomes "no deep imports" rather
+   than "no imports".
 4. **No file over ~400 lines.** Today five exceed it, led by `api.service.ts` at 1,500.
 5. **Path aliases, not `../../..`.** `@/*` → `src/*` is already configured in
    `tsconfig.json` and `vite.config.ts`, and **no import uses it yet**: 310 imports
@@ -288,13 +298,22 @@ Order, one commit per step, `npm run typecheck` green between each:
    seam Phase 6's `React.lazy` needs. One deviation from the sketch above: the error
    boundary stays inside `<main>` in `router.tsx` rather than moving to `providers.tsx`,
    because wrapping the whole tree would take the navigation down with a throwing page.
-4. **Move components into features**, one feature per commit. Fix `calender.tsx` →
-   `features/dashboard/components/AdminCalendar.tsx` on the way through.
+4. ~~**Move components into features.**~~ **DONE.** All 54 components placed by domain
+   ownership: 9 in `shared/components/` (KoraBtn, KoraBadge, KoraCircleBtn, Navigation,
+   ErrorBoundary, the two charts, the two upload widgets) and 45 across the six features.
+   Each feature publishes a `components/index.ts`; 28 imports now go through a barrel and
+   **zero** reach into another feature's component files. `calender.tsx` became
+   `features/dashboard/components/AdminCalendar.tsx` on the way through. Landed as one
+   commit rather than one per feature — the import rewrite had to be atomic to keep
+   `tsc` green.
 5. **Move pages into features.** `features/leave/pages/AdminLeaveRequests.tsx` and
    `features/leave/pages/EmployeeLeaveOverview.tsx` sit together — the feature owns both
    sides of its domain.
 6. **Rewrite imports to `@/`** and delete the barrel.
 7. **Add the `no-restricted-paths` rule** that enforces §2 rule 3, so the boundary holds.
+   Per the amendment there, the pattern to ban is `@/features/*/components/*` from outside
+   that feature — the barrel itself stays allowed. The boundary is clean as of step 4, so
+   this rule locks in a property the tree already has rather than forcing a cleanup.
 8. **Reorganise docs** into `docs/` per §3, and thin `README.md` down to setup + running.
 
 Use `git mv` throughout so blame survives. This phase changes no behaviour — if a test

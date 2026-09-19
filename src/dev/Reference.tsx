@@ -1,7 +1,7 @@
 // Import components
-import KoraBtn from "../components/buttons/KoraBtn";
-import KoraCircleBtn from "../components/buttons/KoraCircleBtn";
-import KoraBadge from "../components/badges/KoraBadge";
+import KoraBtn from "@/shared/components/KoraBtn";
+import KoraCircleBtn from "@/shared/components/KoraCircleBtn";
+import KoraBadge from "@/shared/components/KoraBadge";
 
 // Import Icons
 import DeleteIcon from "@mui/icons-material/Delete";
