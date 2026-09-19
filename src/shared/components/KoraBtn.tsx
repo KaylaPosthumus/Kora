@@ -2,7 +2,6 @@
 
 import React from "react";
 import "@/styles/buttons.css";
-import { Button } from "react-bootstrap";
 
 // Btn Properties
 interface BtnProps {
@@ -31,10 +30,10 @@ const KoraBtn = ({
 }: BtnProps) => {
   // Default styles
   let btnStyles = "";
-  let btnVariant = "primary";
+  let variantClass = "kora-btn--primary";
 
   if (secondary) {
-    btnVariant = "outline-primary";
+    variantClass = "kora-btn--secondary";
     switch (style) {
       case "default":
         btnStyles =
@@ -55,7 +54,7 @@ const KoraBtn = ({
     }
   } else {
     // Default to primary
-    btnVariant = "primary";
+    variantClass = "kora-btn--primary";
     switch (style) {
       case "default":
         btnStyles =
@@ -77,16 +76,15 @@ const KoraBtn = ({
   }
 
   return (
-    <Button
-      variant={btnVariant}
+    <button
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className={`${btnStyles} text-[14px] font-semibold flex items-center justify-center h-10 px-3 gap-2 rounded-xl kora-btn ${className}
+      className={`${btnStyles} text-[14px] font-semibold flex items-center justify-center h-10 px-3 gap-2 rounded-xl kora-btn ${variantClass} ${className}
       ${iconOnly ? "w-10" : ""}`}
     >
       {children}
-    </Button>
+    </button>
   );
 };
 

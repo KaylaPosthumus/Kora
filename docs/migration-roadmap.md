@@ -455,8 +455,7 @@ screen most users never open. Only `firebase` is named now.
 What landed, against the original plan below: route-level `React.lazy` (14 of 15 screens;
 Login stays eager as the landing route), `pdfmake` behind a dynamic import, both oversized
 images converted to sized WebP, and the `sw.js` `CACHE` bumped so existing installs evict
-the old 3.3 MB PNG. **Bootstrap was not dropped** — that is still open, and is the
-remaining item from this phase.
+the old 3.3 MB PNG. Bootstrap was dropped separately, in commit 56.
 
 The original plan follows.
 
@@ -472,10 +471,11 @@ between the app and the phones it was built for.
 - **Images.** `Auth_Background.png` is 3.3 MB at 2000×2000; `no_profile_image.png` is
   1.2 MB at 1024×1024 for an avatar that renders at ~96 px. Converted to WebP at display
   size these are roughly 100 KB and 8 KB — **~4.4 MB off the wire** for two files.
-- **Drop Bootstrap.** `src/styles/index.css:1` imports the whole `bootstrap.min.css`.
-  Only 4 files touch `react-bootstrap` and 1 uses Bootstrap classes. Porting those to
-  Tailwind + Ant removes an entire CSS framework, and takes the app from four styling
-  systems down to three.
+- ~~**Drop Bootstrap.**~~ **DONE** (commit 56). Note the stated reason was the weaker
+  one: 226 kB of CSS sounds like a lot, but gzipped it was ~30 kB. The real problem was
+  that Bootstrap's breakpoints disagree with Tailwind's — `lg` at 992px against 1024px —
+  so the two dashboards changed layout at a different width from every other screen.
+  CSS went from 255 kB to 35 kB (37 kB to 7 kB gzipped).
 - Bump `CACHE` in `public/sw.js` on any change, or clients keep the old worker's cache.
 
 **Target:** initial JS under 500 KB gzipped. Measure before and after each step.
@@ -498,7 +498,8 @@ clicks are wired from one definition for the same reason, and a column opts out 
 card with Ant's own `responsive: ["lg"]`.
 
 Two pages needed no table work. `AdminDashboard` had 0 Tailwind breakpoints but was never
-desktop-only: its grid is react-bootstrap's `Col xs/md/lg`, which already responds.
+desktop-only: its grid was react-bootstrap's `Col xs/md/lg`, which already responded
+(and became a Tailwind grid in commit 56).
 `AdminCreateEmployee` already had `grid-cols-1 lg:grid-cols-3`.
 
 `AdminIndividualEmployee` was the real work — 13 fractional widths, and the two halves

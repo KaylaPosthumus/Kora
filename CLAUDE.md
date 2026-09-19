@@ -264,7 +264,12 @@ package with its own Vitest config and its own `npm test`, as is `rules-tests/`
 ## Conventions
 
 - Ant Design is the component library; the theme token block lives in `src/app/theme.ts`.
-  Tailwind and Bootstrap are also present, plus hand-written CSS in `src/styles/`.
+  Tailwind is the other, plus hand-written CSS in `src/styles/`. **Bootstrap is
+  gone** — it was dropped because its breakpoints disagreed with Tailwind's
+  (`lg` at 992px against 1024px), so the dashboards changed layout at a different
+  width from every other screen. `buttons.css` styles the button states and keys on
+  `kora-btn--primary` / `kora-btn--secondary`, which `KoraBtn` and `KoraCircleBtn`
+  set themselves; a rename on either side is silent, so a test pins them together.
 - `src/dev/` holds unguarded dev-only scratch pages, served under `/dev/*`.
   `src/app/router.tsx` reaches them through a single lazy import on the
   `import.meta.env.DEV` branch, so Rollup drops the whole subtree from a

@@ -1,4 +1,3 @@
-import { Container, Row, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import GaugeComponent from "react-gauge-component";
 import { LeaveBalanceBlock } from "@/features/leave/components";
@@ -169,12 +168,12 @@ const EmployeeHome: React.FC = () => {
       <h4 className="text-zinc-900 mb-3">Stay informed and manage your tasks effortlessly.</h4>
       <div className="line-horisontal mb-4 bg-black" style={{ height: "1px" }}></div>
 
-      <Container>
-        <Row>
-          <Col md={8}>
-            <Row className="g-3">
+      <div>
+        <div className="grid grid-cols-12 gap-3">
+          <div className="col-span-12 md:col-span-8">
+            <div className="grid grid-cols-12 gap-3">
               {/* Ratings */}
-              <Col xs={12} md={5}>
+              <div className="col-span-12 md:col-span-5">
                 <div className="text-zinc-500 font-semibold text-center mb-2">Your Ratings</div>
                 <div className="bg-warmstone-50 p-4 pt-2 rounded-2xl shadow-sm">
                   <div className="w-full py-4 flex flex-col gap-2 items-center" style={{ minHeight: 239 }}>
@@ -225,10 +224,10 @@ const EmployeeHome: React.FC = () => {
                     )}
                   </div>
                 </div>
-              </Col>
+              </div>
 
               {/* Leave Balances */}
-              <Col xs={12} md={7}>
+              <div className="col-span-12 md:col-span-7">
                 <div className="text-zinc-500 font-semibold text-center mb-2">
                   Your Remaining Leave
                 </div>
@@ -245,11 +244,11 @@ const EmployeeHome: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </Col>
-            </Row>
+              </div>
+            </div>
             {/* Payroll Information */}
-            <Row className="g-3 pt-3">
-              <Col xs={12} md={12}>
+            <div className="grid grid-cols-12 gap-3 pt-3">
+              <div className="col-span-12">
                 <div className="text-zinc-500 font-semibold text-center mb-2">
                   Your Payroll Information
                 </div>
@@ -303,20 +302,20 @@ const EmployeeHome: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </Col>
-            </Row>
-            <Row className="g-3 pt-4 mb-4">
-              <Col xs={12} md={12}>
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-3 pt-4 mb-4">
+              <div className="col-span-12">
                 <div className="bg-corigreen-500 p-4 rounded-2xl justify-center text-white text-center shadow-sm">
                   <p>"{quote}"</p>
                   <p className="italic"> - {quoteAuthor}</p>
                 </div>
-              </Col>
-            </Row>
-          </Col>
+              </div>
+            </div>
+          </div>
 
-          <Col md={4}>
-            <Col xs={12} md={12}>
+          <div className="col-span-12 md:col-span-4">
+            <div className="w-full">
               <div className="text-zinc-500 font-semibold text-center mb-2">Meetings with HR: Overview</div>
               <div className="relative">
                 <div
@@ -345,10 +344,10 @@ const EmployeeHome: React.FC = () => {
                   }}
                 />
               </div>
-            </Col>
-          </Col>
-        </Row>
-      </Container>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

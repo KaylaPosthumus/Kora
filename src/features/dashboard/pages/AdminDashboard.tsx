@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import "@/styles/adminDash.css";
-import { Col, Container, Row } from "react-bootstrap";
 
 //Custom Components
 import BarChartCard from "@/shared/components/BarChart";
@@ -220,9 +219,6 @@ const AdminDashboard: React.FC = () => {
 
   if (error) return <div>Error: {error}</div>;
 
-  // The grid below is react-bootstrap's (Col xs/md/lg), which already responds —
-  // this page had no Tailwind breakpoints but was never desktop-only in the way
-  // the table screens were.
   return (
     <div className="max-w-7xl mx-auto m-4 mb-4 px-1 sm:px-0">
       {/* Heading */}
@@ -237,33 +233,33 @@ const AdminDashboard: React.FC = () => {
 
       <div className="mb-3">
         {/* Column 1 */}
-        <Container className="mb-3">
-          <Row>
+        <div className="mb-3">
+          <div className="grid grid-cols-12 gap-3">
             {/* Left Cards */}
-            <Col lg="8" md="8">
-              <Row className="g-3">
+            <div className="col-span-12 lg:col-span-8">
+              <div className="grid grid-cols-12 gap-3">
                 {/* Employee Ratings Chart */}
-                <Col xs={12} md={7}>
+                <div className="col-span-12 md:col-span-7">
                   <div className="text-zinc-500 font-semibold text-center mb-2">
                     Employee Ratings: Top 5
                   </div>
                   <div className="bg-warmstone-50 pt-2 rounded-2xl shadow-sm">
                     <BarChartCard empUserRatingMetrics={empUserRatingMetrics} />
                   </div>
-                </Col>
+                </div>
 
                 {/* Employment Overview Card */}
-                <Col xs={12} md={5}>
+                <div className="col-span-12 md:col-span-5">
                   <div className="text-zinc-500 font-semibold text-center mb-2">
                     Employment Overview
                   </div>
                   <div className="bg-warmstone-50 p-3 rounded-2xl flex flex-col shadow-sm">
                     <DoughnutChartCard employeeStatusTotals={employeeStatusTotals} />
                   </div>
-                </Col>
+                </div>
 
                 {/* Leave Requests Card */}
-                <Col xs={12} md={5}>
+                <div className="col-span-12 md:col-span-5">
                   <div className="w-full flex flex-col items-center">
                     <div className="flex justify-between items-center gap-3 mb-2">
                       <div className="text-zinc-500 font-semibold">Leave Requests</div>
@@ -292,12 +288,12 @@ const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </Col>
+                </div>
 
-                <Col xs={12} md={7}>
+                <div className="col-span-12 md:col-span-7">
                   {/* Creating PRM meetings and rating employee buttons - For Modal */}
-                  <Row className="g-3">
-                    <Col md={6}>
+                  <div className="grid grid-cols-12 gap-3">
+                    <div className="col-span-12 md:col-span-6">
                       <div
                         className="bg-corigreen-500 text-warmstone-200 p-3 rounded-2xl shadow-sm h-full hover:cursor-pointer"
                         onClick={() => setShowCreatePRModal(true)}
@@ -307,8 +303,8 @@ const AdminDashboard: React.FC = () => {
                           <img src={AdminAddIcon} alt="Plus Icon" className="AdminAddIcon" />
                         </div>
                       </div>
-                    </Col>
-                    <Col md={6}>
+                    </div>
+                    <div className="col-span-12 md:col-span-6">
                       <div
                         className="flex flex-col bg-sakura-500 text-warmstone-200 p-3 rounded-2xl shadow-sm h-full hover:cursor-pointer"
                         onClick={() => {
@@ -316,15 +312,15 @@ const AdminDashboard: React.FC = () => {
                         }}
                       >
                         <p className="text-zinc-900 text-sm font-bold mb-2">View All Meetings</p>
-                        <div className="flex bg-zinc-900 rounded-full p-2 w-fit align-self-end">
+                        <div className="flex bg-zinc-900 rounded-full p-2 w-fit self-end">
                           <Icons.MeetingRoom className="w-6 h-6" />
                         </div>
                       </div>
-                    </Col>
-                  </Row>
+                    </div>
+                  </div>
 
                   {/* Top Rated employee list */}
-                  <Col xs={12} md={12}>
+                  <div className="col-span-12">
                     <div className="text-zinc-500 font-semibold text-center mb-2 mt-3">
                       Top 3 Employees
                     </div>
@@ -346,13 +342,13 @@ const AdminDashboard: React.FC = () => {
                         );
                       })}
                     </div>
-                  </Col>
-                </Col>
-              </Row>
-            </Col>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Right Card -> Performance Review calender and meetCards */}
-            <Col lg="4" md="4">
+            <div className="col-span-12 lg:col-span-4">
               <AdminCalendar value={selectedDate} onChange={setSelectedDate} />
               <div className="text-zinc-500 font-semibold text-center mb-2 mt-3">
                 <h4>Your Meetings on {dayjs(selectedDate).format("D MMMM")}</h4>
@@ -399,9 +395,9 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
+            </div>
+          </div>
+        </div>
 
         {/* CreatePRModal */}
         <CreatePRModal

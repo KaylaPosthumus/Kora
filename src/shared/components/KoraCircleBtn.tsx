@@ -2,7 +2,6 @@
 
 import React from "react";
 import "@/styles/buttons.css";
-import { Button } from "react-bootstrap";
 
 // PrimaryBtn Properties
 interface PrimaryBtnProps {
@@ -32,11 +31,11 @@ const KoraCircleBtn = ({
 }: PrimaryBtnProps) => {
   // Default styles
   let btnStyles = "";
-  let btnVariant = "primary";
+  let variantClass = "kora-btn--primary";
 
   if (secondary) {
     // Secondary variant
-    btnVariant = "outline-primary";
+    variantClass = "kora-btn--secondary";
     switch (style) {
       case "default":
         btnStyles =
@@ -57,7 +56,7 @@ const KoraCircleBtn = ({
     }
   } else {
     // If not secondary, default to primary variant
-    btnVariant = "primary";
+    variantClass = "kora-btn--primary";
     switch (style) {
       case "default":
         btnStyles =
@@ -79,16 +78,15 @@ const KoraCircleBtn = ({
   }
 
   return (
-    <Button
-      variant={btnVariant}
+    <button
       onClick={onClick}
       type={type}
-      className={`${btnStyles} flex items-center justify-center h-8 w-8 rounded-full kora-btn ${className}`}
+      className={`${btnStyles} flex items-center justify-center h-8 w-8 rounded-full kora-btn ${variantClass} ${className}`}
       disabled={disabled}
       aria-label={ariaLabel}
     >
       {React.isValidElement(icon) && React.cloneElement(icon, { fontSize: "small" })}
-    </Button>
+    </button>
   );
 };
 

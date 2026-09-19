@@ -1,24 +1,55 @@
-/* Manual Override for Active States of KoraButtons */
-/* (Overriding bootstrap's default states) */
+/*
+ * State styling for KoraBtn and KoraCircleBtn.
+ *
+ * These selectors used to key on Bootstrap's own classes — `.btn`, `.btn-primary`,
+ * `.btn-outline-primary` — which react-bootstrap's `variant` prop injected. With
+ * Bootstrap gone, the buttons carry `kora-btn` plus `kora-btn--primary` or
+ * `kora-btn--secondary`, which the components set themselves. Same three states,
+ * same colours, no framework underneath.
+ *
+ * The `[class*="bg-corigreen"]` attribute selectors are unchanged: they key on the
+ * Tailwind classes the component already applies, which is how one rule covers a
+ * whole colour family without the component having to name its own state styles.
+ *
+ * `!important` throughout, because these have to beat Tailwind's `hover:` and
+ * `disabled:` utilities on the same element.
+ */
+
+/* Base — what Bootstrap's `.btn` used to provide. */
+.kora-btn {
+  transition:
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+}
+
+.kora-btn:disabled {
+  cursor: not-allowed;
+  opacity: 1; /* the disabled colours below carry the affordance, not a fade */
+}
 
 /* PRIMARY BUTTONS */
 /* ######################################################### */
 /* Active State */
 /* -------------------------------------------------------- */
 /* Green / Default */
-.btn.kora-btn.btn-primary[class*="bg-corigreen"]:active {
+.kora-btn.kora-btn--primary[class*="bg-corigreen"]:active {
   background-color: #b5c89f !important; /* corigreen-300 */
   border-color: #b5c89f !important;
 }
 
 /* Black */
-.btn.kora-btn.btn-primary[class*="bg-zinc"]:active {
+.kora-btn.kora-btn--primary[class*="bg-zinc"]:active {
   background-color: #71717a !important; /* zinc-400 */
   border-color: #71717a !important;
 }
 
 /* Red */
-.btn.kora-btn.btn-primary[class*="bg-red"]:active {
+.kora-btn.kora-btn--primary[class*="bg-red"]:active {
   background-color: #fca5a5 !important; /* red-300 */
   border-color: #fca5a5 !important;
 }
@@ -27,17 +58,18 @@
 /* Focus State */
 /* -------------------------------------------------------- */
 /* All Primary Buttons */
-.btn.kora-btn.btn-primary:focus {
+.kora-btn.kora-btn--primary:focus-visible {
   background-color: #f4b8d9 !important; /* sakura-500 */
   border-color: #f4b8d9 !important;
   box-shadow: 0 0 0 0.25rem rgba(244, 184, 217, 0.5) !important;
+  outline: none !important;
 }
 /* -------------------------------------------------------- */
 
 /* Disabled State */
 /* -------------------------------------------------------- */
 /* All Primary Buttons */
-.btn.kora-btn.btn-primary:disabled {
+.kora-btn.kora-btn--primary:disabled {
   background-color: #a1a1aa !important; /* zinc-400 */
   border-color: #a1a1aa !important;
 }
@@ -49,21 +81,21 @@
 /* Active State */
 /* -------------------------------------------------------- */
 /* Green / Default */
-.btn.kora-btn.btn-outline-primary[class*="border-corigreen"]:active {
+.kora-btn.kora-btn--secondary[class*="border-corigreen"]:active {
   background-color: #b5c89f !important; /* corigreen-300 */
   border-color: #b5c89f !important;
   color: #fafafa !important;
 }
 
 /* Black */
-.btn.kora-btn.btn-outline-primary[class*="border-zinc"]:active {
+.kora-btn.kora-btn--secondary[class*="border-zinc"]:active {
   background-color: #71717a !important; /* zinc-400 */
   border-color: #71717a !important;
   color: #fafafa !important;
 }
 
 /* Red */
-.btn.kora-btn.btn-outline-primary[class*="border-red"]:active {
+.kora-btn.kora-btn--secondary[class*="border-red"]:active {
   background-color: #fca5a5 !important; /* red-300 */
   border-color: #fca5a5 !important;
   color: #fafafa !important;
@@ -73,18 +105,19 @@
 /* Focus State */
 /* -------------------------------------------------------- */
 /* All Secondary Buttons */
-.btn.kora-btn.btn-outline-primary:focus {
+.kora-btn.kora-btn--secondary:focus-visible {
   background-color: transparent !important;
   border-color: #f4b8d9 !important; /* sakura-500 */
   box-shadow: 0 0 0 0.25rem rgba(244, 184, 217, 0.5) !important;
   color: #926e82 !important;
+  outline: none !important;
 }
 /* -------------------------------------------------------- */
 
 /* Disabled State */
 /* -------------------------------------------------------- */
 /* All Secondary Buttons */
-.btn.kora-btn.btn-outline-primary:disabled {
+.kora-btn.kora-btn--secondary:disabled {
   border-color: #a1a1aa !important; /* zinc-500 */
   color: #a1a1aa !important;
 }
