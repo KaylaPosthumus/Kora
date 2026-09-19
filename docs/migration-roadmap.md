@@ -281,9 +281,13 @@ Order, one commit per step, `npm run typecheck` green between each:
    Two modules are still over the ~400-line guide — `employeesApi.ts` (457) and
    `gatheringsApi.ts` (413) — which is the next thing to look at if either keeps growing.
    The barrel at `src/services/api.service.ts` is marked `@deprecated`; step 6 deletes it.
-3. **Lift the shell.** `App.tsx` is 220 lines, ~150 of which are the Ant Design token
-   block. Split into `app/App.tsx`, `app/router.tsx`, `app/providers.tsx`, `app/theme.ts`.
-   This is also what makes Phase 8 a one-file edit.
+3. ~~**Lift the shell.**~~ **DONE.** The 247-line `src/App.tsx` is now four modules:
+   `app/theme.ts` (the ~150-line Ant token block), `app/router.tsx` (nav, page frame,
+   route table), `app/providers.tsx` (the wrapper stack) and `app/App.tsx` (24 lines of
+   composition). Phase 8's Ant half is now a single-file edit, and `router.tsx` is the
+   seam Phase 6's `React.lazy` needs. One deviation from the sketch above: the error
+   boundary stays inside `<main>` in `router.tsx` rather than moving to `providers.tsx`,
+   because wrapping the whole tree would take the navigation down with a throwing page.
 4. **Move components into features**, one feature per commit. Fix `calender.tsx` →
    `features/dashboard/components/AdminCalendar.tsx` on the way through.
 5. **Move pages into features.** `features/leave/pages/AdminLeaveRequests.tsx` and
@@ -452,7 +456,8 @@ backend has the same never-run-against-a-real-project status the data layer has.
 
 - **Do not restructure before Phase 2.** Attributing a rules failure is much harder once
   106 files have moved.
-- **Do not rebrand before Phase 4.** The theme block is 150 lines inside `App.tsx` today
+- ~~**Do not rebrand before Phase 4.**~~ Unblocked: step 3 moved the theme block into
+  `src/app/theme.ts`, so Phase 8's Ant half is now one file. It was 150 lines inside `App.tsx`
   and one file after; waiting turns a sweep into an edit.
 - **Do not share one `node_modules` between `src/` and `functions/`.** Different runtimes.
   `rules-tests/` is a third tree. Each has its own lockfile and its own CI job.

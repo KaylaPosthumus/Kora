@@ -225,10 +225,10 @@ package with its own Vitest config and its own `npm test`, as is `rules-tests/`
 
 ## Conventions
 
-- Ant Design is the component library; the theme token block lives in `App.tsx`.
+- Ant Design is the component library; the theme token block lives in `src/app/theme.ts`.
   Tailwind and Bootstrap are also present, plus hand-written CSS in `src/styles/`.
 - `src/dev/` holds unguarded dev-only scratch pages, served under `/dev/*`.
-  `App.tsx` reaches them through a single lazy import on the
+  `src/app/router.tsx` reaches them through a single lazy import on the
   `import.meta.env.DEV` branch, so Rollup drops the whole subtree from a
   production build — verified by no dev chunk appearing in `dist/assets`. Keep
   that shape: importing anything from `src/dev/` outside that branch ships it.
