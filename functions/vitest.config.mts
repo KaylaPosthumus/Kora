@@ -7,6 +7,12 @@ import { defineConfig } from "vitest/config";
  * the two suites never collide.
  */
 export default defineConfig({
+  // An inline, empty PostCSS config. Without it Vite searches upward for one,
+  // finds the web app's postcss.config.js at the repo root, and fails to load
+  // its tailwindcss plugin — which this package does not install. It only
+  // passes locally because the root node_modules happens to be there; in CI,
+  // where each job installs just its own package, every run failed on it.
+  css: { postcss: {} },
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
