@@ -8,26 +8,26 @@ import type { SorterResult, FilterValue } from "antd/es/table/interface";
 import dayjs from "dayjs";
 
 // Import Services
-import { employeeAPI, pageAPI } from "../../services/api.service";
+import { employeeAPI, pageAPI } from "@/services/api.service";
 
 // Import Components
 import KoraBtn from "@/shared/components/KoraBtn";
 import { EmployTypeBadge } from "@/features/employees/components";
 
 // Import Constants
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 
 // Import Utils
-import { formatRandAmount, formatShortRandAmount } from "../../utils/formatUtils";
-import { getFullImageUrl } from "../../utils/imageUtils";
-import { isDateInPast, formatTimestampToDate, calculateNextPayDay } from "../../utils/dateUtils";
+import { formatRandAmount, formatShortRandAmount } from "@/utils/formatUtils";
+import { getFullImageUrl } from "@/utils/imageUtils";
+import { isDateInPast, formatTimestampToDate, calculateNextPayDay } from "@/utils/dateUtils";
 
 // Import Types / Interfaces
 import { EmployeeListItem } from "@/shared/types/employeeListItem";
 import { EmployType, Gender, PayCycle } from "@/shared/types/common";
 
 // Authentication
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 // Types for table
 type ColumnsType<T extends object = object> = TableProps<T>["columns"];

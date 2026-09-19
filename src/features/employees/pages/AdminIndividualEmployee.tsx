@@ -20,20 +20,20 @@ import ProfilePicUploadBtn from "@/shared/components/ProfilePicUploadBtn";
 // Modals
 
 // Import Icons
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 
 // Import Assets
-import GoogleIcon from "../../assets/icons/googleIcon.png";
+import GoogleIcon from "@/assets/icons/googleIcon.png";
 
 // Import Utils / Functions
 import {
   calculateNextPayDay,
   formatEmploymentDuration,
   calculatePreviousPayDay,
-} from "../../utils/dateUtils";
-import { formatPhone, formatRandAmount } from "../../utils/formatUtils";
-import { getFullImageUrl } from "../../utils/imageUtils";
-import { pageAPI, employeeAPI, empUserAPI } from "../../services/api.service";
+} from "@/utils/dateUtils";
+import { formatPhone, formatRandAmount } from "@/utils/formatUtils";
+import { getFullImageUrl } from "@/utils/imageUtils";
+import { pageAPI, employeeAPI, empUserAPI } from "@/services/api.service";
 
 // Types / Interfaces
 import { Gender, PayCycle } from "@/shared/types/common";
@@ -45,7 +45,7 @@ import { Gathering } from "@/shared/types/gathering";
 import { AdminGatheringBox } from "@/features/gatherings/components";
 
 // Authentication
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 // Admin Employee Details Page Response Interface
 interface AdminEmpDetailsResponse {

@@ -6,13 +6,13 @@ import {
   fullGoogleSignIn,
   fullEmailLogin,
   handleExistingLoginRedirect,
-} from "../../services/authService";
+} from "@/services/authService";
 
 // Styling and UI Components
 import { Form, Input, message, Spin } from "antd";
 import GoogleIcon from "@mui/icons-material/Google";
-import BackgroundImage from "../../assets/images/Auth_Background.png";
-import Logo from "../../assets/logos/cori_logo_green.png";
+import BackgroundImage from "@/assets/images/Auth_Background.png";
+import Logo from "@/assets/logos/cori_logo_green.png";
 
 // Child Components
 import { UnlinkedMessage } from "@/features/auth/components";

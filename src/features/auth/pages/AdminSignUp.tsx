@@ -13,20 +13,32 @@ import KoraBtn from "@/shared/components/KoraBtn";
 import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
-
 import { VerifyEmailNotice } from "@/features/auth/components";
+import { adminSignUp, adminGoogleSignUp } from "@/services/authService";
 import { useEffect, useState } from "react";
-import BackgroundImage from "../../assets/images/Auth_Background.png";
-import Logo from "../../assets/logos/cori_logo_green.png";
+import BackgroundImage from "@/assets/images/Auth_Background.png";
+import Logo from "@/assets/logos/cori_logo_green.png";
 
-// API calls:
-import { employeeSignUp, employeeGoogleSignUp } from "../../services/authService";
+const AdminSignUp: React.FC = () => {
+  const navigate = useNavigate();
 
-const EmployeeSignUp: React.FC = () => {
   const [form] = Form.useForm();
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
   const messageKey = "signup";
+
+  const handleGoogleSignUp = async () => {
+    messageApi.open({ key: messageKey, type: "loading", content: "Signing up with Google..." });
+
+    const result = await adminGoogleSignUp();
+
+    messageApi.open({
+      key: messageKey,
+      type: result.errorCode === 200 ? "success" : "error",
+      content: result.errorCode === 200 ? result.message : `Sign-up failed: ${result.message}`,
+      duration: 3,
+    });
+  };
 
   const handleSignUp = async () => {
     try {
@@ -37,7 +49,7 @@ const EmployeeSignUp: React.FC = () => {
       });
       const values = await form.validateFields();
 
-      const result = await employeeSignUp({
+      const result = await adminSignUp({
         fullName: values.fullName,
         email: values.email,
         password: values.password,
@@ -57,19 +69,6 @@ const EmployeeSignUp: React.FC = () => {
         content: `Validation failded, please check if you can sign in, ${err}`,
       });
     }
-  };
-
-  const handleGoogleSignUp = async () => {
-    messageApi.open({ key: messageKey, type: "loading", content: "Signing up with Google..." });
-
-    const result = await employeeGoogleSignUp();
-
-    messageApi.open({
-      key: messageKey,
-      type: result.errorCode === 200 ? "success" : "error",
-      content: result.errorCode === 200 ? result.message : `Sign-up failed: ${result.message}`,
-      duration: 3,
-    });
   };
 
   return (
@@ -92,9 +91,8 @@ const EmployeeSignUp: React.FC = () => {
           <div className="w-1/2 flex items-center justify-center mb-16">
             {!pendingEmail && (
               <div className="flex flex-col items-center w-[300px]">
-                <h1 className="text-3xl font-bold mb-4 text-corigreen-500 ">
-                  Employee{" "}
-                  <span className="text-zinc-900 font-light">Signup</span>
+                <h1 className="text-3xl font-bold mb-4 text-corigreen-500">
+                  Admin <span className="text-zinc-900 font-light">Signup</span>
                 </h1>
                 <Form
                   form={form}
@@ -115,7 +113,6 @@ const EmployeeSignUp: React.FC = () => {
                   <Form.Item
                     name="fullName"
                     label="Full Name"
-                    // Ensure first letter uppercase and rest lowercase
                     normalize={(value: string) =>
                       value
                         .trimStart()
@@ -213,4 +210,4 @@ const EmployeeSignUp: React.FC = () => {
   );
 };
 
-export default EmployeeSignUp;
+export default AdminSignUp;

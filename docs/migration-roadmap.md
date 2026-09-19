@@ -306,9 +306,14 @@ Order, one commit per step, `npm run typecheck` green between each:
    `features/dashboard/components/AdminCalendar.tsx` on the way through. Landed as one
    commit rather than one per feature — the import rewrite had to be atomic to keep
    `tsc` green.
-5. **Move pages into features.** `features/leave/pages/AdminLeaveRequests.tsx` and
-   `features/leave/pages/EmployeeLeaveOverview.tsx` sit together — the feature owns both
-   sides of its domain.
+5. ~~**Move pages into features.**~~ **DONE.** All 14 screens sit with their feature, so
+   each owns both sides of its domain: `features/leave/pages/` holds
+   `AdminLeaveRequests.tsx` and `EmployeeLeaveOverview.tsx` together, and the same for
+   equipment, employees and gatherings. The split that mattered was the two home screens
+   — `EmployeeHome` and `AdminDashboard` both went to `dashboard`, since each is its
+   role's dashboard rather than a member of the domain it summarises. `NotFound` went to
+   `app/`, not to a feature: it belongs to the shell that routes to it. `src/pages/` is
+   gone.
 6. **Rewrite imports to `@/`** and delete the barrel.
 7. **Add the `no-restricted-paths` rule** that enforces §2 rule 3, so the boundary holds.
    Per the amendment there, the pattern to ban is `@/features/*/components/*` from outside

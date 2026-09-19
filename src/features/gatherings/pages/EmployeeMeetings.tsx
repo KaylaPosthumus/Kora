@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Table, Dropdown, Tooltip, Button, message, Spin, Empty } from "antd";
 import type { TableProps, MenuProps } from "antd";
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 import KoraBtn from "@/shared/components/KoraBtn";
-import { meetingAPI, subscribeToGatherings } from "../../services/api.service";
+import { meetingAPI, subscribeToGatherings } from "@/services/api.service";
 import { GatheringType, MeetStatus, ReviewStatus } from "@/shared/types/common";
 import { GatheringStatusBadge, MeetRequestsBadge, RequestMeetingModal, EditMeetingRequestModal } from "@/features/gatherings/components";
-import { formatTimestampToDate, formatTimestampToTime } from "../../utils/dateUtils";
-import { downloadFileFromUrl } from "../../utils/fileUtils";
+import { formatTimestampToDate, formatTimestampToTime } from "@/utils/dateUtils";
+import { downloadFileFromUrl } from "@/utils/fileUtils";
 import dayjs from "dayjs";
 import { Gathering } from "@/shared/types/gathering";
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 // Types for table
 type ColumnsType<T extends object = object> = TableProps<T>["columns"];

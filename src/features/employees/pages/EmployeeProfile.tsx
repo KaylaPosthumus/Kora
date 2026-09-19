@@ -13,10 +13,10 @@ import ProfilePicUploadBtn from "@/shared/components/ProfilePicUploadBtn";
 import { Avatar, message, Spin } from "antd";
 
 // Import Icons
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 
 // Functionality
-import { empUserAPI, pageAPI } from "../../services/api.service";
+import { empUserAPI, pageAPI } from "@/services/api.service";
 import dayjs from "dayjs";
 
 // Types & Interfaces
@@ -25,10 +25,10 @@ import { EmpUser } from "@/shared/types/empUser";
 import { EmpUserRatingMetrics } from "@/shared/types/empUserRatingMetrics";
 
 // Utility Functions
-import { formatPhone } from "../../utils/formatUtils";
-import { formatEmploymentDuration } from "../../utils/dateUtils";
-import { generatePayrollPDF } from "../../utils/pdfUtils";
-import { getFullCurrentUser } from "../../services/authService";
+import { formatPhone } from "@/utils/formatUtils";
+import { formatEmploymentDuration } from "@/utils/dateUtils";
+import { generatePayrollPDF } from "@/utils/pdfUtils";
+import { getFullCurrentUser } from "@/services/authService";
 
 interface EmployeeProfileResponse {
   empUser: EmpUser;

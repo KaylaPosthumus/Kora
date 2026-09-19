@@ -1,7 +1,7 @@
 //Kayla Posthumus
 
 import React, { useEffect, useState } from "react";
-import "../../styles/adminDash.css";
+import "@/styles/adminDash.css";
 import { Col, Container, Row } from "react-bootstrap";
 
 //Custom Components
@@ -12,7 +12,7 @@ import { TopRatedEmpAdm as TopRatedEmpCard, AdminCalendar } from "@/features/das
 import { AdminGatheringBox, CreatePRModal, EditPRModal } from "@/features/gatherings/components";
 
 //Functionality
-import { empLeaveRequestsAPI, gatheringAPI, pageAPI } from "../../services/api.service";
+import { empLeaveRequestsAPI, gatheringAPI, pageAPI } from "@/services/api.service";
 import { useNavigate } from "react-router-dom";
 
 //Interface
@@ -21,14 +21,14 @@ import { Gathering } from "@/shared/types/gathering";
 //Modals
 
 //Assets
-import AdminAddIcon from "../../assets/icons/AdminAddIcon.png";
+import AdminAddIcon from "@/assets/icons/AdminAddIcon.png";
 import { Spin } from "antd";
 import dayjs from "dayjs";
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 import KoraBtn from "@/shared/components/KoraBtn";
 
 // Authentication
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 const AdminDashboard: React.FC = () => {
   // State variables

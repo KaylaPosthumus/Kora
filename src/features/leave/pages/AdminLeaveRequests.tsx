@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { empLeaveRequestsAPI } from "../../services/api.service";
+import { empLeaveRequestsAPI } from "@/services/api.service";
 import dayjs from "dayjs";
-import { calculateDurationInDays } from "../../utils/dateUtils";
+import { calculateDurationInDays } from "@/utils/dateUtils";
 
 // Import Components
 import { Tooltip, Table, message } from "antd";
 
 // Icons
 import { ClockCircleOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 
 // Badges & Buttons
 import KoraBadge from "@/shared/components/KoraBadge";
@@ -23,7 +23,7 @@ import { EditPolicyModal, OverBalanceConfirmModal } from "@/features/leave/compo
 // Over Balance Confirm Modal
 
 // Authentication
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 // Message
 

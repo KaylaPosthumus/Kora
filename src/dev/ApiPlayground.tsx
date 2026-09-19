@@ -1,4 +1,4 @@
-// pages/apiPlayground/ApiPlayground.tsx
+// src/dev/ApiPlayground.tsx
 import { useState } from "react";
 import { getCurrentUser, CurrentUserDTO } from "../services/authService";
 

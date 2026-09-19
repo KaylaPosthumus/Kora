@@ -4,21 +4,21 @@ import Navigation from "@/shared/components/Navigation";
 import { ProtectedRoute } from "@/features/auth/components";
 import ErrorBoundary from "@/shared/components/ErrorBoundary";
 
-import Login from "@/pages/auth/Login";
-import EmployeeSignUp from "@/pages/auth/EmployeeSignUp";
-import AdminSignUp from "@/pages/auth/AdminSignUp";
-import EmployeeHome from "@/pages/employee/EmployeeHome";
-import EmployeeLeaveOverview from "@/pages/employee/EmployeeLeaveOverview";
-import EmployeeProfile from "@/pages/employee/EmployeeProfile";
-import EmployeeMeetings from "@/pages/employee/EmployeeMeetings";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import AdminEmployeeManagement from "@/pages/admin/AdminEmployeeManagement";
-import AdminCreateEmployee from "@/pages/admin/AdminCreateEmployee";
-import AdminIndividualEmployee from "@/pages/admin/AdminIndividualEmployee";
-import AdminEquipmentManagement from "@/pages/admin/AdminEquipmentManagement";
-import AdminLeaveRequests from "@/pages/admin/AdminLeaveRequests";
-import AdminMeetings from "@/pages/admin/AdminMeetings";
-import NotFound from "@/pages/NotFound";
+import Login from "@/features/auth/pages/Login";
+import EmployeeSignUp from "@/features/auth/pages/EmployeeSignUp";
+import AdminSignUp from "@/features/auth/pages/AdminSignUp";
+import EmployeeHome from "@/features/dashboard/pages/EmployeeHome";
+import EmployeeLeaveOverview from "@/features/leave/pages/EmployeeLeaveOverview";
+import EmployeeProfile from "@/features/employees/pages/EmployeeProfile";
+import EmployeeMeetings from "@/features/gatherings/pages/EmployeeMeetings";
+import AdminDashboard from "@/features/dashboard/pages/AdminDashboard";
+import AdminEmployeeManagement from "@/features/employees/pages/AdminEmployeeManagement";
+import AdminCreateEmployee from "@/features/employees/pages/AdminCreateEmployee";
+import AdminIndividualEmployee from "@/features/employees/pages/AdminIndividualEmployee";
+import AdminEquipmentManagement from "@/features/equipment/pages/AdminEquipmentManagement";
+import AdminLeaveRequests from "@/features/leave/pages/AdminLeaveRequests";
+import AdminMeetings from "@/features/gatherings/pages/AdminMeetings";
+import NotFound from "./NotFound";
 
 // Dev-only scratch pages. Vite folds `import.meta.env.DEV` to `false` in a production
 // build, so Rollup drops this branch along with the module and chunks behind it —

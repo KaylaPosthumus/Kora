@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { LeaveStatus } from "@/shared/types/common";
-import { subscribeToEmployeeLeave } from "../../services/api.service";
+import { subscribeToEmployeeLeave } from "@/services/api.service";
 
 // Icons
 import { ClockCircleOutlined } from "@ant-design/icons";
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 
 // Graphs & Tooltip
 import { Progress, Tooltip, Spin } from "antd";
@@ -14,7 +14,7 @@ import KoraBadge from "@/shared/components/KoraBadge";
 import { LeaveRequestCard, ApplyForLeaveModal } from "@/features/leave/components";
 
 // Apply-for-leave modal
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 // KoraBtn component
 import KoraBtn from "@/shared/components/KoraBtn";

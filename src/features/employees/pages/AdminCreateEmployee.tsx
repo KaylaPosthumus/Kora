@@ -13,7 +13,7 @@ import {
 const { Title, Text } = Typography;
 import KoraBtn from "@/shared/components/KoraBtn";
 import { EquipAssignListItem, AssignEmpToOneOrManyEquipsModal } from "@/features/equipment/components";
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 import {
   EmployType,
   EquipmentCategory,
@@ -22,11 +22,11 @@ import {
   PayCycle,
 } from "@/shared/types/common";
 import { UnlinkedUserDropdown, UnlinkedUser } from "@/features/employees/components";
-import { employeeAPI, linkUserAsAdmin, userAPI } from "../../services/api.service";
+import { employeeAPI, linkUserAsAdmin, userAPI } from "@/services/api.service";
 import dayjs from "dayjs";
 
 // Authentication
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 import { Equipment } from "@/shared/types/equipment";
 
 const AdminCreateEmployee: React.FC = () => {

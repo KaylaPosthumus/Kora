@@ -6,19 +6,19 @@ import {
   pageAPI,
   subscribeToGatherings,
   UPCOMING_AND_COMPLETED,
-} from "../../services/api.service";
+} from "@/services/api.service";
 import { EmpUser } from "@/shared/types/empUser";
-import { formatRandAmount } from "../../utils/formatUtils";
+import { formatRandAmount } from "@/utils/formatUtils";
 import dayjs from "dayjs";
-import { Icons } from "../../constants/icons";
-import { calculateNextPayDay } from "../../utils/dateUtils";
-import { generatePayrollPDF } from "../../utils/pdfUtils";
+import { Icons } from "@/constants/icons";
+import { calculateNextPayDay } from "@/utils/dateUtils";
+import { generatePayrollPDF } from "@/utils/pdfUtils";
 import { Gender, PayCycle } from "@/shared/types/common";
 
 import { useParams } from "react-router-dom";
 import { Spin } from "antd";
 import { EmpGatheringBox } from "@/features/gatherings/components";
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 const EmployeeHome: React.FC = () => {
   const [empUser, setEmpUser] = useState<EmpUser | null>(null);

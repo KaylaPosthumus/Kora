@@ -35,7 +35,7 @@ const navigation = captureNavigation();
  * so each test needs a fresh copy — and `Login` has to be imported *after* the
  * reset or it would close over the previous one.
  */
-const loadLogin = async () => (await import("../../pages/auth/Login")).default;
+const loadLogin = async () => (await import("@/features/auth/pages/Login")).default;
 
 const seedLinkedEmployee = () => {
   authMock.addAccount({

@@ -2,13 +2,13 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import type { GetProp, TableProps } from "antd";
 import { Table, Avatar, Tooltip, Button, Dropdown, Popover, message, DatePicker, Spin } from "antd";
 import type { SorterResult, FilterValue } from "antd/es/table/interface";
-import { equipmentAPI } from "../../services/api.service";
+import { equipmentAPI } from "@/services/api.service";
 import { useNavigate } from "react-router-dom";
-import { formatRandAmount } from "../../utils/formatUtils";
-import { getFullImageUrl } from "../../utils/imageUtils";
+import { formatRandAmount } from "@/utils/formatUtils";
+import { getFullImageUrl } from "@/utils/imageUtils";
 
 // Import Icons
-import { Icons } from "../../constants/icons";
+import { Icons } from "@/constants/icons";
 
 // Import Components
 import KoraBtn from "@/shared/components/KoraBtn";
@@ -22,7 +22,7 @@ import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 import { EmpUser } from "@/shared/types/empUser";
 
 // Authentication
-import { getFullCurrentUser } from "../../services/authService";
+import { getFullCurrentUser } from "@/services/authService";
 
 type ColumnsType<T extends object = object> = TableProps<T>["columns"];
 type TablePaginationConfig = Exclude<GetProp<TableProps, "pagination">, boolean>;
