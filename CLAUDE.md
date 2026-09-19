@@ -43,12 +43,15 @@ still relative; the rewrite is Phase 4 work.
 
 ## Environment
 
-Copy `.env.example` to `.env.local` and fill it in. Three groups of vars:
-`VITE_FIREBASE_*` (web app config, read by `src/services/firebase.ts`),
-`VITE_CLOUDINARY_*` (the upload widgets still use Cloudinary), and the
+Copy `.env.example` to `.env.local` and fill it in. Two groups of vars:
+`VITE_FIREBASE_*` (web app config, read by `src/services/firebase.ts`) and the
 `GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_PROJECT_ID` / `SEED_*` group used only
 by `scripts/seed.mjs`. The seed script runs via `node --env-file=.env.local`, so its
-vars must be in that file — a shell export is not read.
+vars must be in that file — a shell export is not read. Cloudinary is gone: uploads
+go to Firebase Storage through `src/services/storageService.ts`.
+
+`functions/` has its **own** dependency tree. `npm install` at the root does not
+reach it — run `npm --prefix functions install`, and the same for `rules-tests/`.
 
 Nothing in `src/` connects to an emulator — the app always runs against the real
 project (`kora-51711`, pinned in `.firebaserc`), and the Vitest suite mocks the
@@ -174,7 +177,7 @@ a service worker in front of the dev server breaks hot reload, so PWA behaviour 
 only be tested against `npm run build` + `npm run preview`.
 
 The service worker ignores cross-origin requests entirely, which is what keeps
-Firestore's own persistence and Cloudinary out of a second cache. Build assets are
+Firestore's own persistence and Storage downloads out of a second cache. Build assets are
 content-hashed so they are cache-first; navigations are network-first with the cached
 shell as fallback. **If you change `public/sw.js`, bump the `CACHE` constant** or
 clients keep the old worker's cache. `firebase.json` marks `/sw.js` and

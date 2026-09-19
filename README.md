@@ -3,9 +3,10 @@
 HR management system — React + TypeScript + Vite, backed by Firebase (Auth + Firestore).
 
 Ported from the Electron/.NET version of Coriander. `MIGRATION_PLAN.md` records the
-decisions behind the data model (phase 1); `NEXT_MIGRATION_PLAN.md.pdf` is the phase 2
-plan that drives the work after it. `CLAUDE.md` is the orientation doc for the
-architecture and its invariants.
+decisions behind the data model (phase 1); **`docs/migration-roadmap.md` is the current
+forward plan** and supersedes `NEXT_MIGRATION_PLAN.md.pdf`. `CLAUDE.md` is the
+orientation doc for the architecture and its invariants, and `functions/README.md`
+covers the server-side half.
 
 ## Setup
 
@@ -14,15 +15,15 @@ npm install
 cp .env.example .env.local     # fill this in — see below
 ```
 
-Create a Firebase project and enable **Authentication** (Email/Password + Google) and
-**Firestore**. Storage does not need enabling yet: nothing writes to it, and
-`storage.rules` denies everything — uploads still go to Cloudinary.
+Create a Firebase project and enable **Authentication** (Email/Password + Google),
+**Firestore** and **Storage** — profile pictures and review documents are uploaded
+through `src/services/storageService.ts` under the two prefixes `storage.rules`
+describes. Deploying `functions/` additionally needs the project on the **Blaze**
+plan; Cloud Functions are not available on Spark.
 
-`.env.local` has three groups, and the app needs the first two to run:
+`.env.local` has two groups, and the app needs the first to run:
 
 - `VITE_FIREBASE_*` — the web app config, from **Project settings → Your apps**.
-- `VITE_CLOUDINARY_*` — cloud name plus the two unsigned presets. Without them the
-  profile-picture and review-document upload widgets fail.
 - `GOOGLE_APPLICATION_CREDENTIALS`, `FIREBASE_PROJECT_ID`, `SEED_*` — read only by
   the seed script (see Seeding).
 
@@ -118,8 +119,10 @@ build and ships whatever is already in `dist/`, which is usually stale — reach
 only with `--only` for rules and indexes.
 
 `firebase.json` publishes `dist/` to Hosting with an SPA rewrite, and deploys
-`firestore.rules`, `firestore.indexes.json`, and `storage.rules`. There is no
-`functions` block — the app has no server-side code.
+`firestore.rules`, `firestore.indexes.json`, `storage.rules` and `functions/`, whose
+`predeploy` hook runs the backend's own `npm run build`. The functions package has a
+separate dependency tree — run `npm --prefix functions install` at least once, since
+the root `npm install` does not reach it.
 
 ## Data model
 
@@ -149,35 +152,51 @@ return an unsubscribe the page calls on unmount. The one-shot reads stay for the
 screens and for the employee views that don't change on their own: `EmployeeProfile` and
 the detail card on `EmployeeHome` still call `pageAPI`.
 
-**Roles and custom claims.** `firestore.rules` reads a caller's role from
-`request.auth.token.role` and falls back to a `get()` on `users/{uid}`. Only the seed
-script ever calls `setCustomUserClaims` — the in-app linking actions
-(`employeeAPI.setupUserAsEmployee`, `linkUserAsAdmin`) write the role onto the user doc
-and nothing else, because a browser client cannot mint its own claims. So for every user
-created through the UI the fallback is the only path, and each rule evaluation costs a
-document read. Closing that is what phase 3's Cloud Function is for.
+**Roles and custom claims.** `firestore.rules` reads a caller's role from the custom
+claim and falls back to a `get()` on `users/{uid}` when the claim is absent. The in-app
+linking actions (`employeeAPI.setupUserAsEmployee`, `linkUserAsAdmin`) write the role
+onto the user doc and nothing else, because a browser client cannot mint its own claims;
+the `syncRoleClaim` Cloud Function then derives the claim from that document, so the
+user doc stays the single source of truth. A new claim does not reach the client until
+its ID token refreshes, so `AuthContext` watches `userClaims/{uid}.refreshTime` and
+forces `getIdToken(true)` when it moves. Until that lands the `get()` fallback still
+authorises correctly, just at the cost of a document read per evaluation.
+
+Claims are read in the rules through a `claim(key, default)` helper, never dot access —
+dot access on an absent claim is an evaluation error, not a null, and it once denied
+every employee write. `rules-tests/` pins that.
 
 ## Still on the list
 
-- Uploads still go to Cloudinary; moving them to Firebase Storage is a separate change
-  (`storage.rules` currently denies everything).
+The forward plan lives in `docs/migration-roadmap.md`; this is the short version.
+
+**Blocking everything else — nothing has run against the live project.** The Firebase
+CLI holds no credentials, `serviceAccountKey.json` is absent, and the rules, indexes,
+storage rules, functions and Hosting have never been deployed. The whole suite passes
+offline against mocked Firebase, which cannot catch a missing index or a rule that
+denies a real write. `docs/phase-2-verification.md` is the runbook.
+
+- **The backend is written but unreachable from the app.** `functions/` deploys
+  `adjustLeaveBalance`, `requestEmailVerification` and `confirmEmailVerification` as
+  callables, but `src/services/firebase.ts` never calls `getFunctions()` and nothing in
+  `src/` calls `httpsCallable`. Three admin/employee flows are waiting on that seam.
+- **`onLeaveRequestWritten` stamps a `validation` verdict** — overlaps and insufficient
+  balance — onto every leave request. No type declares the field and no screen reads it.
+- **Email needs the `firestore-send-email` extension** pointed at the `mail` collection.
+  Until it is installed, verification messages queue in `mail` unsent rather than lost.
+- Email verification is sent but never enforced — nothing reads `isVerified`. Access is
+  gated on an admin having linked the account. Enforce it or drop the field.
 - Admin dashboard aggregates are computed client-side. If the employee count grows,
   move them into a Cloud Function or precomputed aggregate documents.
-- The old Jest suite was not carried over — its mocks targeted the axios API. The
-  Vitest suite above covers the leave transaction, the auth flow and the live-read
-  subscriptions; the page-level fan-outs in `pageAPI` are still untested.
-- No Cloud Function sets custom claims, so users created through the UI are authorised
-  through a document read on every rule evaluation (see Data model).
-- Email verification is sent but never enforced — nothing reads `isVerified`. Access is
-  gated on an admin having linked the account.
+- The page-level fan-outs in `pageAPI` are still the largest untested surface; the
+  suites cover the leave transaction, the auth flow and the live-read subscriptions.
 - The mobile pass covered the employee side only; admin pages have essentially no
   breakpoints.
-- `npm run lint` exits clean, with 205 `no-explicit-any`-style warnings left from the
+- `npm run lint` exits clean, with 221 `no-explicit-any`-style warnings left from the
   port still to chip at.
-- The rebrand has not happened: the Tailwind palette is still `corigreen`/`sakura`/
-  `warmstone`, the logo and the PWA icons are still the Coriander wordmark, and
-  `CoriBtn`/`CoriBadge`/`CoriCircleBtn` keep the old name. That phase needs brand
-  assets, not code.
+- The rebrand is name-only: the components are `KoraBtn`/`KoraBadge`/`KoraCircleBtn`,
+  but the Tailwind palette is still `corigreen`/`sakura`/`warmstone` and the logo and
+  PWA icons are still the Coriander wordmark. That phase needs brand assets, not code.
 
 ## Verifying against the live project
 

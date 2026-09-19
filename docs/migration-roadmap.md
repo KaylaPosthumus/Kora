@@ -6,6 +6,9 @@
 >
 > `MIGRATION_PLAN.md` stays as the phase-1 record — the *why* behind the data model.
 > This document is the *what next*.
+>
+> **Last reconciled against the tree at commit `0be12a5` (2026-09-19.)** Phases 3 and 5
+> are done; Phase 2 is still the blocking one and has never been run.
 
 ---
 
@@ -21,16 +24,19 @@
 | Auth | Firebase Auth, email + Google | Old .NET numeric contract (`200`/`300`/`4xx`) preserved so the auth screens didn't change |
 | Access control | 7 helper functions, 10 match blocks | `firestore.rules` covers all 9 collections + `leaveBalances` subcollection + a collection-group read |
 | Indexes | 7 composite indexes declared | Covers every composite query in `api.service.ts` |
-| Build health | Green | `tsc --noEmit` clean, 43 tests passing across 3 files |
+| Build health | Green | `tsc --noEmit` clean in all three packages; **630 tests passing** — 183 app, 345 `functions/`, 102 `rules-tests/`. `lint` 0 errors / 221 warnings; production build succeeds |
+| Backend | Complete | `functions/` deploys 15 functions — claims, cascades, denormalisation, leave balances, email verification. See Phase 5 |
 | Mobile + PWA | Employee side shipped | Commits 12–14. Was "phase 5" in the PDF; it landed early |
 
 ### What has not happened
 
 | Gap | Detail |
 | --- | --- |
-| **Nothing has run against the live project** | Firebase CLI holds no tokens (last `firebase login` was cancelled 2026-08-21). `serviceAccountKey.json` is absent, so `npm run seed` has never run. Rules, indexes, storage rules and Hosting have **never been deployed** |
-| **No backend exists** | No `functions/` directory. Custom claims are minted only by `scripts/seed.mjs`; every UI-created user is authorised by the `get()` fallback on `users/{uid}` |
-| Three CoriCore capabilities unreplaced | Email API (6-digit 2FA) → Firebase link sent but `isVerified` is read by nothing. Image API → still Cloudinary; Firebase Storage is initialised and `storage.rules` written, but **zero application files import Storage**. LeaveBalance CRUD → no admin path to correct a balance |
+| **Nothing has run against the live project** | `firebase login:list` still reports no authorized accounts, and `serviceAccountKey.json` is absent, so `npm run seed` has never run. Rules, indexes, storage rules, **functions** and Hosting have **never been deployed**. This is unchanged since this document was first written, and it now gates more code than it did then |
+| **The backend is written but unreachable from the app** | `functions/` is complete and tested, but three of its entry points are callables and `src/services/firebase.ts` never calls `getFunctions()` — nothing in `src/` calls `httpsCallable`. `adjustLeaveBalance`, `requestEmailVerification` and `confirmEmailVerification` have no client seam |
+| Deploying functions needs Blaze | Cloud Functions are not available on the Spark plan, and `cleanUpVerifications` additionally needs Cloud Scheduler. Whether `kora-51711` is on Blaze is unverified — it cannot be checked without CLI credentials |
+| Email cannot actually send | `requestEmailVerification` queues a message in the `mail` collection; delivery needs the `firestore-send-email` extension installed and pointed at it. Until then messages accumulate unsent — visible and replayable, not lost |
+| A backend verdict nothing reads | `onLeaveRequestWritten` stamps a `validation` field (overlaps, insufficient balance) onto every leave request. No type in `src/` declares it and no screen reads it |
 | Admin side is desktop-only | 0 Tailwind breakpoints across all 7 admin pages (employee pages have 3–12 each) |
 | Rebrand is name-only | Palette is still `corigreen`/`sakura`/`warmstone`; `cori_logo_green.png` referenced from 5 files; PWA icons generated from it still read "Coriander" |
 | Bundle is 4.8 MB | One un-split JS chunk plus 257 KB CSS, on a PWA employees install on phones |
@@ -81,8 +87,9 @@ Three current violations to fix on the way through: `src/components/calender.tsx
    another feature's `api/` or `types`. A feature may **never** import another feature's
    `components/`. Enforce with `eslint-plugin-import`'s `no-restricted-paths`.
 4. **No file over ~400 lines.** Today five exceed it, led by `api.service.ts` at 1,500.
-5. **Path aliases, not `../../..`.** There are currently 286 imports climbing two or
-   more levels.
+5. **Path aliases, not `../../..`.** `@/*` → `src/*` is already configured in
+   `tsconfig.json` and `vite.config.ts`, and **no import uses it yet**: 310 imports
+   climb two or more levels.
 
 ---
 
@@ -242,7 +249,20 @@ push and PR. Do this *early*: it is what protects every phase after it.
 
 ### Phase 4 — Restructure `src/`
 
-Only after Phase 2. A rules or index bug is far harder to attribute once 106 files have moved.
+Only after Phase 2. A rules or index bug is far harder to attribute once 106 files have
+moved — and that argument is stronger now than when it was written, because the backend
+has never run either, and a trigger misfiring is harder still to attribute mid-restructure.
+
+**The preconditions are unchanged and verified as of 2026-09-19:** `interfaces/` (14
+files) and `types/` (3) are still separate, `src/components/calender.tsx` and
+`src/interfaces/performance_reviews/` still carry their naming violations,
+`api.service.ts` is still 1,500 lines, and the `@/` alias is configured but used by zero
+imports while 310 still climb two or more levels. Nothing has drifted; the plan below
+still applies as written.
+
+What *has* changed since it was written is the safety net. There are now 630 tests across
+three suites and CI runs all three, so a restructure that breaks behaviour is far more
+likely to be caught than it would have been. Keep them green between every step.
 
 Order, one commit per step, `npm run typecheck` green between each:
 
@@ -267,45 +287,90 @@ result or a screen changes, something went wrong.
 
 ---
 
-### Phase 5 — Add the backend (`functions/`)
+### Phase 4.5 — Wire the client to the backend's callables
 
-**Trigger: custom claims.** Everything else the client-side fan-out already covers.
+Small, and the backend is idle until it happens. Three deployed functions have no caller.
 
-Today `firestore.rules` resolves a role from `request.auth.token.role` and falls back to
-`get(/databases/$(db)/documents/users/$(uid))` when the claim is absent. Since
-`setCustomUserClaims` is called only by the seed script, **every UI-created user takes the
-fallback** — a document read on every rule evaluation, on every request.
+1. **Initialise Functions.** `src/services/firebase.ts` exports `auth`, `db` and
+   `storage` but never calls `getFunctions(app)`. Add it, and a thin
+   `callable<TReq, TRes>(name)` wrapper that maps a thrown `HttpsError` onto the same
+   `{ data, status }` contract the rest of the data layer returns — the numeric-status
+   shape the screens already destructure. Do not let a second error convention in.
+2. **`adjustLeaveBalance`** — the admin path to correct a balance that CoriCore had and
+   this app has never had. It takes a reason and writes an audit entry to
+   `leaveBalanceAdjustments`. The natural home is the individual-employee screen, next to
+   the existing balance display.
+3. **The verification pair** — `requestEmailVerification` / `confirmEmailVerification`.
+   `VeriCodeForm` was dropped in the port and `VerifyEmailNotice` replaced it; this is the
+   decision point for whether the 6-digit form comes back. Blocked on the product call
+   under Phase 5, and on the `firestore-send-email` extension.
+4. **Surface the `validation` verdict.** `onLeaveRequestWritten` stamps overlaps and
+   insufficient-balance findings onto each leave request. Declare the field on the leave
+   request type and show it in the admin review UI — it is advisory by design, so it
+   belongs next to `OverBalanceConfirmModal`, not as a block.
 
-1. `firebase init functions` (TypeScript). It gets its **own** `package.json` and
-   `node_modules` — Cloud Functions run server-side on Node, separate from the browser
-   bundle. Do not try to share one dependency tree.
-2. Add a `functions` block to `firebase.json` so `npm run deploy` ships everything together.
-3. Write **`syncRoleClaim`** as a Firestore trigger on `users/{uid}`, not a callable. The
-   user document stays the single source of truth and the claim is derived from it, which
-   means every path that sets a role — `setupUserAsEmployee`, `linkUserAsAdmin`, the seed
-   script, a manual console edit — is covered by one function. A callable only covers the
-   paths that remember to call it.
-4. **Document the token-refresh gotcha.** A new claim does not appear until the ID token
-   refreshes. The client must call `getIdToken(true)` after linking, or the user sits on a
-   stale role until their token rotates (up to an hour). `AuthContext.refresh()` is where
-   this belongs.
-5. Keep the `get()` fallback in the rules as a safety net, but the claim becomes the
-   primary path.
-6. **Only if the dashboard feels slow:** move `pageAPI.getAdminDashboardData` aggregates
+---
+
+### Phase 5 — Add the backend (`functions/`) — **DONE** (2026-09-19), except deployment
+
+Landed across commits 25–38, and it grew well past the "just custom claims" trigger this
+section originally scoped. `functions/README.md` is the reference; the summary:
+
+**15 functions, in three groups.**
+
+- *Authorisation* — `syncRoleClaim` (Firestore trigger on `users/{uid}`, not a callable,
+  so every path that sets a role is covered) and `onEmployeeSuspensionChanged`, which put
+  `role` / `employeeId` / `adminId` / `suspended` on the token.
+- *Referential integrity* — `onEmployeeDeleted`, `onAdminDeleted`, `onUserDeleted`.
+  The two deletions cascade **differently on purpose**: an employee's dependents are
+  removed, an admin's are kept and only unlinked, because a performance review is a record
+  about the employee and their history outlives the admin who ran it.
+- *Denormalisation and domain logic* — the three-hop name-propagation chain
+  (`onUserProfileWritten` → `onEmployeeProfileWritten` / `onAdminProfileWritten`),
+  `onEquipmentCategoryWritten`, `onLeaveTypeWritten`, `onLeaveRequestWritten`,
+  `adjustLeaveBalance`, and the email-verification trio
+  (`requestEmailVerification`, `confirmEmailVerification`, `cleanUpVerifications`).
+
+**Three things it closed that were live bugs, not ports.** `onLeaveTypeWritten` backfills
+balances, closing a hole where leave could be approved with the days silently never
+deducted (`setLeaveRequestStatus` only decrements `if (balanceSnapshot.exists())`).
+Rules now enforce `startDate <= endDate`, closing a self-service way to *grant* yourself
+leave — an inverted range gives a negative duration, and `delta = -days` then **adds** to
+the balance. And suspension, previously decorative, now gates an employee's writes.
+
+**The architecture that makes it testable without an emulator:** each area splits into a
+pure decision module with no Firebase imports, and a thin trigger that injects an Admin
+SDK backend. 345 tests, no credentials, no network — consistent with the rest of the repo.
+
+**No new indexes were needed.** Every query the backend runs is single-field equality (or
+one single-field range in `cleanUpVerifications`), so the automatic indexes cover it.
+
+**What is left of this phase:**
+
+1. **Deploy it.** Nothing here has ever run. This is part of Phase 2 now, not separate.
+   The project must be on **Blaze** — Cloud Functions are unavailable on Spark, and
+   `cleanUpVerifications` also needs Cloud Scheduler.
+2. **Install the `firestore-send-email` extension** and point it at the `mail`
+   collection, or verification codes queue unsent. The provider credentials live in the
+   extension's config, deliberately not in this codebase.
+3. **Give the callables a client seam** — `getFunctions()` in `src/services/firebase.ts`
+   and an `httpsCallable` wrapper. Neither exists today, so `adjustLeaveBalance` and the
+   two verification callables are unreachable from the app. This is frontend work; see
+   Phase 4.5 below.
+4. **Only if the dashboard feels slow:** move `pageAPI.getAdminDashboardData` aggregates
    server-side. `getAdminEmpManagement` reads *every* employee's leave balances via one
-   collection-group query — a deliberate, documented choice that is correct at one
-   company's scale and the first thing to revisit if that stops being true.
+   collection-group query — correct at one company's scale, and the first thing to
+   revisit if that stops being true.
 
-**Settle the Storage question in this phase.** `getStorage()` is initialised in
-`firebase.ts`, `storage.rules` is written and deployed — and no application file imports
-Storage. Uploads all go to Cloudinary via unsigned client-side presets. Either migrate
-uploads to Firebase Storage (the rules start mattering, the Cloudinary env vars go) or
-delete the `getStorage()` init and `storage.rules` and stay on Cloudinary deliberately.
-Half-wired is the one option to avoid.
+**Settled here:** Storage. Commit 34 moved profile pictures and review documents off
+Cloudinary onto Firebase Storage via `src/services/storageService.ts`; the Cloudinary env
+vars are gone and `storage.rules` now governs real traffic. One capability was lost in the
+move — the Cloudinary widget's cropping UI.
 
-**Also a product decision, not a technical one:** email verification is sent and never
-enforced — `isVerified` rides on `CurrentUserDTO` and nothing reads it. Either gate access
-on it or drop the field.
+**Still a product decision, not a technical one:** email verification is sent and never
+enforced — `isVerified` rides on `CurrentUserDTO` and nothing reads it. The 6-digit-code
+backend now exists, so the choice is three-way: wire the code UI to it, gate access on
+Firebase's own `emailVerified`, or drop the field. Do not leave it half-wired.
 
 ---
 
@@ -359,22 +424,35 @@ Blocked on brand assets, not on engineering.
 ## 5. Sequencing, and what not to do
 
 ```
-Phase 2  Prove it live          ██████  blocking — everything else assumes it
-Phase 3  Hygiene                  ████  cheap, independent, do alongside 2
-Phase 4  Restructure              ████  after 2, before 8
-Phase 5  Backend (functions/)     ████  when claims or aggregates force it
+Phase 2  Prove it live          ██████  BLOCKING — still not done; now gates the backend too
+Phase 3  Hygiene                  ████  DONE (2026-08-21)
+Phase 5  Backend (functions/)     ████  DONE (2026-09-19) — written and tested, not deployed
+Phase 4  Restructure              ████  next, after 2
+Phase 4.5 Wire the callables      ██    small; the backend is waiting on it
 Phase 6  Performance              ████  after 4 (needs the lazy-loading seam)
 Phase 7  Admin responsive         ██    priority depends on how admins work
 Phase 8  Rebrand                  ██    last; needs assets, not code
 ```
 
+Phase 5 ran ahead of Phase 4 because bugs forced it — a leave-approval path that never
+deducted days, and a rules gap that let an employee grant themselves leave. That was the
+right call, but it means **Phase 2 now gates more code than when it was written**: the
+backend has the same never-run-against-a-real-project status the data layer has.
+
 - **Do not restructure before Phase 2.** Attributing a rules failure is much harder once
   106 files have moved.
 - **Do not rebrand before Phase 4.** The theme block is 150 lines inside `App.tsx` today
   and one file after; waiting turns a sweep into an edit.
-- **Do not add `functions/` "just because."** Add it when claims or aggregates require it.
 - **Do not share one `node_modules` between `src/` and `functions/`.** Different runtimes.
-- **Do Phase 3.4 (CI) early.** It is the thing that protects every phase after it.
+  `rules-tests/` is a third tree. Each has its own lockfile and its own CI job.
+- **Do not deploy the backend before reading `functions/README.md`.** Three of its
+  functions cascade deletions and two rewrite custom claims. A first run against a seeded
+  project is the right place to watch that, not a populated one.
+- **Do not let a second error convention in** when Phase 4.5 wires the callables. The
+  data layer returns `{ data, status }` everywhere; a raw thrown `HttpsError` reaching a
+  screen would be the first exception to that.
+- CI (Phase 3.4) is in place and runs all three suites as separate jobs — keep it green
+  through Phase 4 rather than batching fixes; it is what makes a 106-file move safe.
 
 ---
 
@@ -385,9 +463,16 @@ Phase 8  Rebrand                  ██    last; needs assets, not code
   the largest untested surface.
 - `getAdminEmpManagement`'s collection-group read grows with total employees rather than
   with the page. Correct today, worth a note in `docs/data-model.md`.
-- No admin path exists to correct a leave balance directly — balances are only created at
-  employee setup and moved by the approve/decline transaction. CoriCore had CRUD here.
+- The admin path to correct a leave balance now exists **server-side only** — the
+  `adjustLeaveBalance` callable, with a reason and an audit entry. It has no UI and no
+  caller. See Phase 4.5.
 - 56 `any` in `src/`, concentrated in `AdminLeaveRequests` (6), `api.service.ts` (5) and
-  `AdminDashboard` (5).
-- `MIGRATION_PLAN.md`'s status header and `README.md`'s "Still on the list" overlap. Once
-  this roadmap exists, both should point here instead of restating it.
+  `AdminDashboard` (5). The repo-wide lint warning count is 221.
+- `storage.rules`'s `isAdmin()` reads `request.auth.token.role` by **dot access**, which
+  Firestore rules cannot do safely — but Storage rules cannot `get()` Firestore, so there
+  is no fallback to reach and an absent claim simply denies. That fails safe, and it makes
+  `syncRoleClaim` plus a token refresh a *prerequisite* for admin uploads rather than an
+  optimisation. Worth a rules-test tier of its own if Storage use grows.
+- `MIGRATION_PLAN.md`'s status header and `README.md`'s "Still on the list" now point
+  here rather than restating it (2026-09-19). Keep it that way: this file is the one
+  place the status lives.

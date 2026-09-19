@@ -40,7 +40,7 @@ suite run with no emulator — see "Tests" below.
 | --- | --- | --- |
 | `syncRoleClaim` | Firestore `users/{uid}` written | Mirrors `role`/`employeeId`/`adminId` into custom claims |
 | `onEmployeeDeleted` | Firestore `employees/{id}` deleted | Cascades to dependents; unlinks equipment and users |
-| `onEmployeeSuspensionChanged` | Firestore `employees/{id}` written | Puts `isSuspended` on the token so the rules can act on it |
+| `onEmployeeSuspensionChanged` | Firestore `employees/{id}` written | Puts the employee's `isSuspended` flag on the token as a `suspended` claim, so the rules can act on it |
 | `onAdminDeleted` | Firestore `admins/{id}` deleted | Unlinks gatherings **without deleting them** |
 | `onEquipmentCategoryWritten` | Firestore `equipmentCategories/{id}` written | Mirrors a renamed category onto equipment |
 | `onUserProfileWritten` | Firestore `users/{uid}` written | Hands name/email/picture down to employee and admin records |
@@ -190,12 +190,12 @@ and never terminate.
 ## Two gotchas worth knowing
 
 **Claims do not appear until the ID token refreshes.** A newly linked employee
-keeps a token with the old role for up to an hour. `syncRoleClaim` stamps
-`userClaims/{uid}.refreshTime` after every change so the client can watch that
-document and call `getIdToken(true)` — wiring that up in `AuthContext.refresh()`
-is the outstanding frontend task. Until it exists nothing breaks: the `get()`
-fallback in `firestore.rules` still authorises correctly, just with a document
-read per rule evaluation.
+would otherwise keep a token with the old role for up to an hour. `syncRoleClaim`
+stamps `userClaims/{uid}.refreshTime` after every change, and `AuthContext`
+watches that document and forces `getIdToken(true)` when it moves (commit 33,
+covered by `src/contexts/__tests__/claimWatch.test.tsx`). The `get()` fallback in
+`firestore.rules` stays as the safety net for the window before that lands, at
+the cost of a document read per rule evaluation.
 
 **Storage rules have no such fallback.** Firestore rules can fall back to
 `get(users/{uid})`; Storage rules cannot read Firestore at all, so `isAdmin()`
@@ -235,12 +235,23 @@ up `functions/src`. The two suites are independent and can run side by side.
   need — so tightening further would risk breaking flows that cannot currently
   be tested against a live project.
 
-## Deliberately not done
+## Not done yet
 
-- **Uploads still go to Cloudinary.** `storage.rules` now describes the two
-  prefixes the migration lands against (`profilePictures/{userId}/…`,
-  `reviewDocuments/{reviewId}/…`), but `ProfilePicUploadBtn.tsx` and
-  `DocUploadWidget.tsx` are unchanged. Permitting a path nothing writes to is
-  harmless and makes the swap a frontend-only change.
-- **Nothing calls the verification callables yet.** The backend is complete and
-  tested; adding the code-entry UI is frontend work.
+- **None of this has been deployed.** No function here has ever run. The Firebase
+  CLI holds no credentials, and deploying needs the project on **Blaze** — Cloud
+  Functions are unavailable on Spark, and `cleanUpVerifications` also needs Cloud
+  Scheduler. Everything below assumes that step happens first.
+- **The callables have no client seam.** `src/services/firebase.ts` never calls
+  `getFunctions()`, and nothing in `src/` calls `httpsCallable`. So
+  `adjustLeaveBalance`, `requestEmailVerification` and `confirmEmailVerification`
+  are complete, tested and unreachable from the app. Frontend work — see
+  Phase 4.5 in `docs/migration-roadmap.md`.
+- **Nothing reads the `validation` verdict.** `onLeaveRequestWritten` writes it to
+  every leave request; no type in `src/` declares the field and no screen shows
+  it. It is advisory by design, so it belongs beside `OverBalanceConfirmModal`.
+- **Email cannot send until the extension is installed.** See step 3 above.
+
+**Settled since this file was first written:** uploads moved off Cloudinary to
+Firebase Storage in commit 34 (`src/services/storageService.ts`), so
+`storage.rules` now governs real traffic against `profilePictures/{userId}/…` and
+`reviewDocuments/{reviewId}/…` rather than describing a path nothing wrote to.
