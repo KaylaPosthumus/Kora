@@ -16,7 +16,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 import { SignUpComplete } from "@/features/auth/components";
 import { useEffect, useState } from "react";
-import BackgroundImage from "@/assets/images/Auth_Background.png";
+import BackgroundImage from "@/assets/images/Auth_Background.webp";
 import Logo from "@/assets/logos/cori_logo_green.png";
 
 // API calls:

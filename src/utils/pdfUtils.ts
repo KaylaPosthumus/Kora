@@ -1,14 +1,31 @@
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 import dayjs from "dayjs";
 import { EmpUser } from "@/shared/types/empUser";
 import { GenderLabels, EmployTypeLabels, PayCycleLabels } from "@/shared/types/common";
 import { formatRandAmount } from "./formatUtils";
 import logoUrl from "@/assets/logos/cori_logo_green.png";
 
-pdfMake.vfs = pdfFonts;
+/**
+ * Loads pdfmake on demand.
+ *
+ * It and its embedded font file are the heaviest dependency in the app, and one
+ * button on two screens uses them. Imported at the top of this module they ride
+ * in the bundle of everyone who never exports a payslip; behind this call they
+ * are fetched when someone actually clicks.
+ *
+ * The browser caches the chunk, so a second export does not re-download it.
+ */
+const loadPdfMake = async () => {
+  const [{ default: pdfMake }, { default: pdfFonts }] = await Promise.all([
+    import("pdfmake/build/pdfmake"),
+    import("pdfmake/build/vfs_fonts"),
+  ]);
+  pdfMake.vfs = pdfFonts;
+  return pdfMake;
+};
 
 export const generatePayrollPDF = async (empUser: EmpUser) => {
+  const pdfMake = await loadPdfMake();
+
   // Load the logo. The URL has to come from the import rather than a literal path —
   // the build content-hashes the file into /assets, so a hard-coded "/src/..." path
   // resolves to the SPA fallback (index.html) in any production build.

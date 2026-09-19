@@ -15,6 +15,39 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    rollupOptions: {
+      output: {
+        /**
+         * One vendor chunk, and only one.
+         *
+         * The instinct is to name every big dependency here. Measured, that made
+         * first paint *worse*: naming a package forces all of it into one chunk,
+         * which defeats the tree-shaking that would otherwise leave the unused
+         * parts behind. Splitting out `antd` cost 189 kB gzipped on first paint
+         * (583 kB against 394 kB) — the login screen uses four antd components
+         * and was made to download all of them.
+         *
+         * `@mui/x-charts` was worse than useless. It depends on `@mui/material`,
+         * which every `@mui/icons-material` icon also depends on, so naming it
+         * pulled the chart chunk into the entry's static graph and Vite preloaded
+         * 464 kB of charting on first paint — for a screen most users never open.
+         * Left unnamed, the charts stay with the lazy dashboard route.
+         *
+         * Firebase stays named: it is a third-party runtime the app tree-shakes
+         * little of anyway, and its own chunk means a deploy that changes only
+         * app code leaves it cached.
+         */
+        manualChunks: {
+          firebase: [
+            "firebase/app",
+            "firebase/auth",
+            "firebase/firestore",
+            "firebase/storage",
+            "firebase/functions",
+          ],
+        },
+      },
+    },
   },
   test: {
     environment: "jsdom",

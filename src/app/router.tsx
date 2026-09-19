@@ -1,29 +1,60 @@
 import React, { lazy, Suspense } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { Spin } from "antd";
 import Navigation from "@/shared/components/Navigation";
 import { ProtectedRoute } from "@/features/auth/components";
 import ErrorBoundary from "@/shared/components/ErrorBoundary";
 
+/**
+ * Login is imported eagerly; every other screen is split out.
+ *
+ * It is the landing route — making it lazy would cost a second round trip before
+ * anyone can even see the form. Everything behind it is loaded on navigation, so
+ * an employee on a phone no longer downloads the seven admin screens they cannot
+ * open, and an admin does not pay for the employee screens either.
+ *
+ * Each `import()` below becomes its own chunk. Splitting per screen rather than
+ * per role is what keeps a chunk from being a second bundle: the pages already
+ * share their heavy dependencies through the vendor chunks in `vite.config.ts`.
+ */
 import Login from "@/features/auth/pages/Login";
-import EmployeeSignUp from "@/features/auth/pages/EmployeeSignUp";
-import AdminSignUp from "@/features/auth/pages/AdminSignUp";
-import EmployeeHome from "@/features/dashboard/pages/EmployeeHome";
-import EmployeeLeaveOverview from "@/features/leave/pages/EmployeeLeaveOverview";
-import EmployeeProfile from "@/features/employees/pages/EmployeeProfile";
-import EmployeeMeetings from "@/features/gatherings/pages/EmployeeMeetings";
-import AdminDashboard from "@/features/dashboard/pages/AdminDashboard";
-import AdminEmployeeManagement from "@/features/employees/pages/AdminEmployeeManagement";
-import AdminCreateEmployee from "@/features/employees/pages/AdminCreateEmployee";
-import AdminIndividualEmployee from "@/features/employees/pages/AdminIndividualEmployee";
-import AdminEquipmentManagement from "@/features/equipment/pages/AdminEquipmentManagement";
-import AdminLeaveRequests from "@/features/leave/pages/AdminLeaveRequests";
-import AdminMeetings from "@/features/gatherings/pages/AdminMeetings";
-import NotFound from "./NotFound";
+
+const EmployeeSignUp = lazy(() => import("@/features/auth/pages/EmployeeSignUp"));
+const AdminSignUp = lazy(() => import("@/features/auth/pages/AdminSignUp"));
+const EmployeeHome = lazy(() => import("@/features/dashboard/pages/EmployeeHome"));
+const EmployeeLeaveOverview = lazy(
+  () => import("@/features/leave/pages/EmployeeLeaveOverview")
+);
+const EmployeeProfile = lazy(() => import("@/features/employees/pages/EmployeeProfile"));
+const EmployeeMeetings = lazy(() => import("@/features/gatherings/pages/EmployeeMeetings"));
+const AdminDashboard = lazy(() => import("@/features/dashboard/pages/AdminDashboard"));
+const AdminEmployeeManagement = lazy(
+  () => import("@/features/employees/pages/AdminEmployeeManagement")
+);
+const AdminCreateEmployee = lazy(
+  () => import("@/features/employees/pages/AdminCreateEmployee")
+);
+const AdminIndividualEmployee = lazy(
+  () => import("@/features/employees/pages/AdminIndividualEmployee")
+);
+const AdminEquipmentManagement = lazy(
+  () => import("@/features/equipment/pages/AdminEquipmentManagement")
+);
+const AdminLeaveRequests = lazy(() => import("@/features/leave/pages/AdminLeaveRequests"));
+const AdminMeetings = lazy(() => import("@/features/gatherings/pages/AdminMeetings"));
+const NotFound = lazy(() => import("./NotFound"));
 
 // Dev-only scratch pages. Vite folds `import.meta.env.DEV` to `false` in a production
 // build, so Rollup drops this branch along with the module and chunks behind it —
 // verified by the absence of any dev chunk in `dist/assets`.
 const DevRoutes = import.meta.env.DEV ? lazy(() => import("@/dev/DevRoutes")) : null;
+
+/** Shown while a route's chunk is in flight. */
+const RouteFallback: React.FC = () => (
+  <div className="flex items-center justify-center w-full h-full min-h-[50vh]">
+    <Spin size="large" />
+  </div>
+);
 
 const adminOnly = (element: React.ReactNode) => (
   <ProtectedRoute requires="admin">{element}</ProtectedRoute>
@@ -64,7 +95,10 @@ const AppRoutes: React.FC = () => {
         }`}
       >
         <ErrorBoundary>
-          <Routes>
+          {/* One boundary for every lazy route. It sits inside <main>, so the
+              navigation stays put while a screen's chunk arrives. */}
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
             {/* Auth Routes */}
             <Route path="/" element={<Login />} />
             <Route path="/employee/signup" element={<EmployeeSignUp />} />
@@ -104,8 +138,9 @@ const AppRoutes: React.FC = () => {
             )}
 
             {/* Anything unmatched */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
       </main>
     </div>

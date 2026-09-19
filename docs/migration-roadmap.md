@@ -38,7 +38,6 @@
 | A backend verdict nothing reads | `onLeaveRequestWritten` stamps a `validation` field (overlaps, insufficient balance) onto every leave request. No type in `src/` declares it and no screen reads it |
 | Admin side is desktop-only | 0 Tailwind breakpoints across all 7 admin pages (employee pages have 3–12 each) |
 | Rebrand is name-only | Palette is still `corigreen`/`sakura`/`warmstone`; `cori_logo_green.png` referenced from 5 files; PWA icons generated from it still read "Coriander" |
-| Bundle is 4.8 MB | One un-split JS chunk plus 257 KB CSS, on a PWA employees install on phones |
 
 ### One blind spot, stated up front
 
@@ -436,10 +435,30 @@ linking the account, which is the control that was actually wanted.
 
 ---
 
-### Phase 6 — Performance
+### Phase 6 — Performance — **DONE** (2026-09-19)
 
-The employee app is an installable PWA, and it currently ships **4.8 MB of JavaScript in
-one chunk** plus 257 KB of CSS. After correctness, this is the biggest thing standing
+First paint went from **1,929 kB gzipped to 395 kB** (235 entry + 123 firebase + 37 CSS),
+and the login screen from ~5,300 kB to ~616 kB with images. The roadmap's target was
+"initial JS under 500 KB gzipped"; it is 358 kB.
+
+The counter-intuitive finding is in `vite.config.ts`, and it is worth not undoing:
+**naming a package in `manualChunks` usually made things worse.** Splitting `antd` out
+cost 189 kB gzipped on first paint, because forcing a package into one chunk defeats the
+tree-shaking that leaves its unused parts behind. Naming `@mui/x-charts` was worse still
+— it depends on `@mui/material`, as does every `@mui/icons-material` icon, so the chart
+chunk became a static dependency of the entry and Vite preloaded 464 kB of charting for a
+screen most users never open. Only `firebase` is named now.
+
+What landed, against the original plan below: route-level `React.lazy` (14 of 15 screens;
+Login stays eager as the landing route), `pdfmake` behind a dynamic import, both oversized
+images converted to sized WebP, and the `sw.js` `CACHE` bumped so existing installs evict
+the old 3.3 MB PNG. **Bootstrap was not dropped** — that is still open, and is the
+remaining item from this phase.
+
+The original plan follows.
+
+The employee app is an installable PWA, and it shipped **4.8 MB of JavaScript in
+one chunk** plus 257 KB of CSS. After correctness, this was the biggest thing standing
 between the app and the phones it was built for.
 
 - **Route-level `React.lazy`** in `app/router.tsx` (Phase 4 creates the seam). Admin
@@ -491,7 +510,7 @@ Phase 3  Hygiene                  ████  DONE (2026-08-21)
 Phase 5  Backend (functions/)     ████  DONE (2026-09-19) — written and tested, not deployed
 Phase 4  Restructure              ████  next, after 2
 Phase 4.5 Wire the callables      ██    small; the backend is waiting on it
-Phase 6  Performance              ████  after 4 (needs the lazy-loading seam)
+Phase 6  Performance              ████  DONE (2026-09-19) — 1,929 kB -> 395 kB gzipped
 Phase 7  Admin responsive         ██    priority depends on how admins work
 Phase 8  Rebrand                  ██    last; needs assets, not code
 ```

@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar, Dropdown, MenuProps, Space } from "antd";
 import { GoogleOutlined, MailOutlined, DownOutlined } from "@ant-design/icons";
-import noUserImage from "@/assets/icons/no_profile_image.png";
+import noUserImage from "@/assets/icons/no_profile_image.webp";
 
 export interface UnlinkedUser {
   userId: string;

@@ -14,7 +14,12 @@
  *    a cold spot on a phone opens the app rather than the browser's error page.
  */
 
-const CACHE = "kora-v1";
+// Bumped to v2 when the auth background went from a 3.3 MB PNG to a 180 kB WebP.
+// Content-hashing means the new asset has a new URL, so nothing serves stale —
+// but "activate" only deletes caches whose key differs, so without a bump an
+// existing install would hold the old 3.3 MB file indefinitely with nothing
+// reachable to evict it.
+const CACHE = "kora-v2";
 const SHELL = "/index.html";
 
 self.addEventListener("install", (event) => {
