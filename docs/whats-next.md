@@ -1,0 +1,93 @@
+# What's next
+
+Written 2026-09-19, at commit `6dd1791`. The forward *plan* is
+[`migration-roadmap.md`](migration-roadmap.md); this is the shorter question of what
+to actually do on Monday, and who has to do it.
+
+**Where things stand.** Phases 3 through 8 are done bar the rebrand. 639 tests pass
+across three packages, `typecheck` and `lint` are clean, and the production build is
+green. **Nothing has ever run against the live Firebase project**, which is the one
+thing standing between this and being a working app.
+
+---
+
+## 1. Only you can do these
+
+### Deploy it for the first time — the blocking one
+
+Everything below this is downstream. The data layer, the security rules, the twelve
+Cloud Functions and the Hosting config have never been exercised against real
+Firestore: the whole suite runs against mocks and an emulator. Query shapes, missing
+composite indexes and rules that deny a real write only fail at runtime.
+
+Three things are needed before a deploy can happen, and none of them can be done for
+you:
+
+1. **`firebase login`.** The CLI holds no credentials — `firebase login:list` reports
+   no authorized accounts.
+2. **A service account key.** Firebase console → Project settings → Service accounts
+   → Generate new private key, saved at the repo root as `serviceAccountKey.json`. It
+   is already gitignored and `.env.local` already points at it.
+3. **The Blaze plan on `kora-51711`.** Cloud Functions are not available on Spark.
+   Whether the project is already on Blaze cannot be checked without credentials.
+
+Then [`verification.md`](verification.md) is the runbook — a screen-by-screen
+click-through, the three things static analysis could not settle, and the proofs for
+the rules and the leave transaction. Expect to find missing indexes; that is what the
+exercise is for, and the error message contains a link that creates each one.
+
+### Decide the brand
+
+The rebrand is the last phase and is blocked on assets, not code:
+
+- A Kora logo, to replace `src/assets/logos/cori_logo_green.png` (imported from five
+  files — swap the file, keep the import sites).
+- A colour palette, to replace `corigreen` / `sakura` / `warmstone` in
+  `tailwind.config.js` and `src/app/theme.ts`.
+- Then `scripts/generate-icons.sh` regenerates the PWA icons, which currently still
+  render the Coriander wordmark even though the manifest says "Kora HR".
+
+Phase 4 was done partly so this is a two-file edit rather than a sweep.
+
+---
+
+## 2. I can do these whenever you want
+
+| | Size | Why it matters |
+| --- | --- | --- |
+| **Test the page-shaped reads** | Medium | The five `getAdmin*` / `getEmployee*` fan-outs that replaced the old SQL joins are the largest untested surface in the app. They are also what every screen loads with. |
+| **Fix CI's `verify` job** | Small, blocked | It has failed at `npm ci` on every run since CI was added; `backend` and `rules` pass. The log needs repo-admin auth to read — `gh auth login`, or paste it. You said to leave it; noted here so it is not forgotten. |
+| **Chip at the 213 lint warnings** | Small, dull | Mostly `no-explicit-any` carried over from the port, concentrated in `AdminLeaveRequests` and `AdminDashboard`. |
+| **Storage rules test tier** | Small | `storage.rules` has no tests at all. See the known issue below. |
+
+---
+
+## 3. Known, deliberate, and written down so they are not rediscovered
+
+- **`adminId` is minted into every admin's token and nothing reads it.** The rules
+  authorise admins through `claim('role')`, and the client reads `adminId` off the
+  user document. Dead weight on every request rather than a bug. A contract test
+  names it and fails if the set of unread claims changes either way.
+- **`storage.rules` reads a claim by dot access**, which Firestore rules cannot do
+  safely. Storage rules cannot `get()` Firestore, so there is no fallback to reach and
+  an absent claim simply denies — it fails safe. It does mean `syncRoleClaim` plus a
+  token refresh is a *prerequisite* for admin uploads, not an optimisation.
+- **`getAdminEmpManagement` reads every employee's leave balances** through one
+  collection-group query, so it grows with the company rather than with the page.
+  Correct at one company's scale; the first thing to revisit if that changes.
+- **Email verification is gone**, deliberately (commit 51). Access is gated on an
+  admin linking the account. See [`coriander-parity.md`](coriander-parity.md).
+
+---
+
+## 4. The order I would go in
+
+1. **Deploy and click through.** Nothing else is real until this happens, and it is
+   the only item with unknown unknowns in it.
+2. **Fix whatever that turns up** — missing indexes, most likely, and possibly the
+   three watch items in the verification runbook.
+3. **Rebrand**, once you have the assets. It is cosmetic and isolated.
+4. **Test the page reads**, whenever. This is insurance, not a blocker.
+
+CI's `verify` job is worth fixing before anyone else joins the project, since it is
+the only thing that would catch a mistake without a person noticing it.

@@ -131,7 +131,8 @@ file, so that none of it drifts in two places at once.
 | --- | --- |
 | [`CLAUDE.md`](CLAUDE.md) | Architecture and the invariants that are easy to break. Start here. |
 | [`docs/data-model.md`](docs/data-model.md) | Collections, the two data-layer conventions, where the API modules live |
-| [`docs/migration-roadmap.md`](docs/migration-roadmap.md) | **The forward plan** — what is done, what is next, and what not to do |
+| [`docs/whats-next.md`](docs/whats-next.md) | **Start here** — what to do next, and which parts need you rather than Claude |
+| [`docs/migration-roadmap.md`](docs/migration-roadmap.md) | The full forward plan — what is done, what is next, and what not to do |
 | [`docs/verification.md`](docs/verification.md) | Proving the app against a live Firebase project. Phase 2, still not done |
 | [`docs/coriander-parity.md`](docs/coriander-parity.md) | Where every part of the old Coriander app ended up, and why the gaps exist |
 | [`docs/migration-phase-1.md`](docs/migration-phase-1.md) | The phase-1 plan, kept as the record of *why* the data model looks like this |

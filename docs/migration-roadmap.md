@@ -358,7 +358,7 @@ result or a screen changes, something went wrong.
 
 ---
 
-### Phase 4.5 — Wire the client to the backend's callables
+### Phase 4.5 — Wire the client to the backend's callables — **DONE** (2026-09-19)
 
 Small, and the backend is idle until it happens. Three deployed functions have no caller.
 
@@ -528,11 +528,11 @@ Blocked on brand assets, not on engineering.
 Phase 2  Prove it live          ██████  BLOCKING — still not done; now gates the backend too
 Phase 3  Hygiene                  ████  DONE (2026-08-21)
 Phase 5  Backend (functions/)     ████  DONE (2026-09-19) — written and tested, not deployed
-Phase 4  Restructure              ████  next, after 2
-Phase 4.5 Wire the callables      ██    small; the backend is waiting on it
+Phase 4  Restructure              ████  DONE (2026-09-19)
+Phase 4.5 Wire the callables      ██    DONE (2026-09-19) — commits 49-51
 Phase 6  Performance              ████  DONE (2026-09-19) — 1,929 kB -> 395 kB gzipped
 Phase 7  Admin responsive         ██    DONE (2026-09-19)
-Phase 8  Rebrand                  ██    last; needs assets, not code
+Phase 8  Rebrand                  ██    LAST ONE OPEN — needs assets, not code
 ```
 
 Phase 5 ran ahead of Phase 4 because bugs forced it — a leave-approval path that never
@@ -570,11 +570,11 @@ backend has the same never-run-against-a-real-project status the data layer has.
   the largest untested surface.
 - `getAdminEmpManagement`'s collection-group read grows with total employees rather than
   with the page. Correct today, worth a note in `docs/data-model.md`.
-- The admin path to correct a leave balance now exists **server-side only** — the
-  `adjustLeaveBalance` callable, with a reason and an audit entry. It has no UI and no
-  caller. See Phase 4.5.
-- 56 `any` in `src/`, concentrated in `AdminLeaveRequests` (6), `api.service.ts` (5) and
-  `AdminDashboard` (5). The repo-wide lint warning count is 221.
+- ~~The admin path to correct a leave balance exists server-side only.~~ **Done** in
+  commit 49: `AdjustLeaveBalanceModal` on the individual-employee screen, through
+  `shared/lib/callable.ts`.
+- `no-explicit-any` warnings carried over from the port, concentrated in
+  `AdminLeaveRequests` and `AdminDashboard`. The repo-wide lint warning count is 213.
 - `storage.rules`'s `isAdmin()` reads `request.auth.token.role` by **dot access**, which
   Firestore rules cannot do safely — but Storage rules cannot `get()` Firestore, so there
   is no fallback to reach and an absent claim simply denies. That fails safe, and it makes
