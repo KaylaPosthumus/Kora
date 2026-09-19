@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select, message, DatePicker } from "antd";
 import { equipmentAPI } from "../../services/api.service";
-import { EquipmentCategory, EquipmentCondition } from "../../types/common";
+import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 import dayjs from "dayjs";
-import { Equipment } from "../../interfaces/equipment/equipment";
-import { EmpUser } from "../../interfaces/people/empUser";
+import { Equipment } from "@/shared/types/equipment";
+import { EmpUser } from "@/shared/types/empUser";
 interface EditEquipDetailsModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;

@@ -1,7 +1,7 @@
 import React from "react";
 import { getFullImageUrl } from "../../../utils/imageUtils";
 import EmployTypeBadge from "../../../components/badges/EmployTypeBadge";
-import { EmployType } from "../../../types/common";
+import { EmployType } from "@/shared/types/common";
 import { Icons } from "../../../constants/icons";
 
 interface TopRatedEmployee {

@@ -3,8 +3,8 @@ import { meetingAPI } from "../../services/api.service";
 import { Modal, Button, Form, message, Switch, DatePicker, TimePicker } from "antd";
 import dayjs from "dayjs";
 import { Icons } from "../../constants/icons";
-import { MeetingDTO } from "../../interfaces/meetings/meetingDTO";
-import { MeetStatus } from "../../types/common";
+import { MeetingDTO } from "@/shared/types/meetingDTO";
+import { MeetStatus } from "@/shared/types/common";
 
 interface EditMeetingModalProps {
   showModal: boolean;

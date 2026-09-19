@@ -15,7 +15,7 @@ import {
 import dayjs from "dayjs";
 import KoraBtn from "../buttons/KoraBtn";
 import { empUserAPI } from "../../services/api.service";
-import { EmployType, Gender, PayCycle, UserRole } from "../../types/common";
+import { EmployType, Gender, PayCycle, UserRole } from "@/shared/types/common";
 import { Icons } from "../../constants/icons";
 import GoogleIcon from "../../assets/icons/googleIcon.png";
 import { getFullImageUrl } from "../../utils/imageUtils";

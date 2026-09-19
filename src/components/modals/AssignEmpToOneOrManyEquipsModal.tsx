@@ -1,7 +1,7 @@
-import { Equipment } from "../../interfaces/equipment/equipment";
+import { Equipment } from "@/shared/types/equipment";
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, message } from "antd";
-import { EquipmentCondition } from "../../types/common";
+import { EquipmentCondition } from "@/shared/types/common";
 import EquipCheckItem from "../equipment/EquipCheckItem";
 import { equipmentAPI } from "../../services/api.service";
 

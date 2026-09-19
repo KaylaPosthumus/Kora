@@ -74,14 +74,15 @@ Adopt these before moving any file, so the restructure lands in one shape rather
 | Cloud Functions | `camelCase`, verb first | `syncRoleClaim` |
 | Root docs | `SCREAMING_SNAKE.md` — reserved for `README.md`, `CLAUDE.md` only | everything else goes in `docs/` as `kebab-case.md` |
 
-Three current violations to fix on the way through: `src/components/calender.tsx`
-(lowercase **and** misspelled), `src/interfaces/performance_reviews/`, and
-`src/services/api.service.ts` vs `authService.ts` (two conventions in one folder).
+Three violations to fix on the way through. `src/interfaces/performance_reviews/` is
+**done** — Phase 4 step 1 dissolved it. Still open: `src/components/calender.tsx`
+(lowercase **and** misspelled), and `src/services/api.service.ts` vs `authService.ts`
+(two conventions in one folder).
 
 ### Structural rules
 
-1. **One folder per concept.** `src/interfaces/` and `src/types/` are two folders doing
-   one job (14 files / 208 lines vs 4 files / 157 lines). They merge.
+1. **One folder per concept.** ~~`src/interfaces/` and `src/types/` are two folders
+   doing one job.~~ **Done** — both are now `src/shared/types/`, 17 files, flat.
 2. **A feature owns its vertical** — api, components, hooks, pages, types.
 3. **Import direction is one-way.** A feature may import from `shared/` freely, and from
    another feature's `api/` or `types`. A feature may **never** import another feature's
@@ -254,11 +255,11 @@ Only after Phase 2. A rules or index bug is far harder to attribute once 106 fil
 moved — and that argument is stronger now than when it was written, because the backend
 has never run either, and a trigger misfiring is harder still to attribute mid-restructure.
 
-**The preconditions are unchanged and verified as of 2026-09-19:** `interfaces/` (14
-files) and `types/` (3) are still separate, `src/components/calender.tsx` and
-`src/interfaces/performance_reviews/` still carry their naming violations,
-`api.service.ts` is still 1,500 lines, and the `@/` alias is configured but used by zero
-imports while 310 still climb two or more levels. Nothing has drifted; the plan below
+**Preconditions as verified on 2026-09-19, before step 1:** `interfaces/` (14 files)
+and `types/` (3) were separate, `src/components/calender.tsx` and
+`src/interfaces/performance_reviews/` carried their naming violations, `api.service.ts`
+was 1,500 lines, and the `@/` alias was configured but used by zero imports while 310
+climbed two or more levels. Nothing has drifted; the plan below
 still applies as written.
 
 What *has* changed since it was written is the safety net. There are now 630 tests across
@@ -267,8 +268,11 @@ likely to be caught than it would have been. Keep them green between every step.
 
 Order, one commit per step, `npm run typecheck` green between each:
 
-1. **Merge `interfaces/` into `shared/types/`.** 14 files, 208 lines — the cheapest win,
-   and it kills the `performance_reviews` snake_case folder.
+1. ~~**Merge `interfaces/` into `shared/types/`.**~~ **DONE.** All 17 modules — the 14
+   from `interfaces/` plus `common.ts` and the two `.d.ts` files — now sit flat in
+   `src/shared/types/`. The `performance_reviews` snake_case folder is gone, and the 63
+   files that imported them were rewritten to `@/shared/types/…`, which is the first
+   real use of the alias (step 6 does the rest).
 2. **Split `api.service.ts`** per the table in §3, keeping the old path as a re-export
    barrel. Zero call sites change.
 3. **Lift the shell.** `App.tsx` is 220 lines, ~150 of which are the Ant Design token

@@ -18,13 +18,13 @@ import dayjs from "dayjs";
 import KoraBtn from "../buttons/KoraBtn";
 import TextArea from "antd/es/input/TextArea";
 import { Icons } from "../../constants/icons";
-import { AdminUser } from "../../interfaces/people/adminUser";
-import { MeetingRequestCreate } from "../../interfaces/meetings/meetingRequestCreate";
-import { MeetingRequestUpdate } from "../../interfaces/meetings/meetingRequestUpdate";
+import { AdminUser } from "@/shared/types/adminUser";
+import { MeetingRequestCreate } from "@/shared/types/meetingRequestCreate";
+import { MeetingRequestUpdate } from "@/shared/types/meetingRequestUpdate";
 import { adminAPI, meetingAPI } from "../../services/api.service";
-import { Gathering } from "../../interfaces/gathering/gathering";
-import { MeetingRequestCard } from "../../interfaces/meetings/meetingRequestCard";
-import { MeetingSchedule } from "../../interfaces/meetings/meetingSchedule";
+import { Gathering } from "@/shared/types/gathering";
+import { MeetingRequestCard } from "@/shared/types/meetingRequestCard";
+import { MeetingSchedule } from "@/shared/types/meetingSchedule";
 
 interface AcceptScheduleMeetingModalProps {
   showModal: boolean;

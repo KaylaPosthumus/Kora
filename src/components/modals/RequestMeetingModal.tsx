@@ -17,8 +17,8 @@ import dayjs from "dayjs";
 import KoraBtn from "../buttons/KoraBtn";
 import TextArea from "antd/es/input/TextArea";
 import { Icons } from "../../constants/icons";
-import { AdminUser } from "../../interfaces/people/adminUser";
-import { MeetingRequestCreate } from "../../interfaces/meetings/meetingRequestCreate";
+import { AdminUser } from "@/shared/types/adminUser";
+import { MeetingRequestCreate } from "@/shared/types/meetingRequestCreate";
 import { adminAPI, meetingAPI } from "../../services/api.service";
 
 interface RequestMeetingModalProps {

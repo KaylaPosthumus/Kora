@@ -7,7 +7,7 @@ import {
   invalidateCurrentUser,
   type CurrentUserDTO,
 } from "../services/authService";
-import { UserRole } from "../types/common";
+import { UserRole } from "@/shared/types/common";
 
 interface AuthContextValue {
   /** The signed-in user, or null. Undefined-safe: null while loading too. */

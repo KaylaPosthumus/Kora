@@ -45,12 +45,12 @@ import { getFullImageUrl } from "../../utils/imageUtils";
 import { pageAPI, employeeAPI, empUserAPI } from "../../services/api.service";
 
 // Types / Interfaces
-import { Gender, PayCycle } from "../../types/common";
-import { EmpUser } from "../../interfaces/people/empUser";
-import { LeaveBalance } from "../../interfaces/leave/leaveBalance";
-import { EmpUserRatingMetrics } from "../../interfaces/people/empUserRatingMetrics";
-import { Equipment } from "../../interfaces/equipment/equipment";
-import { Gathering } from "../../interfaces/gathering/gathering";
+import { Gender, PayCycle } from "@/shared/types/common";
+import { EmpUser } from "@/shared/types/empUser";
+import { LeaveBalance } from "@/shared/types/leaveBalance";
+import { EmpUserRatingMetrics } from "@/shared/types/empUserRatingMetrics";
+import { Equipment } from "@/shared/types/equipment";
+import { Gathering } from "@/shared/types/gathering";
 import AdminGatheringBox from "../../components/gathering/AdminGatheringBox";
 
 // Authentication

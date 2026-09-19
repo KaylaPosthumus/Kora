@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { LeaveStatus } from "../../types/common";
+import { LeaveStatus } from "@/shared/types/common";
 
 /**
  * Smoke tests for approve-and-decrement (phase 2 of NEXT_MIGRATION_PLAN).

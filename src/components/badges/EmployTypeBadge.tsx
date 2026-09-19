@@ -1,5 +1,5 @@
 import React, { JSX } from "react";
-import { EmployType } from "../../types/common";
+import { EmployType } from "@/shared/types/common";
 import KoraBadge from "./KoraBadge";
 
 interface EmployTypeBadgeProps {

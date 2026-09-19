@@ -21,14 +21,14 @@ import {
   EquipmentCondition,
   Gender,
   PayCycle,
-} from "../../types/common";
+} from "@/shared/types/common";
 import UnlinkedUserDropdown, { UnlinkedUser } from "../../components/dropdown/UnlinkedUserDropdown";
 import { employeeAPI, linkUserAsAdmin, userAPI } from "../../services/api.service";
 import dayjs from "dayjs";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";
-import { Equipment } from "../../interfaces/equipment/equipment";
+import { Equipment } from "@/shared/types/equipment";
 
 const AdminCreateEmployee: React.FC = () => {
   const [form] = Form.useForm();

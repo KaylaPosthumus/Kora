@@ -1,8 +1,8 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import dayjs from "dayjs";
-import { EmpUser } from "../interfaces/people/empUser";
-import { GenderLabels, EmployTypeLabels, PayCycleLabels } from "../types/common";
+import { EmpUser } from "@/shared/types/empUser";
+import { GenderLabels, EmployTypeLabels, PayCycleLabels } from "@/shared/types/common";
 import { formatRandAmount } from "./formatUtils";
 import logoUrl from "../assets/logos/cori_logo_green.png";
 

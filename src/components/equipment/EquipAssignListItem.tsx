@@ -11,8 +11,8 @@ import dayjs from "dayjs";
 import { Icons } from "../../constants/icons";
 
 // Types
-import { EquipmentCondition, EquipmentCategory } from "../../types/common";
-import { Equipment } from "../../interfaces/equipment/equipment";
+import { EquipmentCondition, EquipmentCategory } from "@/shared/types/common";
+import { Equipment } from "@/shared/types/equipment";
 
 interface EquipAssignListItemProps {
   item: Equipment | null;

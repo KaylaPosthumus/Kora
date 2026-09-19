@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { UserRole } from "../../types/common";
+import { UserRole } from "@/shared/types/common";
 
 /**
  * Smoke tests for the auth flow (phase 2 of NEXT_MIGRATION_PLAN).

@@ -30,19 +30,19 @@ import {
   LeaveStatus,
   MeetStatus,
   ReviewStatus,
-} from "../types/common";
+} from "@/shared/types/common";
 import { calculateDurationInDays } from "../utils/dateUtils";
-import type { EmpUser } from "../interfaces/people/empUser";
-import type { Equipment } from "../interfaces/equipment/equipment";
-import type { LeaveBalance } from "../interfaces/leave/leaveBalance";
-import type { LeaveRequest } from "../interfaces/leave/leaveRequest";
-import type { Gathering } from "../interfaces/gathering/gathering";
-import type { MeetingDTO } from "../interfaces/meetings/meetingDTO";
-import type { MeetingRequestCard } from "../interfaces/meetings/meetingRequestCard";
-import type { PerformanceReview } from "../interfaces/performance_reviews/performanceReview";
-import type { AdminUser } from "../interfaces/people/adminUser";
-import type { EmpUserRatingMetrics } from "../interfaces/people/empUserRatingMetrics";
-import type { EmployeeListItem } from "../interfaces/people/employeeListItem";
+import type { EmpUser } from "@/shared/types/empUser";
+import type { Equipment } from "@/shared/types/equipment";
+import type { LeaveBalance } from "@/shared/types/leaveBalance";
+import type { LeaveRequest } from "@/shared/types/leaveRequest";
+import type { Gathering } from "@/shared/types/gathering";
+import type { MeetingDTO } from "@/shared/types/meetingDTO";
+import type { MeetingRequestCard } from "@/shared/types/meetingRequestCard";
+import type { PerformanceReview } from "@/shared/types/performanceReview";
+import type { AdminUser } from "@/shared/types/adminUser";
+import type { EmpUserRatingMetrics } from "@/shared/types/empUserRatingMetrics";
+import type { EmployeeListItem } from "@/shared/types/employeeListItem";
 
 /**
  * Data layer, rebuilt on Firestore.

@@ -6,7 +6,7 @@ import { Icons } from "../../../constants/icons";
 
 // Badges
 import KoraBadge from "../../../components/badges/KoraBadge";
-import { LeaveStatus, LeaveStatusLabels } from "../../../types/common";
+import { LeaveStatus, LeaveStatusLabels } from "@/shared/types/common";
 
 const getStatusBadgeColor = (status: string) => {
   if (status === "Pending") return "yellow";

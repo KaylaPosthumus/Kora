@@ -1,4 +1,4 @@
-import { MeetStatus } from "../../types/common";
+import { MeetStatus } from "./common";
 
 export interface MeetingDTO {
   meetingId: string;

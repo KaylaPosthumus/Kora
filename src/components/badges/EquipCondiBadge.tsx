@@ -1,5 +1,5 @@
 import React, { JSX } from "react";
-import { EquipmentCondition } from "../../types/common";
+import { EquipmentCondition } from "@/shared/types/common";
 import KoraBadge from "./KoraBadge";
 
 interface EquipCondiBadgeProps {

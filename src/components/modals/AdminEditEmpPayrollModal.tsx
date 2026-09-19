@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select, message } from "antd";
-import { PayCycle } from "../../types/common";
+import { PayCycle } from "@/shared/types/common";
 import { empUserAPI } from "../../services/api.service";
 
 interface AdminEditEmpPayrollModalProps {

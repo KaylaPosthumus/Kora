@@ -1,8 +1,8 @@
 import React from "react";
 import { Modal, Button, message } from "antd";
 import { Icons } from "../../constants/icons";
-import { EquipmentConditionLabels } from "../../types/common";
-import { Equipment } from "../../interfaces/equipment/equipment";
+import { EquipmentConditionLabels } from "@/shared/types/common";
+import { Equipment } from "@/shared/types/equipment";
 import { equipmentAPI } from "../../services/api.service";
 import EquipmentTypeAvatar from "../avatars/EquipmentTypeAvatar";
 

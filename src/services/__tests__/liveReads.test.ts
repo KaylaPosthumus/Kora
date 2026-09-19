@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { GatheringType, MeetStatus } from "../../types/common";
+import { GatheringType, MeetStatus } from "@/shared/types/common";
 
 /**
  * Smoke tests for the live-read layer (the onSnapshot subscriptions behind the

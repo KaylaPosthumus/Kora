@@ -4,7 +4,7 @@ import type { SelectProps } from "antd";
 
 import { Icons } from "../../constants/icons";
 import { empUserAPI, equipmentAPI } from "../../services/api.service";
-import { EquipmentCondition } from "../../types/common";
+import { EquipmentCondition } from "@/shared/types/common";
 import dayjs from "dayjs";
 import { getFullImageUrl } from "../../utils/imageUtils";
 

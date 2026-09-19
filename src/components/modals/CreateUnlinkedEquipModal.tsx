@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button, Form, Input, Select, message } from "antd";
 import { equipmentAPI } from "../../services/api.service";
-import { EquipmentCategory, EquipmentCondition } from "../../types/common";
+import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 
 interface CreateUnlinkedEquipModalProps {
   showModal: boolean;

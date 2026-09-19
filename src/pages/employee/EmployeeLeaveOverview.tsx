@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LeaveStatus } from "../../types/common";
+import { LeaveStatus } from "@/shared/types/common";
 import { subscribeToEmployeeLeave } from "../../services/api.service";
 
 // Icons

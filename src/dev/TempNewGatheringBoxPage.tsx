@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import EmpGatheringBox from "../components/gathering/EmpGatheringBox";
 import AdminGatheringBox from "../components/gathering/AdminGatheringBox";
-import { Gathering } from "../interfaces/gathering/gathering";
+import { Gathering } from "@/shared/types/gathering";
 
 // EMPLOYEE DATA
 // const upcomingGatheringsData = {

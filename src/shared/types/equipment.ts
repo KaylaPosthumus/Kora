@@ -1,4 +1,4 @@
-import { EquipmentCondition } from "../../types/common";
+import { EquipmentCondition } from "./common";
 
 // In Backend: EquipmentDTO
 

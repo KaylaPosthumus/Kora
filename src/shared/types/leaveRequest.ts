@@ -1,4 +1,4 @@
-import { LeaveStatus } from "../../types/common";
+import { LeaveStatus } from "./common";
 
 export interface LeaveRequest {
   leaveRequestId: string;

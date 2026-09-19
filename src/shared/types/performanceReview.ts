@@ -1,4 +1,4 @@
-import { ReviewStatus } from "../../types/common";
+import { ReviewStatus } from "./common";
 
 // In Backend: PerformanceReviewDTO
 

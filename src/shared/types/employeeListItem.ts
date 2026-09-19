@@ -1,4 +1,4 @@
-import { EmployType, Gender, PayCycle } from "../../types/common";
+import { EmployType, Gender, PayCycle } from "./common";
 
 export interface EmployeeListItem {
   empUser: {

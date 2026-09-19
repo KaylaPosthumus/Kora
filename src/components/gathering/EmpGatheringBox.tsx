@@ -18,8 +18,8 @@ import { formatTimestampToDate, formatTimestampToTime } from "../../utils/dateUt
 import { Icons } from "../../constants/icons";
 
 // Interfaces
-import { Gathering } from "../../interfaces/gathering/gathering";
-import { GatheringType, MeetStatus, ReviewStatus } from "../../types/common";
+import { Gathering } from "@/shared/types/gathering";
+import { GatheringType, MeetStatus, ReviewStatus } from "@/shared/types/common";
 
 interface GatheringBoxProps {
   gathering: Gathering;

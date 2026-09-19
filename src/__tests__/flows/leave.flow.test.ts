@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { firestoreMock } from "../../test/firestore";
-import { LeaveStatus } from "../../types/common";
-import type { LeaveBalance } from "../../interfaces/leave/leaveBalance";
-import type { LeaveRequest } from "../../interfaces/leave/leaveRequest";
+import { LeaveStatus } from "@/shared/types/common";
+import type { LeaveBalance } from "@/shared/types/leaveBalance";
+import type { LeaveRequest } from "@/shared/types/leaveRequest";
 
 /**
  * Flow test — a leave request from submission to approval, seen from both sides.

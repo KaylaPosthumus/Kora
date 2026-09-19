@@ -1,4 +1,4 @@
-import { GatheringType, MeetStatus, ReviewStatus } from "../../types/common";
+import { GatheringType, MeetStatus, ReviewStatus } from "./common";
 
 /**
  * A meeting or a performance review, merged for the calendar / gathering lists.

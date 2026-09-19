@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { PayCycle } from "../types/common";
+import { PayCycle } from "@/shared/types/common";
 
 dayjs.extend(duration);
 dayjs.extend(utc);

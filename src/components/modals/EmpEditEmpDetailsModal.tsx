@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select, DatePicker, message, Tooltip } from "antd";
 import dayjs from "dayjs";
-import { Gender } from "../../types/common";
+import { Gender } from "@/shared/types/common";
 import { empUserAPI } from "../../services/api.service";
 
 interface AdminEditEmpDetailsModalProps {

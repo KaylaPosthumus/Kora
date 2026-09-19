@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Drawer, message } from "antd";
 import MeetRequestCard from "../cards/meetingCards/MeetRequestCard";
-import { MeetingRequestCard } from "../../interfaces/meetings/meetingRequestCard";
+import { MeetingRequestCard } from "@/shared/types/meetingRequestCard";
 import { meetingAPI } from "../../services/api.service";
 import AcceptScheduleMeetingModal from "../modals/AcceptScheduleMeetingModal";
 

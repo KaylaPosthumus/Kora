@@ -17,7 +17,7 @@ import { empLeaveRequestsAPI, gatheringAPI, pageAPI } from "../../services/api.s
 import { useNavigate } from "react-router-dom";
 
 //Interface
-import { Gathering } from "../../interfaces/gathering/gathering";
+import { Gathering } from "@/shared/types/gathering";
 
 //Modals
 import CreatePRModal from "../../components/modals/CreatePRModal";

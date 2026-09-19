@@ -1,7 +1,7 @@
 import React from "react";
 import { Icons } from "../../constants/icons";
 import EquipCondiBadge from "../badges/EquipCondiBadge";
-import { EquipmentCondition } from "../../types/common";
+import { EquipmentCondition } from "@/shared/types/common";
 import EquipmentTypeAvatar from "../avatars/EquipmentTypeAvatar";
 
 interface EquipCheckItemProps {

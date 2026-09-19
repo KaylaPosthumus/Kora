@@ -1,4 +1,4 @@
-import { EmployType, PayCycle, Gender, UserRole } from "../../types/common";
+import { EmployType, PayCycle, Gender, UserRole } from "./common";
 
 // In Backend: EmpUserDTO
 

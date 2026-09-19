@@ -10,7 +10,7 @@ import {
   Alert,
 } from "antd";
 import { equipmentAPI } from "../../services/api.service";
-import { EquipmentCategory, EquipmentCondition } from "../../types/common";
+import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 import dayjs from "dayjs";
 
 interface CreateAssignedEquipModalProps {

@@ -122,7 +122,7 @@ destructured off axios, so call sites did not change during the port.
    no-op and moving *off* approved refunds the days. It deliberately does not
    clamp at zero — `OverBalanceConfirmModal` warns the admin, who may proceed.
 
-2. **Enums are readable strings, defined once in `src/types/common.ts`**
+2. **Enums are readable strings, defined once in `src/shared/types/common.ts`**
    (`LeaveStatus.Approved = "approved"`). The stored Firestore values, the
    security rules, and the seed script's document ids all depend on these exact
    strings. String enums have no reverse mapping, so use the `*Labels` maps in

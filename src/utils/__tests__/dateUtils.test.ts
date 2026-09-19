@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { PayCycle } from "../../types/common";
+import { PayCycle } from "@/shared/types/common";
 import {
   calculateDurationInDays,
   calculateNextPayDay,

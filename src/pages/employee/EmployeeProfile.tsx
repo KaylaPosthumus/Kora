@@ -1,4 +1,4 @@
-import { Equipment } from "../../interfaces/equipment/equipment";
+import { Equipment } from "@/shared/types/equipment";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -20,9 +20,9 @@ import { empUserAPI, pageAPI } from "../../services/api.service";
 import dayjs from "dayjs";
 
 // Types & Interfaces
-import { EmployType, Gender, PayCycle } from "../../types/common";
-import { EmpUser } from "../../interfaces/people/empUser";
-import { EmpUserRatingMetrics } from "../../interfaces/people/empUserRatingMetrics";
+import { EmployType, Gender, PayCycle } from "@/shared/types/common";
+import { EmpUser } from "@/shared/types/empUser";
+import { EmpUserRatingMetrics } from "@/shared/types/empUserRatingMetrics";
 
 // Utility Functions
 import { formatPhone } from "../../utils/formatUtils";

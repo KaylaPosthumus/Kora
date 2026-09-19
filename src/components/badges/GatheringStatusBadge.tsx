@@ -1,5 +1,5 @@
 import React from "react";
-import { MeetStatus } from "../../types/common";
+import { MeetStatus } from "@/shared/types/common";
 import KoraBadge from "./KoraBadge";
 
 interface GatheringStatusBadgeProps {

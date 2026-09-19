@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { firestoreMock } from "../../test/firestore";
 import { authMock } from "../../test/firebaseApp";
 import { captureNavigation } from "../../test/navigation";
-import { UserRole } from "../../types/common";
+import { UserRole } from "@/shared/types/common";
 
 /**
  * Flow test — signing up, waiting to be linked, and being granted a role.

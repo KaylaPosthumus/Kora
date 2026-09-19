@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MeetingRequestCard } from "../../../interfaces/meetings/meetingRequestCard";
+import { MeetingRequestCard } from "@/shared/types/meetingRequestCard";
 import KoraBtn from "../../buttons/KoraBtn";
 import dayjs from "dayjs";
 import { Avatar } from "antd";

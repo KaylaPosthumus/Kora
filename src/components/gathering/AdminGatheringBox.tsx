@@ -5,7 +5,7 @@ import KoraBtn from "../buttons/KoraBtn";
 import EditPRModal from "../modals/EditPRModal";
 import { PerformanceReviewDTO } from "../modals/EditPRModal";
 import EditMeetingModal from "../modals/EditMeetingModal";
-import { MeetingDTO } from "../../interfaces/meetings/meetingDTO";
+import { MeetingDTO } from "@/shared/types/meetingDTO";
 import DeleteMeetingModal from "../modals/DeleteMeetingModal";
 import DeletePRModal from "../modals/DeletePRModal";
 
@@ -29,8 +29,8 @@ import { formatTimestampToDate, formatTimestampToTime } from "../../utils/dateUt
 import { Icons } from "../../constants/icons";
 
 // Interfaces
-import { Gathering } from "../../interfaces/gathering/gathering";
-import { GatheringType, MeetStatus, ReviewStatus } from "../../types/common";
+import { Gathering } from "@/shared/types/gathering";
+import { GatheringType, MeetStatus, ReviewStatus } from "@/shared/types/common";
 
 interface GatheringBoxProps {
   gathering: Gathering;

@@ -23,8 +23,8 @@ import { getFullImageUrl } from "../../utils/imageUtils";
 import { isDateInPast, formatTimestampToDate, calculateNextPayDay } from "../../utils/dateUtils";
 
 // Import Types / Interfaces
-import { EmployeeListItem } from "../../interfaces/people/employeeListItem";
-import { EmployType, Gender, PayCycle } from "../../types/common";
+import { EmployeeListItem } from "@/shared/types/employeeListItem";
+import { EmployType, Gender, PayCycle } from "@/shared/types/common";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";

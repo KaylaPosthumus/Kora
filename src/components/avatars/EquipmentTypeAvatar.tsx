@@ -1,6 +1,6 @@
 import React from "react";
 import { Icons } from "../../constants/icons";
-import { EquipmentCategory } from "../../types/common";
+import { EquipmentCategory } from "@/shared/types/common";
 
 interface EquipmentTypeAvatarProps {
   equipmentCategoryId: EquipmentCategory | string;

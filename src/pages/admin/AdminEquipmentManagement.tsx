@@ -23,8 +23,8 @@ import DeleteEquipmentModal from "../../components/modals/DeleteEquipmentModal";
 import dayjs from "dayjs";
 
 // Types
-import { EquipmentCategory, EquipmentCondition } from "../../types/common";
-import { EmpUser } from "../../interfaces/people/empUser";
+import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
+import { EmpUser } from "@/shared/types/empUser";
 
 // Authentication
 import { getFullCurrentUser } from "../../services/authService";

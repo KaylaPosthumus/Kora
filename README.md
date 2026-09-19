@@ -133,7 +133,7 @@ Top-level collections: `users`, `employees` (with a `leaveBalances` subcollectio
 Two conventions worth knowing before you touch the data layer:
 
 - **Enums are readable strings** (`status: "approved"`, not `1`), defined in
-  `src/types/common.ts`. Comparison sites go through the enum, so the values are
+  `src/shared/types/common.ts`. Comparison sites go through the enum, so the values are
   changed in one place.
 - **A leave balance's document id is its leave type id.** That is what lets
   approve-and-decrement run as a single `runTransaction` — the client SDK can't query

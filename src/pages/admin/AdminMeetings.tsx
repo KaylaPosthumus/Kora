@@ -4,10 +4,10 @@ import KoraBtn from "../../components/buttons/KoraBtn";
 import MeetRequestsBadge from "../../components/badges/MeetRequestsBadge";
 import MeetRequestsDrawer from "../../components/drawers/MeetRequestsDrawer";
 import { gatheringAPI, meetingAPI } from "../../services/api.service";
-import { MeetingRequestCard } from "../../interfaces/meetings/meetingRequestCard";
-import { Gathering } from "../../interfaces/gathering/gathering";
+import { MeetingRequestCard } from "@/shared/types/meetingRequestCard";
+import { Gathering } from "@/shared/types/gathering";
 import AdminGatheringBox from "../../components/gathering/AdminGatheringBox";
-import { GatheringType } from "../../types/common";
+import { GatheringType } from "@/shared/types/common";
 import CreatePRModal from "../../components/modals/CreatePRModal";
 import { Spin } from "antd";
 

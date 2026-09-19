@@ -5,7 +5,7 @@ import { firestoreMock } from "../../test/firestore";
 import { authMock } from "../../test/firebaseApp";
 import { renderWithProviders, screen, waitFor } from "../../test/renderWithProviders";
 import ProtectedRoute from "../../components/auth/ProtectedRoute";
-import { UserRole } from "../../types/common";
+import { UserRole } from "@/shared/types/common";
 
 /**
  * Flow test — where a signed-in user actually lands.

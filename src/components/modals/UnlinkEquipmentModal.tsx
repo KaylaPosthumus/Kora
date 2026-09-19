@@ -1,10 +1,10 @@
 import React from "react";
 import { Modal, Button, message } from "antd";
 import { Icons } from "../../constants/icons";
-import { EquipmentConditionLabels } from "../../types/common";
+import { EquipmentConditionLabels } from "@/shared/types/common";
 import { equipmentAPI } from "../../services/api.service";
 import EquipmentTypeAvatar from "../avatars/EquipmentTypeAvatar";
-import { Equipment } from "../../interfaces/equipment/equipment";
+import { Equipment } from "@/shared/types/equipment";
 
 interface UnlinkEquipmentModalProps {
   showModal: boolean;

@@ -8,7 +8,7 @@ import {
   userEvent,
   waitFor,
 } from "../../test/renderWithProviders";
-import { UserRole } from "../../types/common";
+import { UserRole } from "@/shared/types/common";
 
 /**
  * Flow test — the login screen, driven the way a person drives it.

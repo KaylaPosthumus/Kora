@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider } from "./firebase";
-import { UserRole } from "../types/common";
+import { UserRole } from "@/shared/types/common";
 
 /**
  * Auth service, rebuilt on Firebase Auth.
