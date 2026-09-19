@@ -89,8 +89,11 @@ const AppRoutes: React.FC = () => {
       {/* Below lg the nav is a fixed top bar plus a bottom nav, so the page has
           to leave room for both. On lg and up the sidebar is in flow and the
           padding goes away. */}
+      {/* `grow`, not `flex-grow-1`. The latter is Bootstrap's and produced no CSS
+          once Bootstrap was dropped in commit 56, so <main> stopped growing and
+          every page collapsed to the width of its own content. */}
       <main
-        className={`flex-grow-1 min-w-0 ${
+        className={`grow min-w-0 ${
           isAuthPage ? "" : "pt-14 pb-16 lg:pt-0 lg:pb-0"
         }`}
       >
