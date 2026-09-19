@@ -14,7 +14,167 @@
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
-    "import/no-unresolved": ["error", { "ignore": ["^@/"] }]
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": [
+          "^@/"
+        ]
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "@/features/*/components/*"
+            ],
+            "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+          }
+        ]
+      }
+    ]
   },
-  "ignorePatterns": ["dist", "node_modules", "scripts"]
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    "scripts"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "src/features/auth/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/features/*/components/*",
+                  "!@/features/auth/components/*"
+                ],
+                "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/features/dashboard/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/features/*/components/*",
+                  "!@/features/dashboard/components/*"
+                ],
+                "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/features/employees/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/features/*/components/*",
+                  "!@/features/employees/components/*"
+                ],
+                "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/features/equipment/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/features/*/components/*",
+                  "!@/features/equipment/components/*"
+                ],
+                "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/features/gatherings/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/features/*/components/*",
+                  "!@/features/gatherings/components/*"
+                ],
+                "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/features/leave/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/features/*/components/*",
+                  "!@/features/leave/components/*"
+                ],
+                "message": "Import another feature's components through its barrel \u2014 @/features/<feature>/components \u2014 never a file beside it. Inside a feature, import the sibling file directly."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/features/*/components/index.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
 }

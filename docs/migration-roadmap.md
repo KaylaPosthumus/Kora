@@ -325,10 +325,15 @@ Order, one commit per step, `npm run typecheck` green between each:
    `vi.mock()` were aliased too — those are not import statements, so the first pass
    missed them, and a mock path that no longer resolves fails silently by not
    intercepting rather than by erroring.
-7. **Add the `no-restricted-paths` rule** that enforces §2 rule 3, so the boundary holds.
-   Per the amendment there, the pattern to ban is `@/features/*/components/*` from outside
-   that feature — the barrel itself stays allowed. The boundary is clean as of step 4, so
-   this rule locks in a property the tree already has rather than forcing a cleanup.
+7. ~~**Add the `no-restricted-paths` rule**~~ **DONE**, as `no-restricted-imports`.
+   `import/no-restricted-paths` matches resolved *filesystem* paths, and every import in
+   `src/` is now an `@/` alias that ESLint cannot resolve — the project has no
+   `eslint-import-resolver-typescript`, which is why `import/no-unresolved` ignores `^@/`
+   (see §Conventions). The core `no-restricted-imports` rule matches the literal
+   specifier instead, so it works on aliases with no resolver at all. It bans
+   `@/features/*/components/*` globally, and a per-feature `override` re-permits a
+   feature's own components with a negated pattern. Proven in both directions rather than
+   assumed: a cross-feature deep import errors, an intra-feature one does not.
 8. **Reorganise docs** into `docs/` per §3, and thin `README.md` down to setup + running.
 
 Use `git mv` throughout so blame survives. This phase changes no behaviour — if a test
