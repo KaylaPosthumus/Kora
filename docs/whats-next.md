@@ -42,8 +42,8 @@ The rebrand is the last phase and is blocked on assets, not code:
 
 - A Kora logo, to replace `src/assets/logos/cori_logo_green.png` (imported from five
   files — swap the file, keep the import sites).
-- A colour palette, to replace `corigreen` / `sakura` / `warmstone` in
-  `tailwind.config.js` and `src/app/theme.ts`.
+- ~~A colour palette.~~ **Done** (commit 59) — `korablue` / `saffron` / `korastone`,
+  in both `tailwind.config.js` and `src/app/theme.ts`.
 - Then `scripts/generate-icons.sh` regenerates the PWA icons, which currently still
   render the Coriander wordmark even though the manifest says "Kora HR".
 

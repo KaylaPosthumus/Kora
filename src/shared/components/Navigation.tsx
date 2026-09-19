@@ -96,10 +96,10 @@ const Navigation: React.FC = () => {
 
   const getLinkClassName = (path: string, hasIcon = true) => {
     const baseClasses = hasIcon
-      ? "nav-link flex items-center gap-2 hover:text-sakura-300"
+      ? "nav-link flex items-center gap-2 hover:text-saffron-300"
       : "nav-link";
     return isActiveLink(path)
-      ? `${baseClasses} text-sakura-500 font-semibold focus:text-sakura-500`
+      ? `${baseClasses} text-saffron-500 font-semibold focus:text-saffron-500`
       : `${baseClasses} text-white font-light focus:text-white`;
   };
 
@@ -150,7 +150,7 @@ const Navigation: React.FC = () => {
       {groups.map((group, index) => (
         <div key={group.heading ?? index} className="mt-4 flex flex-col gap-4">
           {group.heading && (
-            <small className="text-corigreen-500 text-uppercase">{group.heading}</small>
+            <small className="text-korablue-500 text-uppercase">{group.heading}</small>
           )}
           {group.links.map(({ to, label, icon: Icon }) => (
             <Link
@@ -252,7 +252,7 @@ const Navigation: React.FC = () => {
                 aria-label={label}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] ${
-                  active ? "text-sakura-500 font-semibold" : "text-white font-light"
+                  active ? "text-saffron-500 font-semibold" : "text-white font-light"
                 }`}
               >
                 {Icon && <Icon fontSize="small" />}

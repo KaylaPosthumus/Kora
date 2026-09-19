@@ -294,7 +294,7 @@ function EditPRModal({
               <input
                 type="text"
                 placeholder="Enter meeting link"
-                className="w-full h-12 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-corigreen-500 focus:border-transparent"
+                className="w-full h-12 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-korablue-500 focus:border-transparent"
               />
             </Form.Item>
           ) : (
@@ -306,13 +306,13 @@ function EditPRModal({
               <input
                 type="text"
                 placeholder="Enter meeting location"
-                className="w-full h-12 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-corigreen-500 focus:border-transparent"
+                className="w-full h-12 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-korablue-500 focus:border-transparent"
               />
             </Form.Item>
           )}
 
           <Form.Item name="rating" label="Rating">
-            <Rate allowClear className="text-corigreen-500 text-3xl flex gap-1" />
+            <Rate allowClear className="text-korablue-500 text-3xl flex gap-1" />
           </Form.Item>
 
           <Form.Item name="comment" label="Comment">

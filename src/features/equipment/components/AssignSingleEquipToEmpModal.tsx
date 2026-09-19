@@ -154,7 +154,7 @@ function AssignSingleEquipToEmpModal({
         <>
           {emp.employeeId == equipment?.employeeId ? (
             <div className="flex items-center gap-1">
-              <p className="text-corigreen-500 text-[12px] font-bold">Currently Assigned</p>
+              <p className="text-korablue-500 text-[12px] font-bold">Currently Assigned</p>
             </div>
           ) : emp.isSuspended ? (
             <div className="flex items-center gap-1">
@@ -210,8 +210,8 @@ function AssignSingleEquipToEmpModal({
       >
         <Spin spinning={isLoadingEmployees}>
           {equipment && (
-            <div className="flex items-center gap-3 px-4 py-3 bg-warmstone-300 rounded-xl mb-4">
-              <div className="bg-warmstone-50 rounded-full p-2">
+            <div className="flex items-center gap-3 px-4 py-3 bg-korastone-300 rounded-xl mb-4">
+              <div className="bg-korastone-50 rounded-full p-2">
                 <Icons.Phone className="text-zinc-900" fontSize="large" />
               </div>
               <div className="flex flex-col">

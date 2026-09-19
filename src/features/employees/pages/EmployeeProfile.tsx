@@ -147,7 +147,7 @@ const EmployeeProfile: React.FC = () => {
                   <Avatar
                     src={empUser.profilePicture}
                     size={128}
-                    className="bg-warmstone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
+                    className="bg-korastone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
                   />
                   {/* If user is not a google user */}
                   {empUser.googleId === null ? (
@@ -169,7 +169,7 @@ const EmployeeProfile: React.FC = () => {
                   <Avatar
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${empUser.fullName}`}
                     size={128}
-                    className="bg-warmstone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
+                    className="bg-korastone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
                   />
                   {/* If user is not a google user */}
                   {empUser.googleId === null ? (
@@ -201,7 +201,7 @@ const EmployeeProfile: React.FC = () => {
             </div>
 
             {/* Personal Details */}
-            <div className="bg-warmstone-50 p-4 rounded-2xl flex flex-col w-full shadow-sm">
+            <div className="bg-korastone-50 p-4 rounded-2xl flex flex-col w-full shadow-sm">
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
                 {/* Left Side */}
                 <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
@@ -250,7 +250,7 @@ const EmployeeProfile: React.FC = () => {
               <div className="flex gap-2 items-center">
                 <h2 className="text-zinc-500 font-semibold">Employment & Payroll</h2>
               </div>
-              <div className="bg-warmstone-50 p-4 rounded-2xl flex flex-col w-full shadow-sm">
+              <div className="bg-korastone-50 p-4 rounded-2xl flex flex-col w-full shadow-sm">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
                     {/* Left Side */}
@@ -303,7 +303,7 @@ const EmployeeProfile: React.FC = () => {
               <div className="flex gap-2 items-center">
                 <h2 className="text-zinc-500 font-semibold">Equipment</h2>
               </div>
-              <div className="bg-warmstone-50 p-4 rounded-2xl w-full flex flex-col items-center gap-4 shadow-sm">
+              <div className="bg-korastone-50 p-4 rounded-2xl w-full flex flex-col items-center gap-4 shadow-sm">
                 {equipment.map((item) => (
                   <EquipmentListItem key={item.equipmentId} item={item} />
                 ))}

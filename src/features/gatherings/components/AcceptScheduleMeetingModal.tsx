@@ -126,7 +126,7 @@ function AcceptScheduleMeetingModal({
         title={
           <>
             <h2 className="text-zinc-900 font-bold text-3xl text-center">Schedule a Meeting</h2>
-            <div className="flex flex-col items-center justify-between w-full bg-warmstone-50 p-4 rounded-2xl mt-4">
+            <div className="flex flex-col items-center justify-between w-full bg-korastone-50 p-4 rounded-2xl mt-4">
               <p className="text-zinc-500 font-normal text-sm">{meetingRequest?.purpose}</p>
               <div className="flex gap-2 items-center justify-center w-full mt-4">
                 {meetingRequest?.profilePicture ? (

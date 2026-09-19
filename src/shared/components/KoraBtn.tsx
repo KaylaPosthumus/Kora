@@ -37,7 +37,7 @@ const KoraBtn = ({
     switch (style) {
       case "default":
         btnStyles =
-          "border-2 border-corigreen-500 text-corigreen-500 hover:bg-corigreen-500 hover:text-white hover:border-corigreen-500 ";
+          "border-2 border-korablue-500 text-korablue-500 hover:bg-korablue-500 hover:text-white hover:border-korablue-500 ";
         break;
       case "black":
         btnStyles =
@@ -49,7 +49,7 @@ const KoraBtn = ({
         break;
       default:
         btnStyles =
-          "border-2 border-corigreen-500 text-corigreen-500 hover:bg-corigreen-500 hover:text-white hover:border-corigreen-500";
+          "border-2 border-korablue-500 text-korablue-500 hover:bg-korablue-500 hover:text-white hover:border-korablue-500";
         break;
     }
   } else {
@@ -58,7 +58,7 @@ const KoraBtn = ({
     switch (style) {
       case "default":
         btnStyles =
-          "bg-corigreen-500 text-white border-2 border-corigreen-500 hover:bg-corigreen-600 hover:border-corigreen-600";
+          "bg-korablue-500 text-white border-2 border-korablue-500 hover:bg-korablue-600 hover:border-korablue-600";
         break;
       case "black":
         btnStyles =
@@ -70,7 +70,7 @@ const KoraBtn = ({
         break;
       default:
         btnStyles =
-          "bg-corigreen-500 text-white border-2 border-corigreen-500 hover:bg-corigreen-600 hover:border-corigreen-600";
+          "bg-korablue-500 text-white border-2 border-korablue-500 hover:bg-korablue-600 hover:border-korablue-600";
         break;
     }
   }

@@ -27,17 +27,17 @@ const EquipCheckItem: React.FC<EquipCheckItemProps> = ({
     <div
       onClick={onClick}
       className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl w-full cursor-pointer ${
-        isSelected ? "bg-corigreen-100" : "bg-transparent"
+        isSelected ? "bg-korablue-100" : "bg-transparent"
       }`}
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center h-10 w-10">
           {isSelected ? (
-            <div className="bg-corigreen-500 rounded-full flex items-center justify-center h-8 w-8">
+            <div className="bg-korablue-500 rounded-full flex items-center justify-center h-8 w-8">
               <Icons.Check className="text-white" />
             </div>
           ) : (
-            <div className="bg-warmstone-500 rounded-full flex items-center justify-center h-10 w-10">
+            <div className="bg-korastone-500 rounded-full flex items-center justify-center h-10 w-10">
               <EquipmentTypeAvatar equipmentCategoryId={equipmentCategoryId} />
             </div>
           )}

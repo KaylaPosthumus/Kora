@@ -299,20 +299,20 @@ const AdminIndividualEmployee: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="w-full lg:max-w-1/2 lg:min-w-1/2 lg:w-1/2 flex flex-col gap-4">
             {/* Employee Details */}
-            <div className="bg-warmstone-50 p-4 rounded-2xl flex flex-col shadow-sm">
+            <div className="bg-korastone-50 p-4 rounded-2xl flex flex-col shadow-sm">
               <div className="flex gap-4">
                 <div className="relative">
                   {empUser.profilePicture ? (
                     <Avatar
                       src={getFullImageUrl(empUser.profilePicture)}
                       size={104}
-                      className="bg-warmstone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
+                      className="bg-korastone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
                     />
                   ) : (
                     <Avatar
                       src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${empUser.fullName}`}
                       size={104}
-                      className="bg-warmstone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
+                      className="bg-korastone-600 h-24 w-24 rounded-full object-cover border-2 border-zinc-700"
                     />
                   )}
                   {/* If not google user */}
@@ -420,9 +420,9 @@ const AdminIndividualEmployee: React.FC = () => {
             {/* Payroll Information */}
             <div className="w-full flex flex-col gap-2 items-center">
               <h2 className="text-zinc-500 font-semibold">Payroll</h2>
-              <div className="bg-warmstone-50 p-4 rounded-2xl w-full flex flex-col items-center shadow-sm group">
+              <div className="bg-korastone-50 p-4 rounded-2xl w-full flex flex-col items-center shadow-sm group">
                 <p className="text-zinc-500 text-sm mb-1">Salary</p>
-                <div className="flex justify-center items-center gap-4 p-4 bg-warmstone-200 w-full rounded-2xl">
+                <div className="flex justify-center items-center gap-4 p-4 bg-korastone-200 w-full rounded-2xl">
                   <div className="h-8 w-8 opacity-0">Spacer</div>
                   <div className="flex flex-col items-center ">
                     <p className="text-zinc-900 text-xl">
@@ -445,7 +445,7 @@ const AdminIndividualEmployee: React.FC = () => {
                 <div className="flex flex-col sm:flex-row w-full mt-2 gap-2 h-fit">
                   <div className="flex flex-col w-full sm:w-1/2 items-center">
                     <p className="text-zinc-500 text-sm mb-1">Last Paid</p>
-                    <div className="flex justify-center items-center gap-2 p-4 bg-warmstone-200 w-full rounded-2xl h-full">
+                    <div className="flex justify-center items-center gap-2 p-4 bg-korastone-200 w-full rounded-2xl h-full">
                       {empUser.lastPaidDate ? (
                         <DatePicker
                           value={dayjs(empUser.lastPaidDate)}
@@ -477,7 +477,7 @@ const AdminIndividualEmployee: React.FC = () => {
                   </div>
                   <div className="flex flex-col w-full sm:w-1/2 items-center">
                     <p className="text-zinc-500 text-sm mb-1">Next Pay Day</p>
-                    <div className="flex justify-center items-center gap-2 p-4 bg-warmstone-200 w-full rounded-2xl h-full">
+                    <div className="flex justify-center items-center gap-2 p-4 bg-korastone-200 w-full rounded-2xl h-full">
                       {empUser.lastPaidDate ? (
                         <>
                           {nextPayDay && (
@@ -555,7 +555,7 @@ const AdminIndividualEmployee: React.FC = () => {
                 </Dropdown>
               </div>
               <div
-                className={`bg-warmstone-50 px-4 pt-4 rounded-2xl w-full flex flex-col items-center gap-4 overflow-y-auto scrollbar-hide [&::-webkit-scrollbar]:hidden
+                className={`bg-korastone-50 px-4 pt-4 rounded-2xl w-full flex flex-col items-center gap-4 overflow-y-auto scrollbar-hide [&::-webkit-scrollbar]:hidden
                 ${equipment.length > 3 ? "h-[224px] pb-20" : "h-fit pb-4"}`}
               >
                 {equipment.map((item) => (
@@ -584,7 +584,7 @@ const AdminIndividualEmployee: React.FC = () => {
               </div>
 
               {equipment.length > 3 && (
-                <div className="py-8 w-full bg-gradient-to-b from-transparent to-warmstone-50 absolute rounded-b-2xl bottom-0 left-0 right-0 text-transparent">
+                <div className="py-8 w-full bg-gradient-to-b from-transparent to-korastone-50 absolute rounded-b-2xl bottom-0 left-0 right-0 text-transparent">
                   _
                 </div>
               )}
@@ -626,7 +626,7 @@ const AdminIndividualEmployee: React.FC = () => {
               <div className="w-full sm:w-9/12 flex flex-col gap-4 sm:max-w-9/12">
                 <div className="w-full flex flex-col gap-2 items-center ">
                   <h2 className="text-zinc-500 font-semibold">Average Rating</h2>
-                  <div className="w-full p-4 bg-warmstone-50 rounded-2xl shadow-sm">
+                  <div className="w-full p-4 bg-korastone-50 rounded-2xl shadow-sm">
                     <GaugeComponent
                       minValue={0}
                       maxValue={500}
@@ -681,7 +681,7 @@ const AdminIndividualEmployee: React.FC = () => {
                       />
                     ))}
                     {gatherings.length === 0 && (
-                      <div className="bg-warmstone-50 p-4 rounded-2xl w-full flex flex-col items-center gap-3">
+                      <div className="bg-korastone-50 p-4 rounded-2xl w-full flex flex-col items-center gap-3">
                         <p className="text-zinc-500 text-center">No Meetings Yet</p>
                       </div>
                     )}

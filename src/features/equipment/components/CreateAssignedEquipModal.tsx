@@ -101,7 +101,7 @@ function CreateAssignedEquipModal({
             <h2 className="text-zinc-900 font-bold text-3xl flex flex-col gap-2">
               {/* Create Equipment for {employee.fullName} */}
               Create Equipment{" "}
-              <span className="text-corigreen-500 text-xl font-light">
+              <span className="text-korablue-500 text-xl font-light">
                 (assigned to {employee.fullName})
               </span>
             </h2>

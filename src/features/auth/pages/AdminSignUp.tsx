@@ -85,13 +85,13 @@ const AdminSignUp: React.FC = () => {
             <img
               src={BackgroundImage}
               alt="Login Background"
-              className="w-full h-full bg-corigreen-500 object-cover rounded-tr-[25px] rounded-br-[25px]"
+              className="w-full h-full bg-korablue-500 object-cover rounded-tr-[25px] rounded-br-[25px]"
             />
           </div>
           <div className="w-1/2 flex items-center justify-center mb-16">
             {!pendingEmail && (
               <div className="flex flex-col items-center w-[300px]">
-                <h1 className="text-3xl font-bold mb-4 text-corigreen-500">
+                <h1 className="text-3xl font-bold mb-4 text-korablue-500">
                   Admin <span className="text-zinc-900 font-light">Signup</span>
                 </h1>
                 <Form
@@ -193,7 +193,7 @@ const AdminSignUp: React.FC = () => {
                   Already have an account?{" "}
                   <Link
                     to="/"
-                    className="text-corigreen-500 hover:text-corigreen-300 transition-colors font-bold"
+                    className="text-korablue-500 hover:text-korablue-300 transition-colors font-bold"
                   >
                     Log in
                   </Link>

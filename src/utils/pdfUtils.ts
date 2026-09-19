@@ -167,7 +167,7 @@ export const generatePayrollPDF = async (empUser: EmpUser) => {
       subheading: {
         fontSize: 16,
         bold: true,
-        color: "#6D8650",
+        color: "#22588F",
       },
       smalltext: {
         fontSize: 12,

@@ -7,7 +7,7 @@ import { theme } from "antd";
  * Lifted out of `App.tsx`, where it was ~150 of that file's 247 lines and the
  * reason the shell was hard to read. It is also the whole of Ant's half of the
  * rebrand (Phase 8): the palette below is still Coriander's
- * `corigreen`/`warmstone`, and swapping it is an edit to this file plus
+ * `korablue`/`korastone`, and swapping it is an edit to this file plus
  * `tailwind.config.js`, rather than a sweep.
  *
  * The hex values are duplicated from the Tailwind palette rather than imported
@@ -19,26 +19,32 @@ export const koraTheme: ThemeConfig = {
   algorithm: theme.defaultAlgorithm,
         token: {
           // Primary Colors
-          colorPrimary: "#88A764",
-          colorPrimaryHover: "#6D8650",
-          colorPrimaryActive: "#52643C",
-          colorPrimaryText: "#1B2114",
-          colorPrimaryTextHover: "#1B2114",
-          colorPrimaryTextActive: "#1B2114",
+          colorPrimary: "#2C6FB5",
+          colorPrimaryHover: "#22588F",
+          colorPrimaryActive: "#1A426C",
+          colorPrimaryText: "#0A1826",
+          colorPrimaryTextHover: "#0A1826",
+          colorPrimaryTextActive: "#0A1826",
 
           // Text Colors
-          colorText: "#18181b", // zinc-900
-          colorTextSecondary: "#71717a", // zinc-500
-          colorTextTertiary: "#a1a1aa", // zinc-400
+          colorText: "#2B2B28", // korastone-900
+          colorTextSecondary: "#73736E", // korastone-700
+          colorTextTertiary: "#9C9C97", // korastone-600
 
           // Background Colors
-          colorBgContainer: "#fafaf9", // warmstone-50
-          colorBgElevated: "#f5f5f4", // warmstone-100
-          colorBgLayout: "#e7e5e4", // warmstone-200
+          // These three read `warmstone-*` in the comments but held Tailwind's own
+          // stone defaults, which were close enough to the old beige to pass. They
+          // are the real ramp now, so Ant's surfaces and Tailwind's agree.
+          colorBgContainer: "#FDFDFC", // korastone-50
+          colorBgElevated: "#FAFAF9", // korastone-100
+          colorBgLayout: "#F4F4F2", // korastone-200
 
           // Border Colors
-          colorBorder: "#d4d4d8", // zinc-300
-          colorBorderSecondary: "#e4e4e7", // zinc-200
+          // Borders come off the brand ramp too. At a near-white ground the
+          // border is what separates a card from the page, so it is the 300 step
+          // rather than a lighter one.
+          colorBorder: "#E8E8E4", // korastone-300
+          colorBorderSecondary: "#F4F4F2", // korastone-200
 
           // Component Specific
           borderRadius: 16, // rounded-2xl
@@ -106,7 +112,7 @@ export const koraTheme: ThemeConfig = {
           },
           Form: {
             labelFontSize: 12,
-            labelColor: "#71717a", // zinc-500
+            labelColor: "#73736E", // korastone-700
             verticalLabelPadding: 2,
             fontSize: 12,
           },
@@ -123,12 +129,12 @@ export const koraTheme: ThemeConfig = {
             borderRadiusLG: 16,
           },
           Table: {
-            colorBgSolidHover: "#e7e5e4",
+            colorBgSolidHover: "#F4F4F2",
             borderRadiusLG: 16,
-            headerBg: "#e7e5e4",
+            headerBg: "#F4F4F2",
             headerBorderRadius: 16,
             headerSplitColor: "transparent",
-            headerColor: "#71717a",
+            headerColor: "#73736E",
             headerFilterHoverBg: "transparent",
             headerSortActiveBg: "transparent",
             headerSortHoverBg: "transparent",

@@ -286,5 +286,6 @@ package with its own Vitest config and its own `npm test`, as is `rules-tests/`
   ESLint 9 flat config means upgrading both together.
 - The rebrand is name-only so far. The components carry the Kora name (`KoraBtn`,
   `KoraBadge`, `KoraCircleBtn`) but the Tailwind palette and the logo are still
-  Coriander's (`corigreen`/`sakura`/`warmstone`, `cori_logo_green.png`), as is
+  Kora's own (`korablue`/`saffron`/`korastone`) as of commit 59 — but the logo is
+  still `cori_logo_green.png`, as is
   user-facing copy in `UnlinkedMessage`.

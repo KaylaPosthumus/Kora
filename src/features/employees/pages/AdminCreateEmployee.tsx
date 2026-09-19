@@ -229,7 +229,7 @@ const AdminCreateEmployee: React.FC = () => {
       {/* Empty state */}
       {!selectedUser && (
         <div className="pt-32 text-center text-gray-500">
-          <Icons.PersonAdd className="text-corigreen-500" style={{ fontSize: 64 }} />
+          <Icons.PersonAdd className="text-korablue-500" style={{ fontSize: 64 }} />
           <h2 className="text-xl font-semibold mt-2">No User Selected</h2>
           <p className="mt-2">Please select a user above to begin.</p>
         </div>

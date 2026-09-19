@@ -17,11 +17,11 @@ import KoraBtn from "@/shared/components/KoraBtn";
 function SignUpComplete({ email, onBack }: { email: string; onBack: () => void }) {
   return (
     <div className="flex flex-col items-center w-[320px] gap-4">
-      <HowToRegIcon className="text-corigreen-500" style={{ fontSize: "96px" }} />
+      <HowToRegIcon className="text-korablue-500" style={{ fontSize: "96px" }} />
 
       <div className="flex flex-col gap-2 items-center">
         <h1 className="text-3xl text-zinc-900 font-light text-center">
-          <span className="font-bold text-corigreen-500">Account</span> created
+          <span className="font-bold text-korablue-500">Account</span> created
         </h1>
         <p className="text-zinc-500 text-center">
           We created your account for <span className="font-semibold">{email}</span>. An admin

@@ -55,7 +55,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
       ]}
       series={chartData.series.map((s, i) => ({
         ...s,
-        color: i === 0 ? "#CEDBC0" : "#88A764", 
+        color: i === 0 ? "#CEDBC0" : "#2C6FB5", 
       }))}
       width={440}
       height={260}
@@ -73,7 +73,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
         <span className="text-zinc-700 text-sm">Average Rating</span>
       </div>
       <div className="flex items-center gap-1">
-        <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#88A764" }}></span>
+        <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#2C6FB5" }}></span>
         <span className="text-zinc-700 text-sm">Most Recent Rating</span>
       </div>
     </div>

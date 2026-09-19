@@ -18,7 +18,7 @@ const ApiPlayground: React.FC = () => {
         </h1>
         <button
           onClick={handleGetUser}
-          className="px-4 py-2 bg-corigreen-500 text-white rounded hover:bg-corigreen-400 transition"
+          className="px-4 py-2 bg-korablue-500 text-white rounded hover:bg-korablue-400 transition"
         >
           Fetch Current User
         </button>

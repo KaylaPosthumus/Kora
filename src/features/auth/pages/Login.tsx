@@ -178,7 +178,7 @@ const Login: React.FC = () => {
             <img
               src={BackgroundImage}
               alt="Abstract background"
-              className="w-full h-full bg-corigreen-500 object-cover rounded-tr-[25px] rounded-br-[25px]"
+              className="w-full h-full bg-korablue-500 object-cover rounded-tr-[25px] rounded-br-[25px]"
             />
           </div>
 
@@ -188,7 +188,7 @@ const Login: React.FC = () => {
               <UnlinkedMessage onLogOut={() => setShowUnlinkedMessage(false)} />
             ) : (
               <div className="flex flex-col items-center w-[300px]">
-                <h1 className="text-3xl font-bold mb-4 text-corigreen-500 ">
+                <h1 className="text-3xl font-bold mb-4 text-korablue-500 ">
                   Welcome <span className="text-zinc-900 font-light">Back</span>
                 </h1>
                 <Form
@@ -236,7 +236,7 @@ const Login: React.FC = () => {
                   New employee?{" "}
                   <Link
                     to="/employee/signup"
-                    className="text-corigreen-500 hover:text-corigreen-300 transition-colors font-bold"
+                    className="text-korablue-500 hover:text-korablue-300 transition-colors font-bold"
                   >
                     Sign up
                   </Link>
@@ -246,7 +246,7 @@ const Login: React.FC = () => {
                     For admins?{" "}
                     <Link
                       to="/admin/signup"
-                      className="text-corigreen-500 hover:text-corigreen-300 transition-colors font-bold"
+                      className="text-korablue-500 hover:text-korablue-300 transition-colors font-bold"
                     >
                       Sign up
                     </Link>

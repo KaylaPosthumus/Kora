@@ -49,7 +49,7 @@ function EmpGatheringBox({ gathering }: GatheringBoxProps) {
   };
 
   return (
-    <div className="bg-warmstone-50 p-4 rounded-2xl w-full flex flex-col justify-between gap-3 shadow-sm">
+    <div className="bg-korastone-50 p-4 rounded-2xl w-full flex flex-col justify-between gap-3 shadow-sm">
       {/* Heading & Body */}
       <div className="w-full flex flex-col gap-3">
         {/* Heading Section */}
@@ -57,14 +57,14 @@ function EmpGatheringBox({ gathering }: GatheringBoxProps) {
           <div className=" flex items-center gap-2 w-full">
             {isPerformanceReview ? (
               <Tooltip title="Performance Review">
-                <div className="bg-corigreen-100 rounded-full h-12 w-12 flex items-center justify-center">
-                  <Icons.StarRounded className="text-corigreen-400" fontSize="large" />
+                <div className="bg-korablue-100 rounded-full h-12 w-12 flex items-center justify-center">
+                  <Icons.StarRounded className="text-korablue-400" fontSize="large" />
                 </div>
               </Tooltip>
             ) : (
               <Tooltip title="Standard Meeting">
-                <div className="bg-sakura-100 rounded-full h-12 w-12 flex items-center justify-center">
-                  <Icons.Chat className="text-sakura-400" />
+                <div className="bg-saffron-100 rounded-full h-12 w-12 flex items-center justify-center">
+                  <Icons.Chat className="text-saffron-400" />
                 </div>
               </Tooltip>
             )}
@@ -109,7 +109,7 @@ function EmpGatheringBox({ gathering }: GatheringBoxProps) {
               // Completed Status
               <>
                 <Tooltip title="Completed">
-                  <Icons.CheckCircle className="text-corigreen-400" />
+                  <Icons.CheckCircle className="text-korablue-400" />
                 </Tooltip>
               </>
             )}
@@ -149,7 +149,7 @@ function EmpGatheringBox({ gathering }: GatheringBoxProps) {
       {gathering.isOnline ? (
         // If meet is online
         <div className="w-full flex items-center justify-between gap-3">
-          <div className="w-full flex h-10 items-center justify-center bg-warmstone-100 rounded-xl ">
+          <div className="w-full flex h-10 items-center justify-center bg-korastone-100 rounded-xl ">
             <p className="text-zinc-500 text-[12px]">{gathering.meetLink}</p>
           </div>
           {gathering.meetingStatus === MeetStatus.Upcoming && (
@@ -160,7 +160,7 @@ function EmpGatheringBox({ gathering }: GatheringBoxProps) {
         </div>
       ) : (
         // If meet is in person
-        <div className="w-full flex h-10 items-center justify-center bg-warmstone-100 rounded-xl ">
+        <div className="w-full flex h-10 items-center justify-center bg-korastone-100 rounded-xl ">
           <p className="text-zinc-500 text-[12px]">{gathering.meetLocation}</p>
         </div>
       )}

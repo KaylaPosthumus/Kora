@@ -24,8 +24,8 @@ function MeetRequestsBadge({ requests, employee, onClick }: MeetRequestsBadgePro
       {employee ? (
         <>
           {requests > 0 && (
-            <div className="bg-sakura-500 text-sakura-900 pl-3 pr-4 py-1 rounded-full flex items-center gap-2">
-              <div className="rounded-full bg-sakura-50 w-2 h-2"></div>
+            <div className="bg-saffron-500 text-saffron-900 pl-3 pr-4 py-1 rounded-full flex items-center gap-2">
+              <div className="rounded-full bg-saffron-50 w-2 h-2"></div>
               <p className="font-medium text-sm">
                 {requests} Request{requests === 1 ? "" : "s"} Pending
               </p>

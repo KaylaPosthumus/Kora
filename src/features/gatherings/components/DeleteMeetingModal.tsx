@@ -48,7 +48,7 @@ function DeleteMeetingModal({
             paddingLeft: 40,
             paddingRight: 40,
             paddingTop: 40,
-            background: "#F5F5F4", // warmstone-100 equivalent
+            background: "#F5F5F4", // korastone-100 equivalent
             borderBottom: "none",
           },
           body: {
@@ -97,7 +97,7 @@ function DeleteMeetingModal({
               <p className="text-zinc-500 text-sm">{meeting.meetLocation}</p>
             </div>
           )}
-          <div className="flex flex-col px-4 py-3 bg-warmstone-300 rounded-xl my-2">
+          <div className="flex flex-col px-4 py-3 bg-korastone-300 rounded-xl my-2">
             <p className="text-zinc-900 font-bold">{meeting.employeeName}</p>
             <p className="text-zinc-500 text-sm">{meeting.purpose}</p>
           </div>

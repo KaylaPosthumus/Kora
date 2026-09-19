@@ -14,7 +14,7 @@ interface MeetRequestCardProps {
 function MeetRequestCard({ meetRequest, onApprove, onReject }: MeetRequestCardProps) {
   return (
     <>
-      <div className="flex flex-col w-full bg-warmstone-50 p-4 rounded-2xl hover:shadow-md transition-all cursor-pointer group mt-3">
+      <div className="flex flex-col w-full bg-korastone-50 p-4 rounded-2xl hover:shadow-md transition-all cursor-pointer group mt-3">
         <div className="flex items-center gap-2">
           {meetRequest.profilePicture ? (
             <Avatar src={meetRequest.profilePicture} />

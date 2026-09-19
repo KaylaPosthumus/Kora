@@ -175,7 +175,7 @@ const EmployeeHome: React.FC = () => {
               {/* Ratings */}
               <div className="col-span-12 md:col-span-5">
                 <div className="text-zinc-500 font-semibold text-center mb-2">Your Ratings</div>
-                <div className="bg-warmstone-50 p-4 pt-2 rounded-2xl shadow-sm">
+                <div className="bg-korastone-50 p-4 pt-2 rounded-2xl shadow-sm">
                   <div className="w-full py-4 flex flex-col gap-2 items-center" style={{ minHeight: 239 }}>
                     <GaugeComponent
                       minValue={0}
@@ -252,11 +252,11 @@ const EmployeeHome: React.FC = () => {
                 <div className="text-zinc-500 font-semibold text-center mb-2">
                   Your Payroll Information
                 </div>
-                <div className="bg-warmstone-50 p-4 pt-2 rounded-2xl shadow-sm">
+                <div className="bg-korastone-50 p-4 pt-2 rounded-2xl shadow-sm">
                   <div className="w-full flex flex-col gap-2 items-center">
-                    <div className="bg-warmstone-50 p-2 rounded-2xl w-full flex flex-col items-center">
+                    <div className="bg-korastone-50 p-2 rounded-2xl w-full flex flex-col items-center">
                       <p className="text-zinc-500 text-sm mb-1">Salary</p>
-                      <div className="flex flex-col items-center p-3 bg-warmstone-200 w-full rounded-2xl">
+                      <div className="flex flex-col items-center p-3 bg-korastone-200 w-full rounded-2xl">
                         <p className="text-zinc-900 text-xl">
                           {empUser ? formatRandAmount(empUser.salaryAmount) : "N/A"}
                         </p>
@@ -271,7 +271,7 @@ const EmployeeHome: React.FC = () => {
                       <div className="flex flex-wrap w-full mt-2 gap-2 h-fit">
                         <div className="flex flex-col flex-1 basis-32 min-w-0 items-center">
                           <p className="text-zinc-500 text-sm mb-1">Last Paid</p>
-                          <div className="flex justify-center items-center gap-2 p-3 bg-warmstone-200 rounded-2xl h-full w-full">
+                          <div className="flex justify-center items-center gap-2 p-3 bg-korastone-200 rounded-2xl h-full w-full">
                             <p className="text-zinc-900">
                               {empUser?.lastPaidDate
                                 ? dayjs(empUser.lastPaidDate).format("DD/MM/YYYY")
@@ -281,7 +281,7 @@ const EmployeeHome: React.FC = () => {
                         </div>
                         <div className="flex flex-col flex-1 basis-32 min-w-0 items-center">
                           <p className="text-zinc-500 text-sm mb-1">Next Pay Day</p>
-                          <div className="flex justify-center items-center gap-2 p-4 bg-warmstone-200 w-full rounded-2xl h-full">
+                          <div className="flex justify-center items-center gap-2 p-4 bg-korastone-200 w-full rounded-2xl h-full">
                             <p className="text-zinc-900">
                               {nextPayDay ? dayjs(nextPayDay).format("DD/MM/YYYY") : "N/A"}
                             </p>
@@ -290,12 +290,12 @@ const EmployeeHome: React.FC = () => {
                         <div className="flex flex-col flex-1 basis-32 min-w-0 items-center">
                           <p className="text-transparent text-sm mb-1">..</p>
                           <div
-                            className="flex justify-center items-center gap-2 p-4 hover:bg-corigreen-200 border-2 border-corigreen-500 rounded-2xl w-full cursor-pointer"
+                            className="flex justify-center items-center gap-2 p-4 hover:bg-korablue-200 border-2 border-korablue-500 rounded-2xl w-full cursor-pointer"
                             onClick={() => empUser && generatePayrollPDF(empUser)}
                             style={{ minHeight: 48 }}
                           >
-                            <Icons.Upload className="text-corigreen-600" />
-                            <p className="text-corigreen-600 font-medium text-sm">Export Payroll</p>
+                            <Icons.Upload className="text-korablue-600" />
+                            <p className="text-korablue-600 font-medium text-sm">Export Payroll</p>
                           </div>
                         </div>
                       </div>
@@ -306,7 +306,7 @@ const EmployeeHome: React.FC = () => {
             </div>
             <div className="grid grid-cols-12 gap-3 pt-4 mb-4">
               <div className="col-span-12">
-                <div className="bg-corigreen-500 p-4 rounded-2xl justify-center text-white text-center shadow-sm">
+                <div className="bg-korablue-500 p-4 rounded-2xl justify-center text-white text-center shadow-sm">
                   <p>"{quote}"</p>
                   <p className="italic"> - {quoteAuthor}</p>
                 </div>
@@ -340,7 +340,7 @@ const EmployeeHome: React.FC = () => {
                 <div
                   className="pointer-events-none w-full absolute left-0 right-0 bottom-0 h-7"
                   style={{
-                    background: "linear-gradient(to bottom, rgba(231,229,228,0), #E7E5E4 100%)",
+                    background: "linear-gradient(to bottom, rgba(244,244,242,0), #E7E5E4 100%)",
                   }}
                 />
               </div>

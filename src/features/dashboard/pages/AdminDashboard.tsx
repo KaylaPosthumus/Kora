@@ -243,7 +243,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="text-zinc-500 font-semibold text-center mb-2">
                     Employee Ratings: Top 5
                   </div>
-                  <div className="bg-warmstone-50 pt-2 rounded-2xl shadow-sm">
+                  <div className="bg-korastone-50 pt-2 rounded-2xl shadow-sm">
                     <BarChartCard empUserRatingMetrics={empUserRatingMetrics} />
                   </div>
                 </div>
@@ -253,7 +253,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="text-zinc-500 font-semibold text-center mb-2">
                     Employment Overview
                   </div>
-                  <div className="bg-warmstone-50 p-3 rounded-2xl flex flex-col shadow-sm">
+                  <div className="bg-korastone-50 p-3 rounded-2xl flex flex-col shadow-sm">
                     <DoughnutChartCard employeeStatusTotals={employeeStatusTotals} />
                   </div>
                 </div>
@@ -273,7 +273,7 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="relative w-full">
                       <div
-                        className="h-[335px] bg-warmstone-50 p-3 overflow-y-auto rounded-2xl flex flex-col shadow-sm gap-2 [&::-webkit-scrollbar]:hidden"
+                        className="h-[335px] bg-korastone-50 p-3 overflow-y-auto rounded-2xl flex flex-col shadow-sm gap-2 [&::-webkit-scrollbar]:hidden"
                         style={{ paddingBottom: 32 }}
                       >
                         {mappedLeaveRequests.length > 0 ? (
@@ -295,7 +295,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="grid grid-cols-12 gap-3">
                     <div className="col-span-12 md:col-span-6">
                       <div
-                        className="bg-corigreen-500 text-warmstone-200 p-3 rounded-2xl shadow-sm h-full hover:cursor-pointer"
+                        className="bg-korablue-500 text-korastone-200 p-3 rounded-2xl shadow-sm h-full hover:cursor-pointer"
                         onClick={() => setShowCreatePRModal(true)}
                       >
                         <p className="text-sm font-bold mb-2">New Performance Review</p>
@@ -306,7 +306,7 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="col-span-12 md:col-span-6">
                       <div
-                        className="flex flex-col bg-sakura-500 text-warmstone-200 p-3 rounded-2xl shadow-sm h-full hover:cursor-pointer"
+                        className="flex flex-col bg-saffron-500 text-korastone-200 p-3 rounded-2xl shadow-sm h-full hover:cursor-pointer"
                         onClick={() => {
                           navigate("/admin/meetings");
                         }}
@@ -324,7 +324,7 @@ const AdminDashboard: React.FC = () => {
                     <div className="text-zinc-500 font-semibold text-center mb-2 mt-3">
                       Top 3 Employees
                     </div>
-                    <div className="bg-warmstone-50 p-2 rounded-2xl flex flex-col shadow-sm">
+                    <div className="bg-korastone-50 p-2 rounded-2xl flex flex-col shadow-sm">
                       {topRatedEmployees.map((entry: any) => {
                         const employeeData = entry.employee;
                         const ratingData = entry.rating;

@@ -43,7 +43,7 @@ function TerminateEmployeeModal({
             paddingLeft: 40,
             paddingRight: 40,
             paddingTop: 40,
-            background: "#F5F5F4", // warmstone-100 equivalent
+            background: "#F5F5F4", // korastone-100 equivalent
             borderBottom: "none",
           },
           body: {

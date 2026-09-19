@@ -76,7 +76,7 @@ describe("the classes the stylesheet selects on are the ones emitted", () => {
 
   it("keeps the colour-family hooks the stylesheet matches on", () => {
     // buttons.css keys its active states off the Tailwind colour classes, e.g.
-    // [class*="bg-corigreen"]. If the component stopped emitting those, one rule
+    // [class*="bg-korablue"]. If the component stopped emitting those, one rule
     // would stop covering a whole family with nothing to show for it.
     render(<KoraBtn style="black">Save</KoraBtn>);
     expect(screen.getByRole("button").className).toMatch(/bg-zinc/);

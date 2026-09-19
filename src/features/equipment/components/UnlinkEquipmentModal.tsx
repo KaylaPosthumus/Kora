@@ -49,7 +49,7 @@ function UnlinkEquipmentModal({
             paddingLeft: 40,
             paddingRight: 40,
             paddingTop: 40,
-            background: "#F5F5F4", // warmstone-100 equivalent
+            background: "#F5F5F4", // korastone-100 equivalent
             borderBottom: "none",
           },
           body: {
@@ -79,7 +79,7 @@ function UnlinkEquipmentModal({
             This will remove the item from the employee's profile, but not delete it. You can relink
             this item later.
           </p>
-          <div className="flex items-center gap-3 px-4 py-3 bg-warmstone-300 rounded-xl my-2">
+          <div className="flex items-center gap-3 px-4 py-3 bg-korastone-300 rounded-xl my-2">
             <EquipmentTypeAvatar equipmentCategoryId={equipment.equipmentCatId} />
             <div className="flex flex-col">
               <p className="text-zinc-900">{equipment.equipmentName}</p>

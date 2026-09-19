@@ -4,43 +4,57 @@ export default {
   theme: {
     extend: {
       colors: {
-        corigreen: {
-          50: "#F9FBF7",
-          100: "#E1E9D8",
-          200: "#CCD9BC",
-          300: "#B5C89F",
-          400: "#9FB881",
-          500: "#88A764",
-          600: "#6D8650",
-          700: "#52643C",
-          800: "#364328",
-          900: "#1B2114",
+        /**
+         * Kora's palette. Replaces Coriander's corigreen / sakura / warmstone.
+         *
+         * `korablue` carries every action; `saffron` is an accent for attention
+         * and nothing else — it is bright enough to fight the blue if it is used
+         * for anything routine. The ramps keep the same step names, so a class
+         * only changes its prefix.
+         */
+        korablue: {
+          50: "#F2F7FC",
+          100: "#DBE9F7",
+          200: "#BCD5F0",
+          300: "#92BAE5",
+          400: "#5E97D4",
+          // 5.4:1 against white — the lightest step that holds white button text.
+          500: "#2C6FB5",
+          600: "#22588F",
+          700: "#1A426C",
+          800: "#122C48",
+          900: "#0A1826",
         },
-        sakura: {
-          50: "#FEFBFD",
-          100: "#FCEDF6",
-          200: "#FAE0EF",
-          300: "#F8D3E7",
-          400: "#F6C5E0",
-          500: "#F4B8D9",
-          600: "#C393AE",
-          700: "#926E82",
-          800: "#624A57",
-          900: "#31252B",
+        saffron: {
+          50: "#FFFAF0",
+          100: "#FDEFD3",
+          200: "#FBE0AC",
+          300: "#F8CC78",
+          400: "#F5B546",
+          // Takes dark text only. White on this is 2.1:1 and fails outright.
+          500: "#F09D1C",
+          600: "#C87D13",
+          700: "#9A5F0F",
+          800: "#6B420B",
+          900: "#3D2606",
         },
-        warmstone: {
-          50: "#FEFDFD",
-          100: "#F9F7F4",
-          200: "#F5F1ED",
-          300: "#F1EBE4",
-          400: "#ECE5DC",
-          500: "#E8DFD4",
-          600: "#BAB2AA",
-          700: "#8B867F",
-          800: "#5D5955",
-          900: "#322706",
-          950: "#201800",
-          1000: "#150E00",
+        korastone: {
+          50: "#FDFDFC",
+          // The page ground. Near-white and near-neutral: the old warmstone was
+          // a beige built for a green brand and went muddy under blue.
+          100: "#FAFAF9",
+          200: "#F4F4F2",
+          // Held darker than the ground would suggest, because at this lightness
+          // the border is what separates a white card from what is behind it.
+          300: "#E8E8E4",
+          400: "#DEDEDA",
+          500: "#CBCBC6",
+          600: "#9C9C97",
+          700: "#73736E",
+          800: "#4E4E4A",
+          900: "#2B2B28",
+          950: "#1C1C1A",
+          1000: "#121211",
         },
       },
       fontFamily: {

@@ -208,12 +208,12 @@ const AdminEmployeeManagement: React.FC = () => {
             {record.profilePicture ? (
               <Avatar
                 src={getFullImageUrl(record.profilePicture)}
-                className="bg-warmstone-600 h-12 w-12 rounded-full object-cover border-2 border-zinc-700"
+                className="bg-korastone-600 h-12 w-12 rounded-full object-cover border-2 border-zinc-700"
               />
             ) : (
               <Avatar
                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${record.fullName}`}
-                className="bg-warmstone-600 h-12 w-12 rounded-full object-cover border-2 border-zinc-700"
+                className="bg-korastone-600 h-12 w-12 rounded-full object-cover border-2 border-zinc-700"
               />
             )}
             <div className="flex flex-col">
@@ -392,7 +392,7 @@ const AdminEmployeeManagement: React.FC = () => {
               <div className="flex flex-col">
                 <div className="flex items-center gap-1">
                   <p>{formatTimestampToDate(date)}</p>
-                  <Icons.CheckCircle className="text-corigreen-500" fontSize="small" />
+                  <Icons.CheckCircle className="text-korablue-500" fontSize="small" />
                 </div>
               </div>
             </Tooltip>

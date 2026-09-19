@@ -15,8 +15,8 @@ function EquipmentTypeAvatar({ equipmentCategoryId, className, colour }: Equipme
 
   switch (colour) {
     case "green":
-      bgColour = "bg-corigreen-100";
-      iconColour = "text-corigreen-600";
+      bgColour = "bg-korablue-100";
+      iconColour = "text-korablue-600";
       break;
     case "red":
       bgColour = "bg-red-100";

@@ -146,16 +146,16 @@ function AdminGatheringBox({
     if (gatheringType.isPerformanceReview) {
       return (
         <Tooltip title="Performance Review">
-          <div className="bg-corigreen-100 rounded-full h-12 w-12 flex items-center justify-center">
-            <Icons.StarRounded className="text-corigreen-400" fontSize="large" />
+          <div className="bg-korablue-100 rounded-full h-12 w-12 flex items-center justify-center">
+            <Icons.StarRounded className="text-korablue-400" fontSize="large" />
           </div>
         </Tooltip>
       );
     } else if (gatheringType.isMeeting) {
       return (
         <Tooltip title="Standard Meeting">
-          <div className="bg-sakura-100 rounded-full h-12 w-12 flex items-center justify-center">
-            <Icons.Chat className="text-sakura-500" />
+          <div className="bg-saffron-100 rounded-full h-12 w-12 flex items-center justify-center">
+            <Icons.Chat className="text-saffron-500" />
           </div>
         </Tooltip>
       );
@@ -236,7 +236,7 @@ function AdminGatheringBox({
     if (gatheringStatus.isCompleted) {
       return (
         <Tooltip title="Completed">
-          <Icons.CheckCircle className="text-corigreen-400" />
+          <Icons.CheckCircle className="text-korablue-400" />
         </Tooltip>
       );
     }
@@ -423,7 +423,7 @@ function AdminGatheringBox({
     const displayText = gathering.isOnline ? gathering.meetLink : gathering.meetLocation;
 
     return (
-      <div className="w-full h-10 flex items-center justify-center bg-warmstone-200 rounded-xl overflow-hidden">
+      <div className="w-full h-10 flex items-center justify-center bg-korastone-200 rounded-xl overflow-hidden">
         <Tooltip title={displayText}>
           <p className="text-zinc-500 text-[12px] truncate mx-4">{displayText}</p>
         </Tooltip>
@@ -432,7 +432,7 @@ function AdminGatheringBox({
   };
 
   return (
-    <div className="bg-warmstone-50 p-4 rounded-2xl w-full flex flex-col justify-between gap-3 shadow-sm">
+    <div className="bg-korastone-50 p-4 rounded-2xl w-full flex flex-col justify-between gap-3 shadow-sm">
       {/* Heading & Body */}
       <div className="w-full flex flex-col gap-3">
         {/* Heading Section */}

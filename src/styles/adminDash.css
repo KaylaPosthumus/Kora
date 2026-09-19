@@ -21,12 +21,12 @@
 
 .react-calendar__tile--active {
   background-color: transparent !important;
-  border: 2px solid #88a764 !important;
+  border: 2px solid #2C6FB5 !important;
   border-radius: 6px;
   color: #000000 !important;
 }
 
 .react-calendar__tile--now {
-  background-color: #88a764 !important;
+  background-color: #2C6FB5 !important;
   border-radius: 6px;
 }

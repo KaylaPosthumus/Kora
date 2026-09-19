@@ -39,7 +39,7 @@ const KoraCircleBtn = ({
     switch (style) {
       case "default":
         btnStyles =
-          "bg-transparent text-corigreen-500 border-2 border-corigreen-500 hover:border-corigreen-600 hover:text-corigreen-600";
+          "bg-transparent text-korablue-500 border-2 border-korablue-500 hover:border-korablue-600 hover:text-korablue-600";
         break;
       case "black":
         btnStyles =
@@ -51,7 +51,7 @@ const KoraCircleBtn = ({
         break;
       default:
         btnStyles =
-          "bg-transparent text-corigreen-500 border-2 border-corigreen-500 hover:border-corigreen-600 hover:text-corigreen-600";
+          "bg-transparent text-korablue-500 border-2 border-korablue-500 hover:border-korablue-600 hover:text-korablue-600";
         break;
     }
   } else {
@@ -60,7 +60,7 @@ const KoraCircleBtn = ({
     switch (style) {
       case "default":
         btnStyles =
-          "bg-corigreen-500 text-white border-2 border-corigreen-500 hover:bg-corigreen-600 hover:border-corigreen-600";
+          "bg-korablue-500 text-white border-2 border-korablue-500 hover:bg-korablue-600 hover:border-korablue-600";
         break;
       case "black":
         btnStyles =
@@ -72,7 +72,7 @@ const KoraCircleBtn = ({
         break;
       default:
         btnStyles =
-          "bg-corigreen-500 text-white border-2 border-corigreen-500 hover:bg-corigreen-600 hover:border-corigreen-600";
+          "bg-korablue-500 text-white border-2 border-korablue-500 hover:bg-korablue-600 hover:border-korablue-600";
         break;
     }
   }

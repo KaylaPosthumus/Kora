@@ -51,10 +51,10 @@ const EmployeeLeaveOverview: React.FC = () => {
 
   // Define a palette of Tailwind color classes for balance bars
   const barColors = [
-    "bg-corigreen-500", // Annual Leave
+    "bg-korablue-500", // Annual Leave
     "bg-red-500", // Family Responsibility Leave
     "bg-yellow-300", // Sick Leave
-    "bg-sakura-500", // Parental Leave
+    "bg-saffron-500", // Parental Leave
     "bg-blue-400", // Study Leave
     "bg-orange-400", // Compassionate Leave
   ];

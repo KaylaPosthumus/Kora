@@ -256,14 +256,14 @@ const AdminEquipmentManagement: React.FC = () => {
           >
             <div className="cursor-pointer">
               {record.employeeId ? (
-                <div className="flex items-center gap-2 hover:bg-corigreen-200 p-2 rounded-xl transition-colors">
+                <div className="flex items-center gap-2 hover:bg-korablue-200 p-2 rounded-xl transition-colors">
                   {record.profilePicture ? (
                     <Avatar
                       src={getFullImageUrl(record.profilePicture)}
-                      className="bg-corigreen-500 h-10 w-10 rounded-full object-cover border-1 border-corigreen-300"
+                      className="bg-korablue-500 h-10 w-10 rounded-full object-cover border-1 border-korablue-300"
                     />
                   ) : (
-                    <div className="flex items-center justify-center bg-corigreen-500 h-10 w-10 rounded-full">
+                    <div className="flex items-center justify-center bg-korablue-500 h-10 w-10 rounded-full">
                       <Icons.Person fontSize="medium" className="text-white" />
                     </div>
                   )}
@@ -324,7 +324,7 @@ const AdminEquipmentManagement: React.FC = () => {
                 placement="bottom"
                 destroyTooltipOnHide
               >
-                <div className="flex flex-col cursor-pointer hover:bg-corigreen-200 p-2 rounded-xl transition-colors">
+                <div className="flex flex-col cursor-pointer hover:bg-korablue-200 p-2 rounded-xl transition-colors">
                   <p className="text-zinc-900">
                     {dayjs(record.assignedDate).format("DD MMM YYYY")}
                   </p>

@@ -49,7 +49,7 @@ function DeleteEquipmentModal({
             paddingLeft: 40,
             paddingRight: 40,
             paddingTop: 40,
-            background: "#F5F5F4", // warmstone-100 equivalent
+            background: "#F5F5F4", // korastone-100 equivalent
             borderBottom: "none",
           },
           body: {
@@ -76,7 +76,7 @@ function DeleteEquipmentModal({
       >
         <div className="flex flex-col gap-2">
           <p className="text-zinc-500 text-sm text-center">This cannot be undone.</p>
-          <div className="flex items-center gap-3 px-4 py-3 bg-warmstone-300 rounded-xl my-2">
+          <div className="flex items-center gap-3 px-4 py-3 bg-korastone-300 rounded-xl my-2">
             <EquipmentTypeAvatar equipmentCategoryId={equipment.equipmentCatId} />
             <div className="flex flex-col">
               <p className="text-zinc-900">{equipment.equipmentName}</p>

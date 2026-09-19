@@ -36,7 +36,7 @@
 | **The backend is written but has never run** | `functions/` is complete and tested offline. Its one remaining callable, `adjustLeaveBalance`, now has a client seam and a UI (commit 49), and `onLeaveRequestWritten`'s verdict is on screen (commit 50) — but nothing has been deployed, so none of it does anything in a browser yet |
 | Deploying functions needs Blaze | Cloud Functions are not available on the Spark plan. Whether `kora-51711` is on Blaze is unverified — it cannot be checked without CLI credentials |
 | A backend verdict nothing reads | `onLeaveRequestWritten` stamps a `validation` field (overlaps, insufficient balance) onto every leave request. No type in `src/` declares it and no screen reads it |
-| Rebrand is name-only | Palette is still `corigreen`/`sakura`/`warmstone`; `cori_logo_green.png` referenced from 5 files; PWA icons generated from it still read "Coriander" |
+| Rebrand is assets-only now | Palette is Kora's (`korablue`/`saffron`/`korastone`, commit 59). What is left needs artwork, not code: `cori_logo_green.png` is referenced from 5 files and the PWA icons generated from it still read "Coriander" |
 
 ### One blind spot, stated up front
 
@@ -513,7 +513,8 @@ were pinned with `max-w` and `min-w` as well as `w`, so all three had to be move
 Cosmetic, isolated, and cheap **after** Phase 4 concentrates the theme in one file.
 Blocked on brand assets, not on engineering.
 
-- Tailwind palette: `corigreen` / `sakura` / `warmstone` → Kora tokens in `tailwind.config.js`.
+- ~~Tailwind palette → Kora tokens in `tailwind.config.js`.~~ **DONE** (commit 59):
+  `korablue` / `saffron` / `korastone`.
 - Ant Design token block — one edit in `app/theme.ts`.
 - `cori_logo_green.png` is imported from 5 files; swap the asset, keep the import sites.
 - Re-run `scripts/generate-icons.sh` — the PWA icons still render the Coriander wordmark

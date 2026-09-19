@@ -10,12 +10,12 @@ interface BadgeProps {
 function KoraBadge({ color, size, text, className }: BadgeProps) {
   let textSize: string;
   let pSize: string;
-  let bgColor = "bg-corigreen-500";
+  let bgColor = "bg-korablue-500";
 
   // Determine the color of the badge
   switch (color) {
     case "green":
-      bgColor = "bg-corigreen-500";
+      bgColor = "bg-korablue-500";
       break;
     case "black":
       bgColor = "bg-zinc-900";
@@ -30,7 +30,7 @@ function KoraBadge({ color, size, text, className }: BadgeProps) {
       bgColor = "bg-cyan-600";
       break;
     case "white":
-      bgColor = "bg-warmstone-50";
+      bgColor = "bg-korastone-50";
       break;
     case "orange":
       bgColor = "bg-amber-600";
@@ -39,7 +39,7 @@ function KoraBadge({ color, size, text, className }: BadgeProps) {
       bgColor = "bg-zinc-500";
       break;
     default:
-      bgColor = "bg-corigreen-500";
+      bgColor = "bg-korablue-500";
       break;
   }
 
@@ -75,7 +75,7 @@ function KoraBadge({ color, size, text, className }: BadgeProps) {
     >
       <span
         className={`${textSize} ${
-          color === "yellow" || color === "white" ? "text-zinc-900" : "text-warmstone-50"
+          color === "yellow" || color === "white" ? "text-zinc-900" : "text-korastone-50"
         }`}
       >
         {text}

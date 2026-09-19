@@ -16,7 +16,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
   const DoughnutChartCard: React.FC<DoughnutChartCardProps> = ({ employeeStatusTotals }) => {
     // Structure the Data for the doughnut chart
     const doughnutData = [
-      { id: 0, value: employeeStatusTotals.totalFullTimeEmployees, label: 'Full Time', color: '#88A764' },
+      { id: 0, value: employeeStatusTotals.totalFullTimeEmployees, label: 'Full Time', color: '#2C6FB5' },
       { id: 1, value: employeeStatusTotals.totalPartTimeEmployees, label: 'Part Time', color: '#FF8904' },
       { id: 2, value: employeeStatusTotals.totalInternEmployees, label: 'Intern', color: '#FFDF20' },
       { id: 3, value: employeeStatusTotals.totalContractEmployees, label: 'Contract', color: '#0092B8' },
