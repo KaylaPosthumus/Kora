@@ -4,6 +4,8 @@
 @tailwind utilities;
 
 body {
-  @apply bg-stone-200;
+  /* korastone, not Tailwind's built-in `stone`. The two look alike in a class
+     name, which is how this survived the rebrand rename. */
+  @apply bg-korastone-200;
   font-family: "Inter", sans-serif;
 }

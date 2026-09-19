@@ -27,9 +27,13 @@ export const koraTheme: ThemeConfig = {
           colorPrimaryTextActive: "#0A1826",
 
           // Text Colors
-          colorText: "#2B2B28", // korastone-900
-          colorTextSecondary: "#73736E", // korastone-700
-          colorTextTertiary: "#9C9C97", // korastone-600
+          // Zinc, deliberately, not the brand ramp: 181 Tailwind classes in the
+          // components already use text-zinc-*, and an Ant heading beside a
+          // Tailwind one has to be the same grey. The brand ramp earns its keep
+          // on surfaces and borders, where nothing competes with it.
+          colorText: "#18181b", // zinc-900
+          colorTextSecondary: "#71717a", // zinc-500
+          colorTextTertiary: "#a1a1aa", // zinc-400
 
           // Background Colors
           // These three read `warmstone-*` in the comments but held Tailwind's own
@@ -112,7 +116,7 @@ export const koraTheme: ThemeConfig = {
           },
           Form: {
             labelFontSize: 12,
-            labelColor: "#73736E", // korastone-700
+            labelColor: "#71717a", // zinc-500
             verticalLabelPadding: 2,
             fontSize: 12,
           },
@@ -134,7 +138,7 @@ export const koraTheme: ThemeConfig = {
             headerBg: "#F4F4F2",
             headerBorderRadius: 16,
             headerSplitColor: "transparent",
-            headerColor: "#73736E",
+            headerColor: "#71717a",
             headerFilterHoverBg: "transparent",
             headerSortActiveBg: "transparent",
             headerSortHoverBg: "transparent",

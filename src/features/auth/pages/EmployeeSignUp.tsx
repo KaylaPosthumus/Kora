@@ -16,7 +16,6 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 import { SignUpComplete } from "@/features/auth/components";
 import { useEffect, useState } from "react";
-import BackgroundImage from "@/assets/images/Auth_Background.webp";
 import Logo from "@/assets/logos/cori_logo_green.png";
 
 // API calls:
@@ -83,10 +82,13 @@ const EmployeeSignUp: React.FC = () => {
               alt="Logo"
               className="absolute top-4 left-4 w-[225px] h-[45px] object-contain mt-4 ml-4"
             />
-            <img
-              src={BackgroundImage}
-              alt="Login Background"
-              className="w-full h-full bg-korablue-500 object-cover rounded-tr-[25px] rounded-br-[25px]"
+            {/* The auth panel is a flat blue field for now. It was a 3.3 MB
+                photograph, later a 180 kB WebP, and it is on the landing route —
+                so it was the single heaviest thing between a visitor and the
+                login form. A colour costs nothing and carries the brand. */}
+            <div
+              className="w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
+              aria-hidden="true"
             />
           </div>
           <div className="w-1/2 flex items-center justify-center mb-16">
