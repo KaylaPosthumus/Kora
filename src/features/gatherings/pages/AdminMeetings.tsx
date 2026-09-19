@@ -189,17 +189,17 @@ const AdminMeetings: React.FC = () => {
     );
 
   return (
-    <div className="max-w-7xl mx-auto m-4">
+    <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
       {/* Page Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Icons.MeetingRoom fontSize="large" className="text-zinc-900" />
-            <h1 className="text-3xl font-bold text-zinc-900">Meetings</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">Meetings</h1>
           </div>
           <MeetRequestsBadge requests={meetRequests.length} onClick={() => setDrawerOpen(true)} />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <KoraBtn secondary onClick={() => setShowCreatePRModal(true)}>
             New Review Meet
           </KoraBtn>
@@ -217,8 +217,8 @@ const AdminMeetings: React.FC = () => {
         </div>
       </div>
 
-      {/* Tab Buttons */}
-      <div className="flex gap-2 mb-4">
+      {/* Tab Buttons — wrap instead of overflowing a narrow screen. */}
+      <div className="flex flex-wrap gap-2 mb-4">
         {tabOptions.map((tab) => (
           <KoraBtn
             key={tab}
@@ -241,7 +241,7 @@ const AdminMeetings: React.FC = () => {
           <Spin size="large" />
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {displayedGatherings.map((gathering) => (
             <AdminGatheringBox
               key={gathering.id}
@@ -252,7 +252,7 @@ const AdminMeetings: React.FC = () => {
             />
           ))}
           {displayedGatherings.length === 0 && (
-            <div className="col-span-3 text-center text-zinc-500 py-8">No meetings found.</div>
+            <div className="col-span-full text-center text-zinc-500 py-8">No meetings found.</div>
           )}
         </div>
       )}

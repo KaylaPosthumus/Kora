@@ -4,7 +4,8 @@ import dayjs from "dayjs";
 import { calculateDurationInDays } from "@/utils/dateUtils";
 
 // Import Components
-import { Tooltip, Table, message } from "antd";
+import { Tooltip, message } from "antd";
+import ResponsiveTable from "@/shared/components/ResponsiveTable";
 import LeaveValidationNotice from "@/features/leave/components/LeaveValidationNotice";
 
 // Icons
@@ -301,20 +302,20 @@ const AdminLeaveRequests: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div className="max-w-7xl mx-auto m-4">
+      <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
         {/* Title & Edit Policy */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div className="flex items-center gap-2">
-            <ClockCircleOutlined className="text-3xl text-zinc-900" />
-            <h1 className="text-3xl font-bold text-zinc-900">Leave Requests</h1>
+            <ClockCircleOutlined className="text-2xl sm:text-3xl text-zinc-900" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">Leave Requests</h1>
           </div>
           <KoraBtn style="black" onClick={() => setShowPolicyModal(true)}>
             Edit Policy
           </KoraBtn>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-4">
+        {/* Tabs — wrap rather than overflow on a narrow screen. */}
+        <div className="flex flex-wrap gap-2 mb-4">
           {(["Pending", "Approved", "Rejected"] as const).map((tab) => (
             <KoraBtn
               key={tab}
@@ -332,16 +333,15 @@ const AdminLeaveRequests: React.FC = () => {
           ))}
         </div>
 
-        {/* Table */}
-        <div className="overflow-hidden rounded-xl">
-          <Table
-            columns={columns}
-            dataSource={loading ? [] : displayingLeaveRequests}
-            rowKey="LeaveRequestId"
-            pagination={false}
-            loading={loading}
-          />
-        </div>
+        {/* Table on a desktop, one card per request on a phone. */}
+        <ResponsiveTable
+          columns={columns}
+          dataSource={loading ? [] : displayingLeaveRequests}
+          rowKey="leaveRequestId"
+          loading={loading}
+          headerKeys={["startDate"]}
+          emptyText={`No ${activeTab.toLowerCase()} requests`}
+        />
       </div>
 
       {/* Edit Policy Modal */}

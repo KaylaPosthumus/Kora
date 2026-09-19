@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import type { GetProp, TableProps } from "antd";
-import { Table, Avatar, Tooltip, Button, Dropdown, Popover, message, DatePicker, Spin } from "antd";
+import { Avatar, Tooltip, Button, Dropdown, Popover, message, DatePicker, Spin } from "antd";
 import type { SorterResult, FilterValue } from "antd/es/table/interface";
 import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { getFullImageUrl } from "@/utils/imageUtils";
 
 // Import Icons
 import { Icons } from "@/constants/icons";
+import ResponsiveTable from "@/shared/components/ResponsiveTable";
 
 // Import Components
 import KoraBtn from "@/shared/components/KoraBtn";
@@ -424,11 +425,11 @@ const AdminEquipmentManagement: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div className="max-w-7xl mx-auto m-4">
-        <div className="flex justify-between items-center mb-4">
+      <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
           <div className="flex items-center gap-2">
             <Icons.Construction fontSize="large" className="text-zinc-900" />
-            <h1 className="text-3xl font-bold text-zinc-900">Equipment</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">Equipment</h1>
           </div>
           <KoraBtn style="black" onClick={() => setShowCreateUnlinkedEquipModal(true)}>
             Create
@@ -440,9 +441,9 @@ const AdminEquipmentManagement: React.FC = () => {
             <Spin size="large" />
           </div>
         ) : (
-          <Table<EquipmentData>
+          <ResponsiveTable<EquipmentData>
             columns={columns}
-            rowKey={(record) => record.equipmentId}
+            rowKey="equipmentId"
             dataSource={processedData}
             pagination={{
               ...tableParams.pagination,
@@ -450,6 +451,8 @@ const AdminEquipmentManagement: React.FC = () => {
             }}
             loading={loading}
             onChange={handleTableChange}
+            headerKeys={["equipmentName"]}
+            emptyText="No equipment yet"
           />
         )}
       </div>

@@ -36,7 +36,6 @@
 | **The backend is written but has never run** | `functions/` is complete and tested offline. Its one remaining callable, `adjustLeaveBalance`, now has a client seam and a UI (commit 49), and `onLeaveRequestWritten`'s verdict is on screen (commit 50) — but nothing has been deployed, so none of it does anything in a browser yet |
 | Deploying functions needs Blaze | Cloud Functions are not available on the Spark plan. Whether `kora-51711` is on Blaze is unverified — it cannot be checked without CLI credentials |
 | A backend verdict nothing reads | `onLeaveRequestWritten` stamps a `validation` field (overlaps, insufficient balance) onto every leave request. No type in `src/` declares it and no screen reads it |
-| Admin side is desktop-only | 0 Tailwind breakpoints across all 7 admin pages (employee pages have 3–12 each) |
 | Rebrand is name-only | Palette is still `corigreen`/`sakura`/`warmstone`; `cori_logo_green.png` referenced from 5 files; PWA icons generated from it still read "Coriander" |
 
 ### One blind spot, stated up front
@@ -479,12 +478,28 @@ between the app and the phones it was built for.
 
 ---
 
-### Phase 7 — Admin responsive
+### Phase 7 — Admin responsive — **DONE** (2026-09-19)
 
-The mobile pass covered the employee side only: 0 breakpoints across all 7 admin pages.
-Same treatment as commits 12–14 — Ant `<Table>` becomes cards below `lg`, the fixed
-sidebar becomes a drawer. Lower priority than 2–6 if admins work at desks; promote it if
-they don't.
+All 7 admin pages now carry breakpoints (2–20 each, against 0 before). The sidebar half
+of the original plan needed nothing: `Navigation` is shared with the employee side and
+has been a top bar plus bottom nav below `lg` since commit 12.
+
+The table half produced `shared/components/ResponsiveTable.tsx`, which is the piece worth
+knowing about. It renders an Ant `<Table>` at `lg` and up, and the same rows as stacked
+cards below it — **without defining any card markup for a cell**. It calls each column's
+existing `render` and stacks the results under that column's own `title`. So a screen has
+one definition of how a cell looks and the phone view cannot drift from the desktop one,
+which is what happens when a card view is hand-written beside a table. Pagination and row
+clicks are wired from one definition for the same reason, and a column opts out of the
+card with Ant's own `responsive: ["lg"]`.
+
+Two pages needed no table work. `AdminDashboard` had 0 Tailwind breakpoints but was never
+desktop-only: its grid is react-bootstrap's `Col xs/md/lg`, which already responds.
+`AdminCreateEmployee` already had `grid-cols-1 lg:grid-cols-3`.
+
+`AdminIndividualEmployee` was the real work — 13 fractional widths, and the two halves
+were pinned with `max-w` and `min-w` as well as `w`, so all three had to be moved behind
+`lg:` or the column kept its width and overflowed the screen.
 
 ---
 
@@ -511,7 +526,7 @@ Phase 5  Backend (functions/)     ████  DONE (2026-09-19) — written an
 Phase 4  Restructure              ████  next, after 2
 Phase 4.5 Wire the callables      ██    small; the backend is waiting on it
 Phase 6  Performance              ████  DONE (2026-09-19) — 1,929 kB -> 395 kB gzipped
-Phase 7  Admin responsive         ██    priority depends on how admins work
+Phase 7  Admin responsive         ██    DONE (2026-09-19)
 Phase 8  Rebrand                  ██    last; needs assets, not code
 ```
 

@@ -273,14 +273,14 @@ const AdminIndividualEmployee: React.FC = () => {
       {ContextHolder} {/* Message System */}
       <div className="max-w-7xl mx-auto m-4 pb-4">
         {/* Top Heading with buttons */}
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
           <div className="flex gap-4 items-center">
             <KoraBtn style="black" iconOnly onClick={() => navigate("/admin/employees")}>
               <Icons.ArrowBack />
             </KoraBtn>
             <h1 className="text-3xl font-bold text-zinc-900">Employee Details</h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <KoraBtn secondary style="black" onClick={() => setShowEditDetailsModal(true)}>
               <Icons.Edit />
               Edit Details
@@ -293,9 +293,11 @@ const AdminIndividualEmployee: React.FC = () => {
             </KoraBtn>
           </div>
         </div>
-        {/* Page Body */}
-        <div className="flex gap-4">
-          <div className="max-w-1/2 min-w-1/2 w-1/2 flex flex-col gap-4">
+        {/* Page Body — two columns on a desktop, stacked below lg. The halves
+            were pinned with max-w/min-w as well as w, so all three have to give
+            way or the column keeps its width and overflows the screen. */}
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="w-full lg:max-w-1/2 lg:min-w-1/2 lg:w-1/2 flex flex-col gap-4">
             {/* Employee Details */}
             <div className="bg-warmstone-50 p-4 rounded-2xl flex flex-col shadow-sm">
               <div className="flex gap-4">
@@ -356,8 +358,8 @@ const AdminIndividualEmployee: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-4 mt-8">
-                <div className="flex">
-                  <div className="flex flex-grow flex-col gap-4 w-1/2">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
                     <div className="flex gap-2 items-center">
                       {empUser.gender === Gender.Female ? (
                         <Icons.Female className="text-pink-500" />
@@ -384,7 +386,7 @@ const AdminIndividualEmployee: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-grow flex-col gap-4 w-1/2">
+                  <div className="flex flex-grow flex-col gap-4 w-full sm:w-1/2">
                     <div className="flex gap-2 items-center">
                       <Icons.Phone />
                       <p className="text-zinc-500">{formatPhone(empUser.phoneNumber)}</p>
@@ -440,8 +442,8 @@ const AdminIndividualEmployee: React.FC = () => {
                     onClick={() => setShowEditPayrollModal(true)}
                   />
                 </div>
-                <div className="flex w-full mt-2 gap-2 h-fit">
-                  <div className="flex flex-col w-1/2 items-center">
+                <div className="flex flex-col sm:flex-row w-full mt-2 gap-2 h-fit">
+                  <div className="flex flex-col w-full sm:w-1/2 items-center">
                     <p className="text-zinc-500 text-sm mb-1">Last Paid</p>
                     <div className="flex justify-center items-center gap-2 p-4 bg-warmstone-200 w-full rounded-2xl h-full">
                       {empUser.lastPaidDate ? (
@@ -473,7 +475,7 @@ const AdminIndividualEmployee: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-col w-1/2 items-center">
+                  <div className="flex flex-col w-full sm:w-1/2 items-center">
                     <p className="text-zinc-500 text-sm mb-1">Next Pay Day</p>
                     <div className="flex justify-center items-center gap-2 p-4 bg-warmstone-200 w-full rounded-2xl h-full">
                       {empUser.lastPaidDate ? (
@@ -588,10 +590,10 @@ const AdminIndividualEmployee: React.FC = () => {
               )}
             </div>
           </div>
-          <div className="max-w-1/2 min-w-1/2 w-1/2">
-            <div className="flex gap-4">
+          <div className="w-full lg:max-w-1/2 lg:min-w-1/2 lg:w-1/2">
+            <div className="flex flex-col sm:flex-row gap-4">
               {/* Leave Balances */}
-              <div className="w-3/12 flex flex-col items-center gap-2">
+              <div className="w-full sm:w-3/12 flex flex-col items-center gap-2">
                 <div className="flex items-center gap-2">
                   <h2 className="text-zinc-500 font-semibold">Leave</h2>
                   {/* The only way to move a balance other than approving leave.
@@ -621,7 +623,7 @@ const AdminIndividualEmployee: React.FC = () => {
                 </div>
               </div>
               {/* Rating & Performance Reviews */}
-              <div className="w-9/12 flex flex-col gap-4 max-w-9/12">
+              <div className="w-full sm:w-9/12 flex flex-col gap-4 sm:max-w-9/12">
                 <div className="w-full flex flex-col gap-2 items-center ">
                   <h2 className="text-zinc-500 font-semibold">Average Rating</h2>
                   <div className="w-full p-4 bg-warmstone-50 rounded-2xl shadow-sm">

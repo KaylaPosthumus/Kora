@@ -220,10 +220,13 @@ const AdminDashboard: React.FC = () => {
 
   if (error) return <div>Error: {error}</div>;
 
+  // The grid below is react-bootstrap's (Col xs/md/lg), which already responds —
+  // this page had no Tailwind breakpoints but was never desktop-only in the way
+  // the table screens were.
   return (
-    <div className="max-w-7xl mx-auto m-4 mb-4">
+    <div className="max-w-7xl mx-auto m-4 mb-4 px-1 sm:px-0">
       {/* Heading */}
-      <h1 className="text-3xl font-bold mb-2 text-zinc-900">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-zinc-900">
         Welcome, {dashboardData?.adminUser?.fullName || "Admin"}
       </h1>
       <h4 className="text-zinc-900 mb-3">Stay updated on key HR activities and pending tasks.</h4>

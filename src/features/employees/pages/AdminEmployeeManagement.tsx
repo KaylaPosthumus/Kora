@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 // Import 3rd party components / plugins
 import type { GetProp, TableProps } from "antd";
-import { Table, Avatar, Dropdown, Tooltip, Input, Spin } from "antd";
+import { Avatar, Dropdown, Tooltip, Input, Spin } from "antd";
 import type { SorterResult, FilterValue } from "antd/es/table/interface";
 import dayjs from "dayjs";
 
@@ -15,6 +15,7 @@ import { EmployTypeBadge } from "@/features/employees/components";
 
 // Import Constants
 import { Icons } from "@/constants/icons";
+import ResponsiveTable from "@/shared/components/ResponsiveTable";
 
 // Import Utils
 import { formatRandAmount, formatShortRandAmount } from "@/utils/formatUtils";
@@ -414,13 +415,14 @@ const AdminEmployeeManagement: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto m-4">
-      <div className="flex justify-between items-center mb-4">
+    <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
         <div className="flex items-center gap-2">
           <Icons.DirectionsWalk fontSize="large" className="text-zinc-900" />
-          <h1 className="text-3xl font-bold text-zinc-900">Employees</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900">Employees</h1>
         </div>
-        <div className="flex items-center gap-4">
+        {/* Search takes the width it can on a phone; the button never shrinks. */}
+        <div className="flex items-center gap-2 sm:gap-4">
           <Input.Search
             placeholder="Search By Name"
             allowClear
@@ -438,9 +440,9 @@ const AdminEmployeeManagement: React.FC = () => {
           <Spin size="large" />
         </div>
       ) : (
-        <Table<DataType>
+        <ResponsiveTable<DataType>
           columns={columns}
-          rowKey={(record) => record.employeeId}
+          rowKey="employeeId"
           dataSource={processedData}
           pagination={{
             ...tableParams.pagination,
@@ -448,10 +450,9 @@ const AdminEmployeeManagement: React.FC = () => {
           }}
           loading={loading}
           onChange={handleTableChange}
-          onRow={(record) => ({
-            onClick: () => navigate(`/admin/individual-employee/${record.employeeId}`),
-            className: "cursor-pointer hover:bg-zinc-50",
-          })}
+          onRowClick={(record) => navigate(`/admin/individual-employee/${record.employeeId}`)}
+          headerKeys={["fullName"]}
+          emptyText="No employees match that search"
         />
       )}
     </div>
