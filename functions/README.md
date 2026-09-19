@@ -25,8 +25,7 @@ functions/
 │   ├── equipment/          # onEquipmentCategoryWritten
 │   ├── profile/            # the name-propagation chain
 │   ├── users/              # onUserDeleted
-│   ├── leave/              # adjustLeaveBalance, onLeaveTypeWritten
-│   └── email/              # requestEmailVerification, confirmEmailVerification
+│   └── leave/              # adjustLeaveBalance, onLeaveTypeWritten
 └── package.json            # its OWN deps — never shared with the app
 ```
 
@@ -50,9 +49,6 @@ suite run with no emulator — see "Tests" below.
 | `adjustLeaveBalance` | Callable (admin) | Corrects a balance, with a reason and an audit entry |
 | `onLeaveTypeWritten` | Firestore `leaveTypes/{id}` written | Backfills new types onto existing employees; mirrors renames |
 | `onLeaveRequestWritten` | Firestore `leaveRequests/{id}` written | Stamps a verdict: overlaps, balance, date sanity |
-| `requestEmailVerification` | Callable | Issues a 6-digit code, queues the email |
-| `confirmEmailVerification` | Callable | Checks the code, flips Firebase's `emailVerified` |
-| `cleanUpVerifications` | Scheduled, daily | Retires verification challenges nothing can use |
 
 `onUserDeleted` is a v1 trigger because auth-account deletion has no v2
 equivalent — `firebase-functions/v2/identity` only offers the blocking
@@ -61,16 +57,9 @@ equivalent — `firebase-functions/v2/identity` only offers the blocking
 ## Before this can deploy
 
 1. **The project must be on the Blaze plan.** Cloud Functions are not available
-   on Spark, and `cleanUpVerifications` additionally needs Cloud Scheduler,
-   which is Blaze-only too. Nothing here has been deployed or run against
-   `kora-51711`.
+   on Spark. Nothing here has been deployed or run against `kora-51711`.
 2. **`npm --prefix functions install`** — the functions package has its own
    dependency tree. The root `npm install` does not reach it.
-3. **For email to actually send, install the `firestore-send-email`
-   extension** and point it at the `mail` collection. Until then,
-   `requestEmailVerification` works and the messages accumulate in `mail`
-   unsent — visible and replayable, not lost. The provider and its credentials
-   live in the extension's config, deliberately not in this codebase.
 
 `firebase deploy` from the repo root now ships functions too: `firebase.json`
 has a `functions` block whose `predeploy` runs `npm run build`.
@@ -239,19 +228,17 @@ up `functions/src`. The two suites are independent and can run side by side.
 
 - **None of this has been deployed.** No function here has ever run. The Firebase
   CLI holds no credentials, and deploying needs the project on **Blaze** — Cloud
-  Functions are unavailable on Spark, and `cleanUpVerifications` also needs Cloud
-  Scheduler. Everything below assumes that step happens first.
-- **The callables have no client seam.** `src/services/firebase.ts` never calls
-  `getFunctions()`, and nothing in `src/` calls `httpsCallable`. So
-  `adjustLeaveBalance`, `requestEmailVerification` and `confirmEmailVerification`
-  are complete, tested and unreachable from the app. Frontend work — see
-  Phase 4.5 in `docs/migration-roadmap.md`.
-- **Nothing reads the `validation` verdict.** `onLeaveRequestWritten` writes it to
-  every leave request; no type in `src/` declares the field and no screen shows
-  it. It is advisory by design, so it belongs beside `OverBalanceConfirmModal`.
-- **Email cannot send until the extension is installed.** See step 3 above.
+  Functions are unavailable on Spark. Everything below assumes that step happens
+  first.
 
-**Settled since this file was first written:** uploads moved off Cloudinary to
+**Settled since this file was first written.** `adjustLeaveBalance` got its client
+seam and an admin UI in commit 49 (`shared/lib/callable.ts` plus
+`AdjustLeaveBalanceModal`), and `onLeaveRequestWritten`'s verdict reached the
+screen in commit 50. Email verification was dropped outright in commit 51 — the
+two callables, the scheduled cleanup, the `mail` and `emailVerifications`
+collections and their rules are all gone, because access is gated on an admin
+linking the account and nothing ever read whether an address was confirmed. And
+uploads moved off Cloudinary to
 Firebase Storage in commit 34 (`src/services/storageService.ts`), so
 `storage.rules` now governs real traffic against `profilePictures/{userId}/…` and
 `reviewDocuments/{reviewId}/…` rather than describing a path nothing wrote to.

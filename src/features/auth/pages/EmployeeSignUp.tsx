@@ -14,7 +14,7 @@ import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
 
-import { VerifyEmailNotice } from "@/features/auth/components";
+import { SignUpComplete } from "@/features/auth/components";
 import { useEffect, useState } from "react";
 import BackgroundImage from "@/assets/images/Auth_Background.png";
 import Logo from "@/assets/logos/cori_logo_green.png";
@@ -204,7 +204,7 @@ const EmployeeSignUp: React.FC = () => {
               </div>
             )}
             {pendingEmail && (
-              <VerifyEmailNotice email={pendingEmail} onBack={() => setPendingEmail(null)} />
+              <SignUpComplete email={pendingEmail} onBack={() => setPendingEmail(null)} />
             )}
           </div>
         </div>

@@ -426,6 +426,15 @@ describe("signup writes a safe user doc", () => {
     const { employeeSignUp } = await loadAuthService();
 
     expect((await employeeSignUp(form)).errorCode).toBe(200);
-    expect(sendEmailVerification).toHaveBeenCalled();
+    expect(writtenDoc().isLinked).toBe(false);
+  });
+
+  it("does not send a verification email", async () => {
+    // Kora does not verify addresses — access is gated on an admin linking the
+    // account. Sending a link nothing acts on is what this replaced.
+    const { employeeSignUp } = await loadAuthService();
+    await employeeSignUp(form);
+
+    expect(sendEmailVerification).not.toHaveBeenCalled();
   });
 });

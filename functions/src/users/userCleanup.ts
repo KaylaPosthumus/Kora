@@ -14,12 +14,16 @@
  * Here the record is only unlinked from the vanished account.
  */
 
-/** Documents keyed by uid that this backend owns. */
+/**
+ * Documents keyed by uid that this backend owns.
+ *
+ * `emailVerifications` was here until email verification was dropped. The list
+ * stays plural-shaped rather than collapsing to one string: it is the reason
+ * this module exists, and the next uid-keyed collection belongs in it.
+ */
 export const UID_KEYED_COLLECTIONS = [
   /** Written by syncRoleClaim. */
   "userClaims",
-  /** Written by requestEmailVerification. */
-  "emailVerifications",
 ] as const;
 
 export interface UserCleanupBackend {

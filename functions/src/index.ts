@@ -41,12 +41,3 @@ export { onUserDeleted } from "./users/onUserDeleted";
 export { adjustLeaveBalance } from "./leave/adjustLeaveBalance";
 export { onLeaveTypeWritten } from "./leave/onLeaveTypeWritten";
 export { onLeaveRequestWritten } from "./leave/onLeaveRequestWritten";
-
-// Email verification: CoriCore's 6-digit code, rebuilt.
-export {
-  requestEmailVerification,
-  confirmEmailVerification,
-} from "./email/verifyEmail";
-
-// Housekeeping: retires verification challenges nothing can use any more.
-export { cleanUpVerifications } from "./email/cleanUpVerifications";

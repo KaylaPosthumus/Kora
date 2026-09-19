@@ -321,29 +321,6 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Email verification ----------------------------------------------------
-    // Challenges for the 6-digit code, written and read only through the Admin
-    // SDK by the requestEmailVerification / confirmEmailVerification callables.
-    //
-    // Denied to clients outright. The stored code is hashed, so a read would not
-    // hand over a usable code — but a client that could write here could reset
-    // its own attempt counter and brute-force the code without limit.
-    //
-    // CoriCore stored this on the user row in plaintext. Here it is a separate,
-    // client-unreadable collection precisely because an admin may read every
-    // user document.
-    match /emailVerifications/{userId} {
-      allow read, write: if false;
-    }
-
-    // Outgoing mail queue ---------------------------------------------------
-    // Appended to by Cloud Functions and drained by the firestore-send-email
-    // extension. No client touches it: a client that could write here could send
-    // mail from the project's own address to anyone.
-    match /mail/{mailId} {
-      allow read, write: if false;
-    }
-
     // Claim metadata --------------------------------------------------------
     // `syncRoleClaim` stamps a refreshTime here whenever it rewrites a user's
     // custom claims. The client watches its own document and calls

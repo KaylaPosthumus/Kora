@@ -2,7 +2,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
-  sendEmailVerification,
   signOut,
   updateProfile,
   onAuthStateChanged,
@@ -33,7 +32,6 @@ export interface CurrentUserDTO {
   employeeId?: string;
   adminId?: string;
   profilePicture?: string;
-  isVerified: boolean;
 }
 
 /** Shape of a `users/{uid}` document. */
@@ -93,7 +91,6 @@ const readUserDoc = async (user: User): Promise<CurrentUserDTO | null> => {
       role: UserRole.Unassigned,
       isLinked: false,
       profilePicture: user.photoURL || undefined,
-      isVerified: user.emailVerified,
     };
   }
 
@@ -108,7 +105,6 @@ const readUserDoc = async (user: User): Promise<CurrentUserDTO | null> => {
     employeeId: data.employeeId ?? undefined,
     adminId: data.adminId ?? undefined,
     profilePicture: data.profilePicture || undefined,
-    isVerified: user.emailVerified,
   };
 };
 
@@ -170,11 +166,9 @@ const signUpWithRole = async (
       requestedRole,
       profilePicture: form.profilePicture,
     });
-    await sendEmailVerification(credential.user);
-
     return {
       errorCode: 200,
-      message: "Account created. Check your inbox for the verification link.",
+      message: "Account created. An admin needs to activate it before you can sign in.",
     };
   } catch (error) {
     return toAuthResult(error, "Sign up failed");
@@ -194,21 +188,6 @@ export const adminSignUp = (form: {
   password: string;
   profilePicture?: string | null;
 }): Promise<AuthResult> => signUpWithRole(form, UserRole.Admin);
-
-/** Re-sends the verification email to the signed-in user. */
-export const resendVerificationEmail = async (): Promise<AuthResult> => {
-  const user = auth.currentUser;
-  if (!user) {
-    return { errorCode: 401, message: "You need to be signed in to resend the email." };
-  }
-
-  try {
-    await sendEmailVerification(user);
-    return { errorCode: 200, message: "Verification email sent." };
-  } catch (error) {
-    return toAuthResult(error, "Could not send the verification email");
-  }
-};
 
 /** Google sign-up: same popup as sign-in, but seeds the user doc with a role. */
 const googleSignUpWithRole = async (requestedRole: UserRole): Promise<AuthResult> => {

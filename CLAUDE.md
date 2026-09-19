@@ -180,8 +180,10 @@ context. A signed-in but unlinked user is redirected to `/#notlinked`.
 
 Signup always writes `role: "unassigned"` and records what the user asked for as
 `requestedRole` — the `users` create rule rejects any self-granted role or link, which
-is the privilege boundary the whole rule set rests on. Email verification is sent but
-**never enforced**: `isVerified` is carried on `CurrentUserDTO` and read by nothing.
+is the privilege boundary the whole rule set rests on. **Kora does not verify email
+addresses.** Signup sends no link, `CurrentUserDTO` carries no `isVerified`, and the
+6-digit-code backend was deleted — access is gated solely on an admin linking the
+account, so a verification flow nothing read was removed rather than wired up.
 Access is gated purely on an admin having linked the account.
 
 ### Firestore query changes need an index

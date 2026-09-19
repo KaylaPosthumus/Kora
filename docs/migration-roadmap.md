@@ -19,13 +19,13 @@
 | Area | State | Evidence |
 | --- | --- | --- |
 | Pages | Complete parity | 19 pages, 1:1 with the Electron app (7 admin, 4 employee, 3 auth, 5 dev-only) |
-| Components | Complete, minus three intentional drops | 53 vs 54. `ServerStatusModal`, `StartupLoadingScreen` (no server to poll), `VeriCodeForm` (replaced by `VerifyEmailNotice`). Added `ProtectedRoute`, `VerifyEmailNotice` |
+| Components | Complete, minus three intentional drops | 53 vs 54. `ServerStatusModal`, `StartupLoadingScreen` (no server to poll), `VeriCodeForm` (email verification was later dropped entirely). Added `ProtectedRoute`, `SignUpComplete` |
 | Data layer | Complete parity plus extras | All 11 API groups, 57 of 58 functions matched by name. Only `healthCheckAPI.checkHealth` dropped, correctly. Added `leaveTypesAPI`, `getAllEquipCategories`, two `onSnapshot` subscriptions |
 | Auth | Firebase Auth, email + Google | Old .NET numeric contract (`200`/`300`/`4xx`) preserved so the auth screens didn't change |
 | Access control | 7 helper functions, 10 match blocks | `firestore.rules` covers all 9 collections + `leaveBalances` subcollection + a collection-group read |
 | Indexes | 7 composite indexes declared | Covers every composite query in `api.service.ts` |
 | Build health | Green | `tsc --noEmit` clean in all three packages; **630 tests passing** — 183 app, 345 `functions/`, 102 `rules-tests/`. `lint` 0 errors / 221 warnings; production build succeeds |
-| Backend | Complete | `functions/` deploys 15 functions — claims, cascades, denormalisation, leave balances, email verification. See Phase 5 |
+| Backend | Complete | `functions/` deploys 12 functions — claims, cascades, denormalisation, leave balances. See Phase 5 |
 | Mobile + PWA | Employee side shipped | Commits 12–14. Was "phase 5" in the PDF; it landed early |
 
 ### What has not happened
@@ -33,9 +33,8 @@
 | Gap | Detail |
 | --- | --- |
 | **Nothing has run against the live project** | `firebase login:list` still reports no authorized accounts, and `serviceAccountKey.json` is absent, so `npm run seed` has never run. Rules, indexes, storage rules, **functions** and Hosting have **never been deployed**. This is unchanged since this document was first written, and it now gates more code than it did then |
-| **The backend is written but unreachable from the app** | `functions/` is complete and tested, but three of its entry points are callables and `src/services/firebase.ts` never calls `getFunctions()` — nothing in `src/` calls `httpsCallable`. `adjustLeaveBalance`, `requestEmailVerification` and `confirmEmailVerification` have no client seam |
-| Deploying functions needs Blaze | Cloud Functions are not available on the Spark plan, and `cleanUpVerifications` additionally needs Cloud Scheduler. Whether `kora-51711` is on Blaze is unverified — it cannot be checked without CLI credentials |
-| Email cannot actually send | `requestEmailVerification` queues a message in the `mail` collection; delivery needs the `firestore-send-email` extension installed and pointed at it. Until then messages accumulate unsent — visible and replayable, not lost |
+| **The backend is written but has never run** | `functions/` is complete and tested offline. Its one remaining callable, `adjustLeaveBalance`, now has a client seam and a UI (commit 49), and `onLeaveRequestWritten`'s verdict is on screen (commit 50) — but nothing has been deployed, so none of it does anything in a browser yet |
+| Deploying functions needs Blaze | Cloud Functions are not available on the Spark plan. Whether `kora-51711` is on Blaze is unverified — it cannot be checked without CLI credentials |
 | A backend verdict nothing reads | `onLeaveRequestWritten` stamps a `validation` field (overlaps, insufficient balance) onto every leave request. No type in `src/` declares it and no screen reads it |
 | Admin side is desktop-only | 0 Tailwind breakpoints across all 7 admin pages (employee pages have 3–12 each) |
 | Rebrand is name-only | Palette is still `corigreen`/`sakura`/`warmstone`; `cori_logo_green.png` referenced from 5 files; PWA icons generated from it still read "Coriander" |
@@ -370,10 +369,10 @@ Small, and the backend is idle until it happens. Three deployed functions have n
    this app has never had. It takes a reason and writes an audit entry to
    `leaveBalanceAdjustments`. The natural home is the individual-employee screen, next to
    the existing balance display.
-3. **The verification pair** — `requestEmailVerification` / `confirmEmailVerification`.
-   `VeriCodeForm` was dropped in the port and `VerifyEmailNotice` replaced it; this is the
-   decision point for whether the 6-digit form comes back. Blocked on the product call
-   under Phase 5, and on the `firestore-send-email` extension.
+3. ~~**The verification pair.**~~ **Resolved by deletion** (commit 51). Email
+   verification is not a thing Kora does: access is gated on an admin linking the
+   account, and nothing ever read whether an address was confirmed. The callables, the
+   `mail` and `emailVerifications` collections and their rules are gone.
 4. **Surface the `validation` verdict.** `onLeaveRequestWritten` stamps overlaps and
    insufficient-balance findings onto each leave request. Declare the field on the leave
    request type and show it in the admin review UI — it is advisory by design, so it
@@ -398,8 +397,7 @@ section originally scoped. `functions/README.md` is the reference; the summary:
 - *Denormalisation and domain logic* — the three-hop name-propagation chain
   (`onUserProfileWritten` → `onEmployeeProfileWritten` / `onAdminProfileWritten`),
   `onEquipmentCategoryWritten`, `onLeaveTypeWritten`, `onLeaveRequestWritten`,
-  `adjustLeaveBalance`, and the email-verification trio
-  (`requestEmailVerification`, `confirmEmailVerification`, `cleanUpVerifications`).
+  and `adjustLeaveBalance`.
 
 **Three things it closed that were live bugs, not ports.** `onLeaveTypeWritten` backfills
 balances, closing a hole where leave could be approved with the days silently never
@@ -413,20 +411,15 @@ pure decision module with no Firebase imports, and a thin trigger that injects a
 SDK backend. 345 tests, no credentials, no network — consistent with the rest of the repo.
 
 **No new indexes were needed.** Every query the backend runs is single-field equality (or
-one single-field range in `cleanUpVerifications`), so the automatic indexes cover it.
+every one a single-field equality), so the automatic indexes cover it.
 
 **What is left of this phase:**
 
 1. **Deploy it.** Nothing here has ever run. This is part of Phase 2 now, not separate.
-   The project must be on **Blaze** — Cloud Functions are unavailable on Spark, and
-   `cleanUpVerifications` also needs Cloud Scheduler.
-2. **Install the `firestore-send-email` extension** and point it at the `mail`
-   collection, or verification codes queue unsent. The provider credentials live in the
-   extension's config, deliberately not in this codebase.
-3. **Give the callables a client seam** — `getFunctions()` in `src/services/firebase.ts`
-   and an `httpsCallable` wrapper. Neither exists today, so `adjustLeaveBalance` and the
-   two verification callables are unreachable from the app. This is frontend work; see
-   Phase 4.5 below.
+   The project must be on **Blaze** — Cloud Functions are unavailable on Spark.
+3. ~~**Give the callables a client seam.**~~ **DONE** (commit 49): `getFunctions()` in
+   `src/services/firebase.ts` and `shared/lib/callable.ts`, which maps a rejected
+   `HttpsError` onto the `{ data, status }` envelope the rest of the data layer returns.
 4. **Only if the dashboard feels slow:** move `pageAPI.getAdminDashboardData` aggregates
    server-side. `getAdminEmpManagement` reads *every* employee's leave balances via one
    collection-group query — correct at one company's scale, and the first thing to
@@ -437,10 +430,9 @@ Cloudinary onto Firebase Storage via `src/services/storageService.ts`; the Cloud
 vars are gone and `storage.rules` now governs real traffic. One capability was lost in the
 move — the Cloudinary widget's cropping UI.
 
-**Still a product decision, not a technical one:** email verification is sent and never
-enforced — `isVerified` rides on `CurrentUserDTO` and nothing reads it. The 6-digit-code
-backend now exists, so the choice is three-way: wire the code UI to it, gate access on
-Firebase's own `emailVerified`, or drop the field. Do not leave it half-wired.
+**Settled, by deletion:** email verification. It was sent and never enforced, and the
+answer to "wire it up or drop it" was drop it (commit 51) — access is gated on an admin
+linking the account, which is the control that was actually wanted.
 
 ---
 

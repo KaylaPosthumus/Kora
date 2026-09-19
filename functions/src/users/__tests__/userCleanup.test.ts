@@ -60,15 +60,13 @@ describe("cleanUpDeletedUser", () => {
     expect(report.userDocDeleted).toBe(true);
   });
 
-  it("clears the claim metadata and any outstanding verification challenge", async () => {
+  it("clears the claim metadata", async () => {
     fake.users.set("uid1", {});
     fake.addSideRecord("userClaims", "uid1");
-    fake.addSideRecord("emailVerifications", "uid1");
 
     const report = await cleanUpDeletedUser("uid1", fake.backend);
 
     expect(fake.hasSideRecord("userClaims", "uid1")).toBe(false);
-    expect(fake.hasSideRecord("emailVerifications", "uid1")).toBe(false);
     expect(report.sideRecordsCleared).toEqual([...UID_KEYED_COLLECTIONS]);
   });
 
@@ -118,14 +116,14 @@ describe("cleanUpDeletedUser", () => {
     expect(fake.calls).not.toContain("unlinkEmployee");
   });
 
-  // A signup deleted between requesting a code and the user document landing.
+  // A signup deleted before its user document landed still leaves side records.
   it("still clears side records when there is no user document", async () => {
-    fake.addSideRecord("emailVerifications", "uid1");
+    fake.addSideRecord("userClaims", "uid1");
 
     const report = await cleanUpDeletedUser("uid1", fake.backend);
 
     expect(report.userDocDeleted).toBe(false);
-    expect(fake.hasSideRecord("emailVerifications", "uid1")).toBe(false);
+    expect(fake.hasSideRecord("userClaims", "uid1")).toBe(false);
     expect(fake.calls).not.toContain("deleteUserDoc");
   });
 

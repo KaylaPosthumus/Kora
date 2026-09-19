@@ -13,7 +13,7 @@ import KoraBtn from "@/shared/components/KoraBtn";
 import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
-import { VerifyEmailNotice } from "@/features/auth/components";
+import { SignUpComplete } from "@/features/auth/components";
 import { adminSignUp, adminGoogleSignUp } from "@/services/authService";
 import { useEffect, useState } from "react";
 import BackgroundImage from "@/assets/images/Auth_Background.png";
@@ -201,7 +201,7 @@ const AdminSignUp: React.FC = () => {
               </div>
             )}
             {pendingEmail && (
-              <VerifyEmailNotice email={pendingEmail} onBack={() => setPendingEmail(null)} />
+              <SignUpComplete email={pendingEmail} onBack={() => setPendingEmail(null)} />
             )}
           </div>
         </div>

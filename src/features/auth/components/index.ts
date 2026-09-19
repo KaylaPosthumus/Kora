@@ -8,4 +8,4 @@
 
 export { default as ProtectedRoute } from "./ProtectedRoute";
 export { default as UnlinkedMessage } from "./UnlinkedMessage";
-export { default as VerifyEmailNotice } from "./VerifyEmailNotice";
+export { default as SignUpComplete } from "./SignUpComplete";
