@@ -244,6 +244,7 @@ All four groups landed. `npm run typecheck`, `npm run lint`, `npm test` and
 push and PR. Do this *early*: it is what protects every phase after it.
 
 **Exit criteria:** `npm run build` and `npm run lint` both exit clean; CI green on a PR.
+The first two hold locally. **The third was never met and still is not** — see §5.
 
 ---
 
@@ -451,8 +452,13 @@ backend has the same never-run-against-a-real-project status the data layer has.
 - **Do not let a second error convention in** when Phase 4.5 wires the callables. The
   data layer returns `{ data, status }` everywhere; a raw thrown `HttpsError` reaching a
   screen would be the first exception to that.
-- CI (Phase 3.4) is in place and runs all three suites as separate jobs — keep it green
-  through Phase 4 rather than batching fixes; it is what makes a 106-file move safe.
+- **CI is in place but has never passed.** All 17 push runs since commit 22 added it are
+  red. The `backend` and `rules` jobs went green at commit 38; `verify` has failed at
+  `npm ci` — step 4, before typecheck, lint, test or build ever run — on every single run.
+  The same `npm ci` succeeds locally against the committed lockfile, so it is something
+  about the Linux/Node-22 runner, and the log needs repo-admin auth to read. **Fix this
+  before Phase 4**: a 106-file move without working CI gives up the one safety net that
+  makes it safe.
 
 ---
 
