@@ -319,8 +319,10 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Top Rated employee list */}
-                  <div className="col-span-12">
+                  {/* Top Rated employee list. Plain block, not col-span-12:
+                      its parent is not a grid, so the grid-column would do
+                      nothing. Bootstrap's col-12 set width and worked anywhere. */}
+                  <div className="w-full">
                     <div className="text-zinc-500 font-semibold text-center mb-2 mt-3">
                       Top 3 Employees
                     </div>

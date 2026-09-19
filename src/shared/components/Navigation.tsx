@@ -4,6 +4,9 @@ import KoraBtn from "@/shared/components/KoraBtn";
 import { Icons } from "@/constants/icons";
 import { logout, navbarUserStatus } from "@/services/authService";
 import logo from "@/assets/logos/kora_logo.png";
+// The K alone. Below ~40px the full logo's wordmark is a few pixels tall and
+// reads as a smudge; the top bar and drawer header both draw it at 28.
+import mark from "@/assets/logos/kora_mark.png";
 
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -188,7 +191,7 @@ const Navigation: React.FC = () => {
 
       {/* Mobile top bar. */}
       <header className="lg:hidden fixed top-0 inset-x-0 h-14 z-30 bg-zinc-900 text-white flex items-center justify-between px-4">
-        <img src={logo} alt="Kora" className="h-7 w-auto" />
+        <img src={mark} alt="Kora" className="h-7 w-auto" />
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
@@ -215,7 +218,7 @@ const Navigation: React.FC = () => {
             className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] bg-zinc-900 text-white flex flex-col"
           >
             <div className="flex items-center justify-between p-4">
-              <img src={logo} alt="Kora" className="h-7 w-auto" />
+              <img src={mark} alt="Kora" className="h-7 w-auto" />
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}

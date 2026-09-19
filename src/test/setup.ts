@@ -14,6 +14,10 @@ import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 
+// The app shell registers the dayjs plugins; a test renders a page without it,
+// so a screen calling `.fromNow()` would throw where the running app does not.
+import "@/shared/lib/dayjs";
+
 // Testing Library only registers this itself when Vitest runs with `globals`,
 // which this project does not — tests import `describe`/`it` explicitly. Without
 // it every render stacks up in the same document and `getByRole` starts finding

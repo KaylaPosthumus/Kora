@@ -6,8 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import GaugeComponent from "react-gauge-component";
 import { Avatar, DatePicker, Dropdown, Tooltip, message, Button, Spin } from "antd";
 import dayjs from "dayjs"; // For simple date formatting
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
 
 // Import React Components
 import KoraBtn from "@/shared/components/KoraBtn";

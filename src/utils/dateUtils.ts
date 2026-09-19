@@ -1,14 +1,7 @@
 // Date Utility Functions
 
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
+import dayjs from "@/shared/lib/dayjs";
 import { PayCycle } from "@/shared/types/common";
-
-dayjs.extend(duration);
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 // Get the duration of employment in years, months, and days (E.g. "1 year, 2 months, 3 days")
 const formatEmploymentDuration = (startDate: string): string => {

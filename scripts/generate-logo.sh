@@ -13,6 +13,7 @@
 set -euo pipefail
 
 OUT="$(dirname "$0")/../src/assets/logos/kora_logo.png"
+MARK="$(dirname "$0")/../src/assets/logos/kora_mark.png"
 BOLD="/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 LIGHT="/System/Library/Fonts/Supplemental/Arial.ttf"
 SAFFRON="#F09D1C"
@@ -24,4 +25,13 @@ magick -size 480x528 xc:none \
   -font "$LIGHT" -pointsize 58  -kerning 12 -gravity North -annotate +0+392 "KORA" \
   "$OUT"
 
-echo "wrote $OUT"
+# The K on its own, for anywhere the mark renders small. Below about 40px the
+# wordmark in the full logo is a few pixels tall and reads as a smudge — the
+# mobile top bar draws it at 28.
+magick -size 480x480 xc:none \
+  -fill "$SAFFRON" -draw "roundrectangle 0,0 479,479 88,88" \
+  -fill white \
+  -font "$BOLD" -pointsize 300 -gravity center -annotate +0-10 "K" \
+  "$MARK"
+
+echo "wrote $OUT and $MARK"

@@ -1,12 +1,9 @@
 import React from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/en";
 import "antd/dist/reset.css";
 import "@/styles/table.css";
 import Providers from "./providers";
 import AppRoutes from "./router";
-
-dayjs.locale("en");
+import "@/shared/lib/dayjs";
 
 /**
  * The application shell, and nothing domain-specific.
