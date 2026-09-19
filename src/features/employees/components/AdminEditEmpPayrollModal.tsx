@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select, message } from "antd";
 import { PayCycle } from "@/shared/types/common";
-import { empUserAPI } from "@/services/api.service";
-
+import { empUserAPI } from "@/features/employees/api/employeesApi";
 interface AdminEditEmpPayrollModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;

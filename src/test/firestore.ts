@@ -13,10 +13,11 @@
  * value defined in the test file. Import the module inside the factory instead:
  *
  * ```ts
- * vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
- * vi.mock("../../test/firebaseApp");  // or "../firebase" from a services test
+ * vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+ * vi.mock("@/test/firebaseApp");
+ * vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
  *
- * import { firestoreMock } from "../../test/firestore";
+ * import { firestoreMock } from "@/test/firestore";
  *
  * beforeEach(() => firestoreMock.reset());
  * ```
@@ -32,7 +33,7 @@
  * just a key, and its collection is everything sharing the `…/leaveBalances`
  * prefix. `collectionGroup` matches on the second-to-last segment.
  *
- * Queries support the operators `api.service.ts` actually uses — `==` and `in`,
+ * Queries support the operators the feature API modules actually use — `==` and `in`,
  * plus `orderBy` and `limit` — and `where(documentId(), "in", …)` filters on the
  * key rather than a field. Anything else throws rather than quietly returning
  * every document, so a query the double cannot honour fails loudly.
@@ -183,7 +184,7 @@ const matches = (path: string, data: DocData, constraint: WhereConstraint) => {
       return Array.isArray(constraint.value) && constraint.value.includes(actual);
     default:
       // Loudly, rather than returning everything and making a test pass for the
-      // wrong reason. Add the operator here when api.service starts using it.
+      // wrong reason. Add the operator here when a feature API module starts using it.
       throw new Error(`firestore mock: unsupported where operator "${constraint.op}"`);
   }
 };
@@ -329,7 +330,7 @@ const notify = () => {
 
 /**
  * The object to hand back from `vi.mock("firebase/firestore", …)`. Every export
- * `api.service.ts` imports is present; the type-only imports it also pulls in
+ * the feature API modules import is present; the type-only imports they also pull in
  * are erased at compile time and need no counterpart here.
  */
 export const firestoreModule = () => ({

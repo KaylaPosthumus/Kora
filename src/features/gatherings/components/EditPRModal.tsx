@@ -1,6 +1,6 @@
 import { ReviewStatus } from "@/shared/types/common";
 import React, { useState, useEffect } from "react";
-import { performanceReviewsAPI } from "@/services/api.service";
+import { performanceReviewsAPI } from "@/features/gatherings/api/gatheringsApi";
 import { Modal, Button, Form, message, Rate, Switch, DatePicker, TimePicker } from "antd";
 import dayjs from "dayjs";
 import TextArea from "antd/es/input/TextArea";

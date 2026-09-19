@@ -19,8 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 // Functionality
-import { meetingAPI, performanceReviewsAPI } from "@/services/api.service";
-
+import { meetingAPI, performanceReviewsAPI } from "@/features/gatherings/api/gatheringsApi";
 // Utils
 import { formatTimestampToDate, formatTimestampToTime } from "@/utils/dateUtils";
 

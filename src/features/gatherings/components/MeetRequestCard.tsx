@@ -4,8 +4,7 @@ import KoraBtn from "@/shared/components/KoraBtn";
 import dayjs from "dayjs";
 import { Avatar } from "antd";
 import { Icons } from "@/constants/icons";
-import { meetingAPI } from "@/services/api.service";
-
+import { meetingAPI } from "@/features/gatherings/api/gatheringsApi";
 interface MeetRequestCardProps {
   meetRequest: MeetingRequestCard;
   onApprove: () => void;

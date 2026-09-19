@@ -33,8 +33,7 @@ import {
 } from "@/utils/dateUtils";
 import { formatPhone, formatRandAmount } from "@/utils/formatUtils";
 import { getFullImageUrl } from "@/utils/imageUtils";
-import { pageAPI, employeeAPI, empUserAPI } from "@/services/api.service";
-
+import { empUserAPI, employeeAPI, getAdminEmpDetails } from "@/features/employees/api/employeesApi";
 // Types / Interfaces
 import { Gender, PayCycle } from "@/shared/types/common";
 import { EmpUser } from "@/shared/types/empUser";
@@ -103,7 +102,7 @@ const AdminIndividualEmployee: React.FC = () => {
     try {
       if (employeeId) {
         // Fetch the specific employee by ID using the new API endpoint
-        const response = await pageAPI.getAdminEmpDetails(employeeId);
+        const response = await getAdminEmpDetails(employeeId);
         const data: AdminEmpDetailsResponse = response.data;
 
         setEmpUser(data.empUser);

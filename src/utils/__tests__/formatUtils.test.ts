@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatPhone, formatRandAmount, formatShortRandAmount } from "../formatUtils";
+import { formatPhone, formatRandAmount, formatShortRandAmount } from "@/utils/formatUtils";
 
 /**
  * Unit tests for the display formatters.

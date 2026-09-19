@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { firestoreMock } from "../../test/firestore";
+import { firestoreMock } from "@/test/firestore";
 import { LeaveStatus } from "@/shared/types/common";
 import type { LeaveBalance } from "@/shared/types/leaveBalance";
 import type { LeaveRequest } from "@/shared/types/leaveRequest";
@@ -17,8 +17,8 @@ import type { LeaveRequest } from "@/shared/types/leaveRequest";
  * the admin acts — not just about what ends up in the database.
  */
 
-vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
-vi.mock("../../services/firebase", async () => (await import("../../test/firebaseApp")).firebaseAppModule());
+vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
 
 interface LeaveSnapshot {
   leaveBalances: LeaveBalance[];
@@ -69,7 +69,7 @@ describe("submitting and approving leave", () => {
   it("shows the approval on the employee's open screen without a refresh", async () => {
     seedEmployee(15);
     const { empLeaveRequestsAPI, subscribeToEmployeeLeave } = await import(
-      "../../services/api.service"
+      "@/features/leave/api/leaveApi"
     );
 
     // The employee's leave page is mounted and subscribed.
@@ -102,7 +102,7 @@ describe("submitting and approving leave", () => {
 
   it("puts the request in the admin's pending queue with the names already on it", async () => {
     seedEmployee();
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.createLeaveRequest(threeDayRequest);
 
@@ -120,7 +120,7 @@ describe("submitting and approving leave", () => {
 
   it("moves the request between the admin's three queues as its status changes", async () => {
     seedEmployee();
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
     const created = await empLeaveRequestsAPI.createLeaveRequest(threeDayRequest);
 
     const counts = async () => ({
@@ -140,7 +140,7 @@ describe("submitting and approving leave", () => {
 
   it("gives the days back when an admin reverses an approval", async () => {
     seedEmployee(15);
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
     const created = await empLeaveRequestsAPI.createLeaveRequest(threeDayRequest);
 
     await empLeaveRequestsAPI.approveLeaveRequestById(created.data.id);
@@ -155,7 +155,7 @@ describe("submitting and approving leave", () => {
 
   it("spends the days once when an impatient admin double-clicks approve", async () => {
     seedEmployee(15);
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
     const created = await empLeaveRequestsAPI.createLeaveRequest(threeDayRequest);
 
     await empLeaveRequestsAPI.approveLeaveRequestById(created.data.id);
@@ -167,7 +167,7 @@ describe("submitting and approving leave", () => {
 
   it("lets an admin approve past the balance, going negative", async () => {
     seedEmployee(1);
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
     const created = await empLeaveRequestsAPI.createLeaveRequest(threeDayRequest);
 
     await empLeaveRequestsAPI.approveLeaveRequestById(created.data.id);
@@ -188,7 +188,7 @@ describe("submitting and approving leave", () => {
         remainingDays: 15,
       },
     });
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     const created = await empLeaveRequestsAPI.createLeaveRequest({
       ...threeDayRequest,
@@ -204,7 +204,7 @@ describe("submitting and approving leave", () => {
     seedEmployee();
     firestoreMock.seed({ "employees/emp2": { userId: "uid2", fullName: "Sam Second" } });
     const { empLeaveRequestsAPI, subscribeToEmployeeLeave } = await import(
-      "../../services/api.service"
+      "@/features/leave/api/leaveApi"
     );
 
     const emissions: LeaveSnapshot[] = [];
@@ -220,7 +220,7 @@ describe("submitting and approving leave", () => {
 
   it("still flips the status when the balance document is missing", async () => {
     seedEmployee();
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
     const created = await empLeaveRequestsAPI.createLeaveRequest({
       ...threeDayRequest,
       leaveTypeId: "study",
@@ -236,7 +236,7 @@ describe("submitting and approving leave", () => {
 
   it("writes nothing when the request has vanished", async () => {
     seedEmployee();
-    const { empLeaveRequestsAPI } = await import("../../services/api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await expect(empLeaveRequestsAPI.approveLeaveRequestById("gone")).rejects.toThrow(
       /No leave request found/
@@ -248,7 +248,7 @@ describe("submitting and approving leave", () => {
 describe("the employee's leave screen", () => {
   it("waits for both the balances and the requests before it renders anything", async () => {
     seedEmployee();
-    const { subscribeToEmployeeLeave } = await import("../../services/api.service");
+    const { subscribeToEmployeeLeave } = await import("@/features/leave/api/leaveApi");
 
     const onData = vi.fn();
     const unsubscribe = subscribeToEmployeeLeave(EMPLOYEE_ID, onData);
@@ -267,7 +267,7 @@ describe("the employee's leave screen", () => {
   it("survives the half-updated frame between the two writes of an approval", async () => {
     seedEmployee(15);
     const { empLeaveRequestsAPI, subscribeToEmployeeLeave } = await import(
-      "../../services/api.service"
+      "@/features/leave/api/leaveApi"
     );
     const created = await empLeaveRequestsAPI.createLeaveRequest(threeDayRequest);
 

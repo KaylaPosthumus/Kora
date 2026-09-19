@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { firestoreMock } from "../../test/firestore";
+import { firestoreMock } from "@/test/firestore";
 
 /**
  * Unit tests for the writes that have to touch two documents at once.
@@ -16,8 +16,8 @@ import { firestoreMock } from "../../test/firestore";
  * calls.
  */
 
-vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
-vi.mock("../firebase", async () => (await import("../../test/firebaseApp")).firebaseAppModule());
+vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
 
 const USER_PATH = "users/uid1";
 const EMPLOYEE_PATH = "employees/emp1";
@@ -54,7 +54,7 @@ beforeEach(() => {
 describe("updateEmpUserById", () => {
   it("mirrors a name change onto the user doc as well as the employee doc", async () => {
     seedLinkedEmployee();
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     await empUserAPI.updateEmpUserById("emp1", { fullName: "Eli Employee-Smith" });
 
@@ -66,7 +66,7 @@ describe("updateEmpUserById", () => {
 
   it("mirrors email and profile picture too", async () => {
     seedLinkedEmployee();
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     await empUserAPI.updateEmpUserById("emp1", {
       email: "eli.smith@kora.test",
@@ -81,7 +81,7 @@ describe("updateEmpUserById", () => {
 
   it("does not copy employment fields onto the user doc", async () => {
     seedLinkedEmployee();
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     await empUserAPI.updateEmpUserById("emp1", { salaryAmount: 60000, jobTitle: "Lead" });
 
@@ -94,7 +94,7 @@ describe("updateEmpUserById", () => {
 
   it("writes both documents in a single batch", async () => {
     seedLinkedEmployee();
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     await empUserAPI.updateEmpUserById("emp1", { fullName: "Eli Employee-Smith" });
 
@@ -108,7 +108,7 @@ describe("updateEmpUserById", () => {
 
   it("skips the user write when nothing user-owned changed", async () => {
     seedLinkedEmployee();
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     await empUserAPI.updateEmpUserById("emp1", { department: "Platform" });
 
@@ -119,7 +119,7 @@ describe("updateEmpUserById", () => {
     firestoreMock.seed({
       [EMPLOYEE_PATH]: { userId: null, fullName: "Placeholder", jobTitle: "Designer" },
     });
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     const response = await empUserAPI.updateEmpUserById("emp1", { fullName: "Renamed" });
 
@@ -128,7 +128,7 @@ describe("updateEmpUserById", () => {
   });
 
   it("returns 404 and writes nothing for an unknown employee", async () => {
-    const { empUserAPI } = await import("../api.service");
+    const { empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     const response = await empUserAPI.updateEmpUserById("nope", { fullName: "Ghost" });
 
@@ -154,7 +154,7 @@ describe("terminateEmpById", () => {
 
   it("returns the terminated employee's equipment to the unassigned pool", async () => {
     seedForTermination();
-    const { employeeAPI } = await import("../api.service");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeAPI.terminateEmpById("emp1");
 
@@ -169,7 +169,7 @@ describe("terminateEmpById", () => {
 
   it("does not touch equipment belonging to nobody", async () => {
     seedForTermination();
-    const { employeeAPI } = await import("../api.service");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeAPI.terminateEmpById("emp1");
 
@@ -178,7 +178,7 @@ describe("terminateEmpById", () => {
 
   it("deletes the leave balance subcollection", async () => {
     seedForTermination();
-    const { employeeAPI } = await import("../api.service");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeAPI.terminateEmpById("emp1");
 
@@ -189,7 +189,7 @@ describe("terminateEmpById", () => {
 
   it("unlinks the user account instead of deleting it", async () => {
     seedForTermination();
-    const { employeeAPI } = await import("../api.service");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeAPI.terminateEmpById("emp1");
 
@@ -200,7 +200,7 @@ describe("terminateEmpById", () => {
   });
 
   it("returns 404 and writes nothing for an unknown employee", async () => {
-    const { employeeAPI } = await import("../api.service");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     expect((await employeeAPI.terminateEmpById("nope")).status).toBe(404);
     expect(firestoreMock.writes()).toHaveLength(0);

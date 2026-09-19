@@ -3,7 +3,7 @@ import { Modal, Button, message } from "antd";
 import { Icons } from "@/constants/icons";
 import { EquipmentConditionLabels } from "@/shared/types/common";
 import { Equipment } from "@/shared/types/equipment";
-import { equipmentAPI } from "@/services/api.service";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import EquipmentTypeAvatar from "@/features/equipment/components/EquipmentTypeAvatar";
 
 interface DeleteEquipmentModalProps {

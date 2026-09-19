@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, message } from "antd";
 import { Icons } from "@/constants/icons";
 import { EquipmentConditionLabels } from "@/shared/types/common";
-import { equipmentAPI } from "@/services/api.service";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import EquipmentTypeAvatar from "@/features/equipment/components/EquipmentTypeAvatar";
 import { Equipment } from "@/shared/types/equipment";
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LeaveStatus } from "@/shared/types/common";
-import { subscribeToEmployeeLeave } from "@/services/api.service";
-
+import { subscribeToEmployeeLeave } from "@/features/leave/api/leaveApi";
 // Icons
 import { ClockCircleOutlined } from "@ant-design/icons";
 import { Icons } from "@/constants/icons";

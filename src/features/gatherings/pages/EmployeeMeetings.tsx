@@ -3,7 +3,7 @@ import { Table, Dropdown, Tooltip, Button, message, Spin, Empty } from "antd";
 import type { TableProps, MenuProps } from "antd";
 import { Icons } from "@/constants/icons";
 import KoraBtn from "@/shared/components/KoraBtn";
-import { meetingAPI, subscribeToGatherings } from "@/services/api.service";
+import { meetingAPI, subscribeToGatherings } from "@/features/gatherings/api/gatheringsApi";
 import { GatheringType, MeetStatus, ReviewStatus } from "@/shared/types/common";
 import { GatheringStatusBadge, MeetRequestsBadge, RequestMeetingModal, EditMeetingRequestModal } from "@/features/gatherings/components";
 import { formatTimestampToDate, formatTimestampToTime } from "@/utils/dateUtils";

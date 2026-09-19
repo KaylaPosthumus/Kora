@@ -22,7 +22,7 @@
 import React from "react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { render, type RenderOptions, type RenderResult } from "@testing-library/react";
-import { AuthProvider } from "../contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 interface Options extends Omit<RenderOptions, "wrapper"> {
   /** Initial history entry. Include the hash when it matters — `/#notlinked`. */

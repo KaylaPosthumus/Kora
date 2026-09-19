@@ -3,7 +3,8 @@ import { Modal, Button, Form, Select, DatePicker, message, Spin, Alert } from "a
 import type { SelectProps } from "antd";
 
 import { Icons } from "@/constants/icons";
-import { empUserAPI, equipmentAPI } from "@/services/api.service";
+import { empUserAPI } from "@/features/employees/api/employeesApi";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import { EquipmentCondition } from "@/shared/types/common";
 import dayjs from "dayjs";
 import { getFullImageUrl } from "@/utils/imageUtils";

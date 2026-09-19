@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { firestoreMock } from "../../test/firestore";
-import { authMock } from "../../test/firebaseApp";
-import { captureNavigation } from "../../test/navigation";
+import { firestoreMock } from "@/test/firestore";
+import { authMock } from "@/test/firebaseApp";
+import { captureNavigation } from "@/test/navigation";
 import { UserRole } from "@/shared/types/common";
 
 /**
@@ -10,7 +10,7 @@ import { UserRole } from "@/shared/types/common";
  * This is the app's privilege boundary end to end. A signup can never grant its
  * own role (`firestore.rules` rejects it, and `authService` never asks for one),
  * so a new account is inert until an admin links it. Every step below is a real
- * call into `authService` or `api.service` against the in-memory Firestore —
+ * call into `authService` or a feature API module against the in-memory Firestore —
  * nothing between them is stubbed, so a change that breaks the handover from one
  * step to the next fails here rather than in production.
  *
@@ -20,9 +20,9 @@ import { UserRole } from "@/shared/types/common";
  * before linking returns 200 after it.
  */
 
-vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
-vi.mock("firebase/auth", async () => (await import("../../test/firebaseApp")).firebaseAuthModule());
-vi.mock("../../services/firebase", async () => (await import("../../test/firebaseApp")).firebaseAppModule());
+vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+vi.mock("firebase/auth", async () => (await import("@/test/firebaseApp")).firebaseAuthModule());
+vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
 
 const navigation = captureNavigation();
 
@@ -69,9 +69,9 @@ describe("employee onboarding", () => {
   it("takes a new signup from unlinked to working employee", async () => {
     seedLeaveTypes();
     const { employeeSignUp, fullEmailLogin, checkIfUserIsLinked } = await import(
-      "../../services/authService"
+      "@/services/authService"
     );
-    const { userAPI, employeeAPI } = await import("../../services/api.service");
+    const { userAPI, employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     // 1. They sign up on /employee/signup.
     expect((await employeeSignUp(signupForm)).errorCode).toBe(200);
@@ -127,8 +127,8 @@ describe("employee onboarding", () => {
 
   it("seeds one leave balance per leave type, keyed by the leave type id", async () => {
     seedLeaveTypes();
-    const { employeeSignUp } = await import("../../services/authService");
-    const { employeeAPI } = await import("../../services/api.service");
+    const { employeeSignUp } = await import("@/services/authService");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeSignUp(signupForm);
     const uid = authMock.currentUser()!.uid;
@@ -155,8 +155,8 @@ describe("employee onboarding", () => {
 
   it("copies the user's name and email onto the employee record for list reads", async () => {
     seedLeaveTypes();
-    const { employeeSignUp } = await import("../../services/authService");
-    const { employeeAPI, empUserAPI } = await import("../../services/api.service");
+    const { employeeSignUp } = await import("@/services/authService");
+    const { employeeAPI, empUserAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeSignUp(signupForm);
     const uid = authMock.currentUser()!.uid;
@@ -178,8 +178,8 @@ describe("employee onboarding", () => {
     firestoreMock.seed({
       "equipment/laptop1": { equipmentName: "MacBook Pro", employeeId: null, assignedDate: null },
     });
-    const { employeeSignUp } = await import("../../services/authService");
-    const { employeeAPI } = await import("../../services/api.service");
+    const { employeeSignUp } = await import("@/services/authService");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeSignUp(signupForm);
     const uid = authMock.currentUser()!.uid;
@@ -196,8 +196,8 @@ describe("employee onboarding", () => {
 
   it("leaves the account untouched when linking fails part-way", async () => {
     seedLeaveTypes();
-    const { employeeSignUp } = await import("../../services/authService");
-    const { employeeAPI } = await import("../../services/api.service");
+    const { employeeSignUp } = await import("@/services/authService");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeSignUp(signupForm);
     const uid = authMock.currentUser()!.uid;
@@ -222,7 +222,7 @@ describe("employee onboarding", () => {
 
   it("refuses to link a user id that does not exist", async () => {
     seedLeaveTypes();
-    const { employeeAPI } = await import("../../services/api.service");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await expect(
       employeeAPI.setupUserAsEmployee({ userId: "ghost", ...employmentDetails })
@@ -233,8 +233,8 @@ describe("employee onboarding", () => {
 
 describe("admin onboarding", () => {
   it("grants the admin role only at link time, never at signup", async () => {
-    const { adminSignUp, fullEmailLogin } = await import("../../services/authService");
-    const { linkUserAsAdmin } = await import("../../services/api.service");
+    const { adminSignUp, fullEmailLogin } = await import("@/services/authService");
+    const { linkUserAsAdmin } = await import("@/features/employees/api/employeesApi");
 
     await adminSignUp({ ...signupForm, email: "ada@kora.test" });
     const uid = authMock.currentUser()!.uid;
@@ -267,8 +267,8 @@ describe("admin onboarding", () => {
 describe("Google sign-in onboarding", () => {
   it("creates an unassigned profile on the first sign-in and links on the second", async () => {
     seedLeaveTypes();
-    const { fullGoogleSignIn, checkIfUserIsLinked } = await import("../../services/authService");
-    const { employeeAPI } = await import("../../services/api.service");
+    const { fullGoogleSignIn, checkIfUserIsLinked } = await import("@/services/authService");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     authMock.nextPopupUser({
       uid: "google-uid",
@@ -291,7 +291,7 @@ describe("Google sign-in onboarding", () => {
   });
 
   it("does not overwrite an existing profile when a linked user signs in again", async () => {
-    const { fullGoogleSignIn } = await import("../../services/authService");
+    const { fullGoogleSignIn } = await import("@/services/authService");
 
     authMock.nextPopupUser({ uid: "google-uid", email: "gina@kora.test", displayName: "Gina" });
     firestoreMock.seed({
@@ -317,8 +317,8 @@ describe("Google sign-in onboarding", () => {
 describe("termination", () => {
   it("returns a terminated employee to the not-linked screen without deleting the account", async () => {
     seedLeaveTypes();
-    const { employeeSignUp, fullEmailLogin } = await import("../../services/authService");
-    const { employeeAPI } = await import("../../services/api.service");
+    const { employeeSignUp, fullEmailLogin } = await import("@/services/authService");
+    const { employeeAPI } = await import("@/features/employees/api/employeesApi");
 
     await employeeSignUp(signupForm);
     const uid = authMock.currentUser()!.uid;

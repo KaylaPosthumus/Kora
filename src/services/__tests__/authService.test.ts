@@ -17,7 +17,7 @@ let userDocs: Record<string, unknown>;
 /** Where redirectForUser sent the browser. */
 let navigatedTo: string[];
 
-vi.mock("../firebase", () => ({
+vi.mock("@/services/firebase", () => ({
   auth: authState,
   db: { __fake: "db" },
   storage: {},

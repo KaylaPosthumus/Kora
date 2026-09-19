@@ -28,7 +28,7 @@ let store: Record<string, unknown | null>;
 /** Every `transaction.update` call, in order. */
 let updates: Array<{ path: string; data: Record<string, unknown> }>;
 
-vi.mock("../firebase", () => ({
+vi.mock("@/services/firebase", () => ({
   db: { __fake: "db" },
   auth: {},
   storage: {},
@@ -57,7 +57,7 @@ vi.mock("firebase/firestore", () => {
     orderBy: (...args: unknown[]) => ({ type: "orderBy", args }),
     limit: (n: number) => ({ type: "limit", n }),
     documentId: () => "__name__",
-    // Unused here, but api.service imports it — keep the mock a faithful stand-in.
+    // Unused here, but leaveApi imports it — keep the mock a faithful stand-in.
     onSnapshot: vi.fn(() => () => undefined),
     serverTimestamp: () => "SERVER_TS",
     writeBatch: () => ({ set: vi.fn(), update: vi.fn(), delete: vi.fn(), commit: vi.fn() }),
@@ -101,7 +101,7 @@ describe("approve-and-decrement leave transaction", () => {
 
   it("decrements the balance exactly once when approving", async () => {
     seedRequest(LeaveStatus.Pending, 10);
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.approveLeaveRequestById(REQUEST_ID);
 
@@ -113,7 +113,7 @@ describe("approve-and-decrement leave transaction", () => {
 
   it("gives the days back when an approved request is rejected", async () => {
     seedRequest(LeaveStatus.Approved, 7);
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.rejectLeaveRequestById(REQUEST_ID);
 
@@ -124,7 +124,7 @@ describe("approve-and-decrement leave transaction", () => {
 
   it("gives the days back when an approved request goes back to pending", async () => {
     seedRequest(LeaveStatus.Approved, 7);
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.setLeaveRequestToPendingById(REQUEST_ID);
 
@@ -133,7 +133,7 @@ describe("approve-and-decrement leave transaction", () => {
 
   it("does not touch the balance when re-approving an already-approved request", async () => {
     seedRequest(LeaveStatus.Approved, 7);
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.approveLeaveRequestById(REQUEST_ID);
 
@@ -144,7 +144,7 @@ describe("approve-and-decrement leave transaction", () => {
 
   it("does not touch the balance moving between two non-approved statuses", async () => {
     seedRequest(LeaveStatus.Pending, 10);
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.rejectLeaveRequestById(REQUEST_ID);
 
@@ -155,7 +155,7 @@ describe("approve-and-decrement leave transaction", () => {
   it("still flips the status when the balance document is missing", async () => {
     seedRequest(LeaveStatus.Pending, 10);
     delete store[BALANCE_PATH];
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.approveLeaveRequestById(REQUEST_ID);
 
@@ -167,7 +167,7 @@ describe("approve-and-decrement leave transaction", () => {
     // Deliberate: AdminLeaveRequests warns via OverBalanceConfirmModal and the
     // admin may still approve. The transaction must not silently clamp.
     seedRequest(LeaveStatus.Pending, 1);
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await empLeaveRequestsAPI.approveLeaveRequestById(REQUEST_ID);
 
@@ -176,7 +176,7 @@ describe("approve-and-decrement leave transaction", () => {
 
   it("throws rather than writing when the request does not exist", async () => {
     store = {};
-    const { empLeaveRequestsAPI } = await import("../api.service");
+    const { empLeaveRequestsAPI } = await import("@/features/leave/api/leaveApi");
 
     await expect(empLeaveRequestsAPI.approveLeaveRequestById(REQUEST_ID)).rejects.toThrow(
       /No leave request found/

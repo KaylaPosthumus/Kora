@@ -13,10 +13,10 @@
  * `authService.ts` maps to its numeric result codes.
  *
  * ```ts
- * vi.mock("../../services/firebase", async () => (await import("../firebaseApp")).firebaseAppModule());
- * vi.mock("firebase/auth", async () => (await import("../firebaseApp")).firebaseAuthModule());
+ * vi.mock("../../services/firebase", async () => (await import("@/firebaseApp")).firebaseAppModule());
+ * vi.mock("firebase/auth", async () => (await import("@/firebaseApp")).firebaseAuthModule());
  *
- * import { authMock } from "../firebaseApp";
+ * import { authMock } from "@/firebaseApp";
  * beforeEach(() => authMock.reset());
  * ```
  *

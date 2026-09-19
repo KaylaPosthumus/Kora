@@ -19,8 +19,8 @@ import TextArea from "antd/es/input/TextArea";
 import { Icons } from "@/constants/icons";
 import { AdminUser } from "@/shared/types/adminUser";
 import { MeetingRequestCreate } from "@/shared/types/meetingRequestCreate";
-import { adminAPI, meetingAPI } from "@/services/api.service";
-
+import { adminAPI } from "@/features/employees/api/employeesApi";
+import { meetingAPI } from "@/features/gatherings/api/gatheringsApi";
 interface RequestMeetingModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;

@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { firestoreMock } from "../../test/firestore";
-import { authMock } from "../../test/firebaseApp";
-import { captureNavigation } from "../../test/navigation";
+import { firestoreMock } from "@/test/firestore";
+import { authMock } from "@/test/firebaseApp";
+import { captureNavigation } from "@/test/navigation";
 import {
   renderWithProviders,
   screen,
   userEvent,
   waitFor,
-} from "../../test/renderWithProviders";
+} from "@/test/renderWithProviders";
 import { UserRole } from "@/shared/types/common";
 
 /**
@@ -24,9 +24,9 @@ import { UserRole } from "@/shared/types/common";
  * router), so `captureNavigation` stands in for the browser.
  */
 
-vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
-vi.mock("firebase/auth", async () => (await import("../../test/firebaseApp")).firebaseAuthModule());
-vi.mock("../../services/firebase", async () => (await import("../../test/firebaseApp")).firebaseAppModule());
+vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+vi.mock("firebase/auth", async () => (await import("@/test/firebaseApp")).firebaseAuthModule());
+vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
 
 const navigation = captureNavigation();
 

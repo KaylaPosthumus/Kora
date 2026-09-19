@@ -314,7 +314,17 @@ Order, one commit per step, `npm run typecheck` green between each:
    role's dashboard rather than a member of the domain it summarises. `NotFound` went to
    `app/`, not to a feature: it belongs to the shell that routes to it. `src/pages/` is
    gone.
-6. **Rewrite imports to `@/`** and delete the barrel.
+6. ~~**Rewrite imports to `@/`** and delete the barrel.~~ **DONE.** `src/services/api.service.ts`
+   is gone and its 35 consumers import from the owning feature's `api/` module directly;
+   `pageAPI.getAdminEmpDetails(...)` call sites became plain calls to the exported
+   function. 402 imports now use `@/` and **zero** climb a directory — the only relative
+   specifiers left are `./` siblings, which is what the alias is meant to leave alone.
+   Three test files moved with the code they test (`denormalisation` and
+   `leaveTransaction` to their features, `liveReads` to `shared/lib`, since it exercises
+   `subscribePair` through both of its real consumers), and the relative paths inside
+   `vi.mock()` were aliased too — those are not import statements, so the first pass
+   missed them, and a mock path that no longer resolves fails silently by not
+   intercepting rather than by erroring.
 7. **Add the `no-restricted-paths` rule** that enforces §2 rule 3, so the boundary holds.
    Per the amendment there, the pattern to ban is `@/features/*/components/*` from outside
    that feature — the barrel itself stays allowed. The boundary is clean as of step 4, so

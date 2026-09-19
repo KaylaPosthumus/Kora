@@ -22,7 +22,7 @@ import {
   PayCycle,
 } from "@/shared/types/common";
 import { UnlinkedUserDropdown, UnlinkedUser } from "@/features/employees/components";
-import { employeeAPI, linkUserAsAdmin, userAPI } from "@/services/api.service";
+import { employeeAPI, linkUserAsAdmin, userAPI } from "@/features/employees/api/employeesApi";
 import dayjs from "dayjs";
 
 // Authentication

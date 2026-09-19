@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button, message } from "antd";
 import { Icons } from "@/constants/icons";
-import { meetingAPI } from "@/services/api.service";
+import { meetingAPI } from "@/features/gatherings/api/gatheringsApi";
 import { MeetingDTO } from "@/shared/types/meetingDTO";
 import dayjs from "dayjs";
 

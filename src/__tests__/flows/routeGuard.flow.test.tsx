@@ -1,9 +1,9 @@
 import React from "react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Route, Routes } from "react-router-dom";
-import { firestoreMock } from "../../test/firestore";
-import { authMock } from "../../test/firebaseApp";
-import { renderWithProviders, screen, waitFor } from "../../test/renderWithProviders";
+import { firestoreMock } from "@/test/firestore";
+import { authMock } from "@/test/firebaseApp";
+import { renderWithProviders, screen, waitFor } from "@/test/renderWithProviders";
 import { ProtectedRoute } from "@/features/auth/components";
 import { UserRole } from "@/shared/types/common";
 
@@ -21,9 +21,9 @@ import { UserRole } from "@/shared/types/common";
  * does), which is why every assertion waits.
  */
 
-vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
-vi.mock("firebase/auth", async () => (await import("../../test/firebaseApp")).firebaseAuthModule());
-vi.mock("../../services/firebase", async () => (await import("../../test/firebaseApp")).firebaseAppModule());
+vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+vi.mock("firebase/auth", async () => (await import("@/test/firebaseApp")).firebaseAuthModule());
+vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
 
 /** A cut-down version of the app's route table — the guards are the real ones. */
 const routes = (

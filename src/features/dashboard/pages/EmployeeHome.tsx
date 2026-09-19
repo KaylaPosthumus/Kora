@@ -2,11 +2,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import GaugeComponent from "react-gauge-component";
 import { LeaveBalanceBlock } from "@/features/leave/components";
-import {
-  pageAPI,
-  subscribeToGatherings,
-  UPCOMING_AND_COMPLETED,
-} from "@/services/api.service";
+import { getAdminEmpDetails } from "@/features/employees/api/employeesApi";
+import { UPCOMING_AND_COMPLETED, subscribeToGatherings } from "@/features/gatherings/api/gatheringsApi";
 import { EmpUser } from "@/shared/types/empUser";
 import { formatRandAmount } from "@/utils/formatUtils";
 import dayjs from "dayjs";
@@ -55,7 +52,7 @@ const EmployeeHome: React.FC = () => {
         return;
       }
 
-      const response = await pageAPI.getAdminEmpDetails(user.employeeId);
+      const response = await getAdminEmpDetails(user.employeeId);
       const data: any = response.data;
 
       setEmpUser(data.empUser);

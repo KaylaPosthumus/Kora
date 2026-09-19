@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { empLeaveRequestsAPI } from "@/services/api.service";
+import { empLeaveRequestsAPI } from "@/features/leave/api/leaveApi";
 import dayjs from "dayjs";
 import { calculateDurationInDays } from "@/utils/dateUtils";
 

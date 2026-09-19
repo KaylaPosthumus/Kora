@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 // Import API service
-import { empLeaveRequestsAPI, leaveTypesAPI } from "@/services/api.service";
-
+import { empLeaveRequestsAPI, leaveTypesAPI } from "@/features/leave/api/leaveApi";
 import dayjs from "dayjs";
 import KoraBtn from "@/shared/components/KoraBtn";
 import TextArea from "antd/es/input/TextArea";

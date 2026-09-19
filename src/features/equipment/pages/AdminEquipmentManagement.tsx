@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import type { GetProp, TableProps } from "antd";
 import { Table, Avatar, Tooltip, Button, Dropdown, Popover, message, DatePicker, Spin } from "antd";
 import type { SorterResult, FilterValue } from "antd/es/table/interface";
-import { equipmentAPI } from "@/services/api.service";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import { useNavigate } from "react-router-dom";
 import { formatRandAmount } from "@/utils/formatUtils";
 import { getFullImageUrl } from "@/utils/imageUtils";

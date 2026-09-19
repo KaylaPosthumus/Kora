@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Drawer, message } from "antd";
 import MeetRequestCard from "@/features/gatherings/components/MeetRequestCard";
 import { MeetingRequestCard } from "@/shared/types/meetingRequestCard";
-import { meetingAPI } from "@/services/api.service";
+import { meetingAPI } from "@/features/gatherings/api/gatheringsApi";
 import AcceptScheduleMeetingModal from "@/features/gatherings/components/AcceptScheduleMeetingModal";
 
 interface MeetRequestsDrawerProps {

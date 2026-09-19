@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { meetingAPI } from "@/services/api.service";
+import { meetingAPI } from "@/features/gatherings/api/gatheringsApi";
 import { Modal, Button, Form, message, Switch, DatePicker, TimePicker } from "antd";
 import dayjs from "dayjs";
 import { Icons } from "@/constants/icons";

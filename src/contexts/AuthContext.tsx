@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
-import { auth, db } from "../services/firebase";
+import { auth, db } from "@/services/firebase";
 import {
   getCurrentUser,
   invalidateCurrentUser,
   type CurrentUserDTO,
-} from "../services/authService";
+} from "@/services/authService";
 import { UserRole } from "@/shared/types/common";
 
 interface AuthContextValue {

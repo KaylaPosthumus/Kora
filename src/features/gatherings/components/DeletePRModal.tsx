@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button, message } from "antd";
 import { Icons } from "@/constants/icons";
-import { performanceReviewsAPI } from "@/services/api.service";
+import { performanceReviewsAPI } from "@/features/gatherings/api/gatheringsApi";
 import { PerformanceReviewDTO } from "@/features/gatherings/components/EditPRModal";
 import dayjs from "dayjs";
 

@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select, DatePicker, message, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { Gender } from "@/shared/types/common";
-import { empUserAPI } from "@/services/api.service";
-
+import { empUserAPI } from "@/features/employees/api/employeesApi";
 interface AdminEditEmpDetailsModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;

@@ -1,6 +1,6 @@
 // src/dev/ApiPlayground.tsx
 import { useState } from "react";
-import { getCurrentUser, CurrentUserDTO } from "../services/authService";
+import { getCurrentUser, CurrentUserDTO } from "@/services/authService";
 
 const ApiPlayground: React.FC = () => {
   const [apiResult, setApiResult] = useState<CurrentUserDTO | null>(null);

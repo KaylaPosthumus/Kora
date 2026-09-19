@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, message } from "antd";
 import { EquipmentCondition } from "@/shared/types/common";
 import EquipCheckItem from "@/features/equipment/components/EquipCheckItem";
-import { equipmentAPI } from "@/services/api.service";
-
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 interface AssignEmpToEquipsModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;

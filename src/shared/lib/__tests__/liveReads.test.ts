@@ -27,7 +27,7 @@ const docsOf = (records: Array<{ id: string } & Record<string, unknown>>) => ({
   docs: records.map(({ id, ...rest }) => ({ id, data: () => rest })),
 });
 
-vi.mock("../firebase", () => ({
+vi.mock("@/services/firebase", () => ({
   db: { __fake: "db" },
   auth: {},
   storage: {},
@@ -79,7 +79,7 @@ beforeEach(() => {
 
 describe("subscribeToGatherings", () => {
   it("waits for both collections before emitting", async () => {
-    const { subscribeToGatherings } = await import("../api.service");
+    const { subscribeToGatherings } = await import("@/features/gatherings/api/gatheringsApi");
     const onData = vi.fn();
 
     subscribeToGatherings({ field: "employeeId", id: "emp1" }, onData);
@@ -96,7 +96,7 @@ describe("subscribeToGatherings", () => {
   });
 
   it("merges both collections and sorts by start date", async () => {
-    const { subscribeToGatherings } = await import("../api.service");
+    const { subscribeToGatherings } = await import("@/features/gatherings/api/gatheringsApi");
     const onData = vi.fn();
 
     subscribeToGatherings({ field: "employeeId", id: "emp1" }, onData);
@@ -119,7 +119,7 @@ describe("subscribeToGatherings", () => {
   });
 
   it("re-emits when either side changes afterwards", async () => {
-    const { subscribeToGatherings } = await import("../api.service");
+    const { subscribeToGatherings } = await import("@/features/gatherings/api/gatheringsApi");
     const onData = vi.fn();
 
     subscribeToGatherings({ field: "employeeId", id: "emp1" }, onData);
@@ -140,7 +140,7 @@ describe("subscribeToGatherings", () => {
   });
 
   it("tears down both listeners on unsubscribe", async () => {
-    const { subscribeToGatherings } = await import("../api.service");
+    const { subscribeToGatherings } = await import("@/features/gatherings/api/gatheringsApi");
 
     const unsubscribe = subscribeToGatherings({ field: "employeeId", id: "emp1" }, vi.fn());
     unsubscribe();
@@ -150,7 +150,7 @@ describe("subscribeToGatherings", () => {
   });
 
   it("reports errors instead of emitting", async () => {
-    const { subscribeToGatherings } = await import("../api.service");
+    const { subscribeToGatherings } = await import("@/features/gatherings/api/gatheringsApi");
     const onData = vi.fn();
     const onError = vi.fn();
 
@@ -165,7 +165,7 @@ describe("subscribeToGatherings", () => {
 
 describe("subscribeToEmployeeLeave", () => {
   it("emits balances and requests together once both arrive", async () => {
-    const { subscribeToEmployeeLeave } = await import("../api.service");
+    const { subscribeToEmployeeLeave } = await import("@/features/leave/api/leaveApi");
     const onData = vi.fn();
 
     subscribeToEmployeeLeave("emp1", onData);
@@ -187,7 +187,7 @@ describe("subscribeToEmployeeLeave", () => {
   });
 
   it("re-emits when an approval moves the balance", async () => {
-    const { subscribeToEmployeeLeave } = await import("../api.service");
+    const { subscribeToEmployeeLeave } = await import("@/features/leave/api/leaveApi");
     const onData = vi.fn();
 
     subscribeToEmployeeLeave("emp1", onData);

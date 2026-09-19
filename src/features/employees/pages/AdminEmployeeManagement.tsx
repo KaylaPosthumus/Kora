@@ -8,8 +8,7 @@ import type { SorterResult, FilterValue } from "antd/es/table/interface";
 import dayjs from "dayjs";
 
 // Import Services
-import { employeeAPI, pageAPI } from "@/services/api.service";
-
+import { employeeAPI, getAdminEmpManagement } from "@/features/employees/api/employeesApi";
 // Import Components
 import KoraBtn from "@/shared/components/KoraBtn";
 import { EmployTypeBadge } from "@/features/employees/components";
@@ -91,7 +90,7 @@ const AdminEmployeeManagement: React.FC = () => {
     setLoading(true);
     try {
       // Get ALL the employee data from the server
-      const response = await pageAPI.getAdminEmpManagement();
+      const response = await getAdminEmpManagement();
 
       // Clean up the data to match DataType
       const processedData = response.data.map((item: EmployeeListItem) => ({

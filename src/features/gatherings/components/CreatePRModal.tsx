@@ -14,7 +14,8 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import KoraBtn from "@/shared/components/KoraBtn";
-import { empUserAPI, performanceReviewsAPI } from "@/services/api.service";
+import { empUserAPI } from "@/features/employees/api/employeesApi";
+import { performanceReviewsAPI } from "@/features/gatherings/api/gatheringsApi";
 import { EmployType, Gender, PayCycle, UserRole } from "@/shared/types/common";
 import { Icons } from "@/constants/icons";
 import GoogleIcon from "@/assets/icons/googleIcon.png";

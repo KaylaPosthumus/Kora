@@ -9,7 +9,7 @@ import {
   message,
   Alert,
 } from "antd";
-import { equipmentAPI } from "@/services/api.service";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 import dayjs from "dayjs";
 

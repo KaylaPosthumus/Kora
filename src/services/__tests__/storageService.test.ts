@@ -9,7 +9,7 @@ import {
   validateProfilePicture,
   validateReviewDocument,
   type UploadableFile,
-} from "../storageService";
+} from "@/services/storageService";
 
 const file = (overrides: Partial<UploadableFile> = {}): UploadableFile => ({
   name: "avatar.png",

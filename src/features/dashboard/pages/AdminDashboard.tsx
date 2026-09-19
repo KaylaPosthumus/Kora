@@ -12,7 +12,9 @@ import { TopRatedEmpAdm as TopRatedEmpCard, AdminCalendar } from "@/features/das
 import { AdminGatheringBox, CreatePRModal, EditPRModal } from "@/features/gatherings/components";
 
 //Functionality
-import { empLeaveRequestsAPI, gatheringAPI, pageAPI } from "@/services/api.service";
+import { getAdminDashboardData } from "@/features/dashboard/api/dashboardApi";
+import { gatheringAPI } from "@/features/gatherings/api/gatheringsApi";
+import { empLeaveRequestsAPI } from "@/features/leave/api/leaveApi";
 import { useNavigate } from "react-router-dom";
 
 //Interface
@@ -63,7 +65,7 @@ const AdminDashboard: React.FC = () => {
       return;
     }
     try {
-      const response = await pageAPI.getAdminDashboardData(adminId);
+      const response = await getAdminDashboardData(adminId);
       setDashboardData(response.data);
       console.log("Dashboard Data:", response.data);
     } catch (err) {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button, message } from "antd";
-import { employeeAPI } from "@/services/api.service";
+import { employeeAPI } from "@/features/employees/api/employeesApi";
 import { useNavigate } from "react-router-dom";
 
 interface TerminateEmployeeModalProps {

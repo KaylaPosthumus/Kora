@@ -16,7 +16,7 @@ import { Avatar, message, Spin } from "antd";
 import { Icons } from "@/constants/icons";
 
 // Functionality
-import { empUserAPI, pageAPI } from "@/services/api.service";
+import { empUserAPI, getEmployeeProfile } from "@/features/employees/api/employeesApi";
 import dayjs from "dayjs";
 
 // Types & Interfaces
@@ -64,7 +64,7 @@ const EmployeeProfile: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await pageAPI.getEmployeeProfile(employeeId);
+      const response = await getEmployeeProfile(employeeId);
       setProfileData(response.data);
     } catch (error) {
       console.error("Error fetching employee:", error);

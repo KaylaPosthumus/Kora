@@ -13,13 +13,13 @@ import React from "react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 
-vi.mock("firebase/firestore", async () => (await import("../../test/firestore")).firestoreModule());
-vi.mock("../../services/firebase", async () => (await import("../../test/firebaseApp")).firebaseAppModule());
-vi.mock("firebase/auth", async () => (await import("../../test/firebaseApp")).firebaseAuthModule());
+vi.mock("firebase/firestore", async () => (await import("@/test/firestore")).firestoreModule());
+vi.mock("@/services/firebase", async () => (await import("@/test/firebaseApp")).firebaseAppModule());
+vi.mock("firebase/auth", async () => (await import("@/test/firebaseApp")).firebaseAuthModule());
 
-import { firestoreMock } from "../../test/firestore";
-import { authMock } from "../../test/firebaseApp";
-import { AuthProvider, useAuth } from "../AuthContext";
+import { firestoreMock } from "@/test/firestore";
+import { authMock } from "@/test/firebaseApp";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 /** Renders the user's resolved role, so a refresh is observable in the DOM. */
 const RoleProbe: React.FC = () => {

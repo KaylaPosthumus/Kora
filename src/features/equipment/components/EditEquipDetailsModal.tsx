@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select, message, DatePicker } from "antd";
-import { equipmentAPI } from "@/services/api.service";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 import dayjs from "dayjs";
 import { Equipment } from "@/shared/types/equipment";

@@ -9,7 +9,7 @@ import {
   formatTimestampToDate,
   formatTimestampToTime,
   isDateInPast,
-} from "../dateUtils";
+} from "@/utils/dateUtils";
 
 /**
  * Unit tests for the date helpers.

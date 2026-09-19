@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button, Form, Input, Select, message } from "antd";
-import { equipmentAPI } from "@/services/api.service";
+import { equipmentAPI } from "@/features/equipment/api/equipmentApi";
 import { EquipmentCategory, EquipmentCondition } from "@/shared/types/common";
 
 interface CreateUnlinkedEquipModalProps {
