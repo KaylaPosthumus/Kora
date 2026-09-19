@@ -516,7 +516,7 @@ Blocked on brand assets, not on engineering.
 - ~~Tailwind palette → Kora tokens in `tailwind.config.js`.~~ **DONE** (commit 59):
   `korablue` / `saffron` / `korastone`.
 - Ant Design token block — one edit in `app/theme.ts`.
-- `cori_logo_green.png` is imported from 5 files; swap the asset, keep the import sites.
+- ~~`cori_logo_green.png` is imported from 5 files.~~ Replaced by a placeholder Kora mark in commit 61; the import sites never change, so real artwork is still a one-file swap.
 - Re-run `scripts/generate-icons.sh` — the PWA icons still render the Coriander wordmark
   even though `manifest.webmanifest` says "Kora HR".
 - Copy sweep, starting with `UnlinkedMessage`.

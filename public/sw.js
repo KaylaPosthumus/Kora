@@ -14,12 +14,11 @@
  *    a cold spot on a phone opens the app rather than the browser's error page.
  */
 
-// Bumped to v2 when the auth background went from a 3.3 MB PNG to a 180 kB WebP.
-// Content-hashing means the new asset has a new URL, so nothing serves stale —
-// but "activate" only deletes caches whose key differs, so without a bump an
-// existing install would hold the old 3.3 MB file indefinitely with nothing
-// reachable to evict it.
-const CACHE = "kora-v2";
+// v3: the PWA icons changed with the rebrand. These matter more than a hashed
+// build asset — /icons/icon-192.png keeps its URL, so an existing install would
+// otherwise serve the old Coriander icon from cache forever. Bumping the key is
+// what makes "activate" drop the previous cache.
+const CACHE = "kora-v3";
 const SHELL = "/index.html";
 
 self.addEventListener("install", (event) => {

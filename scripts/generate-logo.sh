@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Renders the placeholder Kora mark: saffron block, white K, KORA beneath.
+#
+# A placeholder until real artwork exists. It is a PNG rather than an SVG because
+# the payroll PDF embeds it through pdfmake's `image:`, which needs a raster data
+# URL — an SVG there renders as nothing.
+#
+# Self-contained on purpose: the mark sits on zinc-900 in the navigation and on
+# korablue-500 on the auth screens, so the saffron block travels with it.
+#
+# Needs ImageMagick. Fonts are named by path: magick here has no fontconfig, so
+# `-font Helvetica` fails with "unable to read font".
+set -euo pipefail
+
+OUT="$(dirname "$0")/../src/assets/logos/kora_logo.png"
+BOLD="/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+LIGHT="/System/Library/Fonts/Supplemental/Arial.ttf"
+SAFFRON="#F09D1C"
+
+magick -size 480x528 xc:none \
+  -fill "$SAFFRON" -draw "roundrectangle 0,0 479,527 88,88" \
+  -fill white \
+  -font "$BOLD"  -pointsize 268 -gravity North -annotate +0+78  "K" \
+  -font "$LIGHT" -pointsize 58  -kerning 12 -gravity North -annotate +0+392 "KORA" \
+  "$OUT"
+
+echo "wrote $OUT"

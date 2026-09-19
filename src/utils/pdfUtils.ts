@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { EmpUser } from "@/shared/types/empUser";
 import { GenderLabels, EmployTypeLabels, PayCycleLabels } from "@/shared/types/common";
 import { formatRandAmount } from "./formatUtils";
-import logoUrl from "@/assets/logos/cori_logo_green.png";
+import logoUrl from "@/assets/logos/kora_logo.png";
 
 /**
  * Loads pdfmake on demand.

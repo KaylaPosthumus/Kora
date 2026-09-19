@@ -11,7 +11,7 @@ import {
 // Styling and UI Components
 import { Form, Input, message, Spin } from "antd";
 import GoogleIcon from "@mui/icons-material/Google";
-import Logo from "@/assets/logos/cori_logo_green.png";
+import Logo from "@/assets/logos/kora_logo.png";
 
 // Child Components
 import { UnlinkedMessage } from "@/features/auth/components";
@@ -170,8 +170,8 @@ const Login: React.FC = () => {
           <div className="w-1/2">
             <img
               src={Logo}
-              alt="Cori Logo"
-              className="cursor-pointer absolute top-4 left-4 w-[225px] h-[45px] object-contain mt-4 ml-4"
+              alt="Kora"
+              className="cursor-pointer absolute top-4 left-4 w-[76px] h-[84px] object-contain mt-4 ml-4"
               onDoubleClick={() => setShowAdminBtn(true)}
             />
             {/* The auth panel is a flat blue field for now. It was a 3.3 MB

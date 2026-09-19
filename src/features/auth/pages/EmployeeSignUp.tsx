@@ -16,7 +16,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 import { SignUpComplete } from "@/features/auth/components";
 import { useEffect, useState } from "react";
-import Logo from "@/assets/logos/cori_logo_green.png";
+import Logo from "@/assets/logos/kora_logo.png";
 
 // API calls:
 import { employeeSignUp, employeeGoogleSignUp } from "@/services/authService";
@@ -80,7 +80,7 @@ const EmployeeSignUp: React.FC = () => {
             <img
               src={Logo}
               alt="Logo"
-              className="absolute top-4 left-4 w-[225px] h-[45px] object-contain mt-4 ml-4"
+              className="absolute top-4 left-4 w-[76px] h-[84px] object-contain mt-4 ml-4"
             />
             {/* The auth panel is a flat blue field for now. It was a 3.3 MB
                 photograph, later a 180 kB WebP, and it is on the landing route —

@@ -207,8 +207,11 @@ shell as fallback. **If you change `public/sw.js`, bump the `CACHE` constant** o
 clients keep the old worker's cache. `firebase.json` marks `/sw.js` and
 `/manifest.webmanifest` `no-cache` so Hosting cannot pin an old shell after a deploy.
 
-The icons are generated from `src/assets/logos/cori_logo_green.png` and still read
-"Coriander"; `scripts/generate-icons.sh` regenerates them once a Kora logo exists.
+The icons are generated from `src/assets/logos/kora_logo.png` by
+`scripts/generate-icons.sh`. That logo is a **placeholder** — a saffron block with a
+white K, built by `scripts/generate-logo.sh` — so re-run both when real artwork
+arrives. Bump `CACHE` in `public/sw.js` when the icons change: they are served from
+`/icons/` and keep their URLs, so an install would otherwise serve the old ones.
 
 ### Tests
 
@@ -286,6 +289,6 @@ package with its own Vitest config and its own `npm test`, as is `rules-tests/`
   ESLint 9 flat config means upgrading both together.
 - The rebrand is name-only so far. The components carry the Kora name (`KoraBtn`,
   `KoraBadge`, `KoraCircleBtn`) but the Tailwind palette and the logo are still
-  Kora's own (`korablue`/`saffron`/`korastone`) as of commit 59 — but the logo is
-  still `cori_logo_green.png`, as is
+  Kora's own (`korablue`/`saffron`/`korastone`) as of commit 59, and the logo is a
+  Kora placeholder as of commit 61. What is still Coriander's is
   user-facing copy in `UnlinkedMessage`.

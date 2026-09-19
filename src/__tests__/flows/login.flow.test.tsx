@@ -293,7 +293,7 @@ describe("the hidden admin signup link", () => {
   it("appears after double-clicking the logo", async () => {
     await renderLogin();
 
-    await userEvent.setup().dblClick(screen.getByAltText("Cori Logo"));
+    await userEvent.setup().dblClick(screen.getByAltText("Kora"));
 
     // Deliberately obscure: /admin/signup is a public route, so the app keeps it
     // out of sight rather than out of reach. Worth pinning so nobody "tidies"
