@@ -6,6 +6,7 @@
  * here would make the barrel import itself.
  */
 
+export { default as AdjustLeaveBalanceModal } from "./AdjustLeaveBalanceModal";
 export { default as ApplyForLeaveModal } from "./ApplyForLeaveModal";
 export { default as EditPolicyModal } from "./EditPolicyModal";
 export { default as LeaveBalanceBlock } from "./LeaveBalanceBlock";

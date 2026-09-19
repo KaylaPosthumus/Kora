@@ -13,7 +13,7 @@ dayjs.extend(relativeTime);
 import KoraBtn from "@/shared/components/KoraBtn";
 import KoraCircleBtn from "@/shared/components/KoraCircleBtn";
 import { EquipmentListItem, CreateAssignedEquipModal, AssignEquipsToExistEmpModal, EditEquipDetailsModal, UnlinkEquipmentModal, DeleteEquipmentModal } from "@/features/equipment/components";
-import { LeaveBalanceBlock } from "@/features/leave/components";
+import { AdjustLeaveBalanceModal, LeaveBalanceBlock } from "@/features/leave/components";
 import { EmployTypeBadge, TimeTodayBadge, AdminEditEmpDetailsModal, AdminEditEmpPayrollModal, TerminateEmployeeModal } from "@/features/employees/components";
 import ProfilePicUploadBtn from "@/shared/components/ProfilePicUploadBtn";
 
@@ -66,6 +66,7 @@ const AdminIndividualEmployee: React.FC = () => {
   const [empUser, setEmpUser] = useState<EmpUser | null>(null);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>([]);
+  const [showAdjustBalance, setShowAdjustBalance] = useState(false);
   const [empUserRatingMetrics, setEmpUserRatingMetrics] = useState<EmpUserRatingMetrics | null>(
     null
   );
@@ -591,7 +592,22 @@ const AdminIndividualEmployee: React.FC = () => {
             <div className="flex gap-4">
               {/* Leave Balances */}
               <div className="w-3/12 flex flex-col items-center gap-2">
-                <h2 className="text-zinc-500 font-semibold">Leave</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-zinc-500 font-semibold">Leave</h2>
+                  {/* The only way to move a balance other than approving leave.
+                      Every correction writes an audit entry naming who and why. */}
+                  <Tooltip title="Correct a leave balance">
+                    <Button
+                      type="text"
+                      size="small"
+                      shape="circle"
+                      aria-label="Correct a leave balance"
+                      disabled={leaveBalances.length === 0}
+                      onClick={() => setShowAdjustBalance(true)}
+                      icon={<Icons.Edit className="text-zinc-500" style={{ fontSize: 16 }} />}
+                    />
+                  </Tooltip>
+                </div>
                 <div className="flex flex-col gap-3 w-full">
                   {leaveBalances.map((balance) => (
                     <LeaveBalanceBlock
@@ -745,6 +761,16 @@ const AdminIndividualEmployee: React.FC = () => {
           setShowModal={setShowTerminateEmployeeModal}
           employeeFullName={empUser?.fullName || "this employee"}
           employeeId={employeeId || ""}
+        />
+
+        {/* Correct Leave Balance Modal */}
+        <AdjustLeaveBalanceModal
+          showModal={showAdjustBalance}
+          setShowModal={setShowAdjustBalance}
+          employeeId={employeeId || ""}
+          employeeName={empUser?.fullName || "this employee"}
+          balances={leaveBalances}
+          onAdjusted={fetchEmployee}
         />
       </div>
     </div>

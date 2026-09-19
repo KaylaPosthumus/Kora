@@ -94,6 +94,7 @@ export const firebaseAppModule = () => ({
   }),
   db: { __fake: "db" },
   storage: { __fake: "storage" },
+  functions: { __fake: "functions" },
   googleProvider: { __fake: "googleProvider" },
   default: { __fake: "app" },
 });
