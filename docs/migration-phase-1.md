@@ -4,7 +4,7 @@
 > record of why the data model looks the way it does. It is not a description of
 > the current codebase** — read `README.md` and `CLAUDE.md` for that, and
 > `docs/migration-roadmap.md` for the forward plan (which supersedes
-> `NEXT_MIGRATION_PLAN.md.pdf`).
+> `docs/next-migration-plan-superseded.pdf`).
 >
 > All eight sequenced steps below landed, except that step 8 (deploying to Hosting)
 > is configured but not yet run against the live project. Four things the plan says

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { UserRole } from "@/shared/types/common";
 
 /**
- * Smoke tests for the auth flow (phase 2 of NEXT_MIGRATION_PLAN).
+ * Smoke tests for the auth flow (phase 2 of docs/migration-roadmap.md).
  *
  * The migration kept the old .NET service's numeric result contract
  * (200 ok / 300 signed-in-but-unlinked / 4xx-5xx failure) so the auth screens

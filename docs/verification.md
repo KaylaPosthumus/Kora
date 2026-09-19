@@ -203,3 +203,25 @@ is exercised.
   documents do not have.
 - **A write that partially applied** — cannot happen here. Every multi-document write
   goes through `writeBatch` or `runTransaction`.
+
+---
+
+## Appendix — the employee-page rules audit
+
+The rules were cross-checked against every call the employee pages make, which found
+and fixed two writes the employee UI offers but the rules denied:
+
+- `gender` was missing from the employees self-update allowlist, so saving the
+  employee's own edit-details form (`EmpEditEmpDetailsModal` sends `fullName`,
+  `gender`, `dateOfBirth`, `phoneNumber`) failed as a whole.
+- `meetings` delete was admin-only, so an employee withdrawing their own unactioned
+  meeting request was denied. It now matches the update rule — allowed only while the
+  request is still `requested`.
+
+One latent trap worth knowing: `updateEmpUserById` mirrors `fullName`, `email` and
+`profilePicture` onto `users/{uid}`, but the users update rule only lets a non-admin
+change `fullName` and `profilePicture`. No employee flow sends `email` today, so it
+does not bite — but adding an email field to the employee's own edit form would fail
+the whole batch, not just the mirror, because it commits atomically.
+
+Rule changes are still unproven until deployed — step 5 above is what confirms them.

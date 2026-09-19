@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { LeaveStatus } from "@/shared/types/common";
 
 /**
- * Smoke tests for approve-and-decrement (phase 2 of NEXT_MIGRATION_PLAN).
+ * Smoke tests for approve-and-decrement (phase 2 of docs/migration-roadmap.md).
  *
  * This is the one write in the app that has to be atomic: approving a leave
  * request flips its status AND spends days off the matching balance. It runs

@@ -1,10 +1,10 @@
 # Kora — Migration Roadmap
 
-> **Supersedes `NEXT_MIGRATION_PLAN.md.pdf`.** That PDF was written before commits 9–16
+> **Supersedes `docs/next-migration-plan-superseded.pdf`.** That PDF was written before commits 9–16
 > landed; three of its five phases have since moved. This is the current forward plan,
 > written against the code as it stands on `migration/firebase` at commit `c6abf27`.
 >
-> `MIGRATION_PLAN.md` stays as the phase-1 record — the *why* behind the data model.
+> `docs/migration-phase-1.md` stays as the phase-1 record — the *why* behind the data model.
 > This document is the *what next*.
 >
 > **Last reconciled against the tree at commit `0be12a5` (2026-09-19.)** Phases 3 and 5
@@ -111,7 +111,7 @@ Kora/
 ├── .github/workflows/ci.yml       # typecheck + lint + test          (Phase 3)
 ├── docs/
 │   ├── migration-roadmap.md       # this file
-│   ├── migration-phase-1.md       # ← MIGRATION_PLAN.md
+│   ├── migration-phase-1.md       # the phase-1 plan
 │   ├── data-model.md              # ← README §Data model
 │   └── verification.md            # ← README §Verifying against the live project
 ├── functions/                     # Cloud Functions backend           (Phase 5)
@@ -259,7 +259,17 @@ The first two hold locally. **The third was never met and still is not** — see
 
 ---
 
-### Phase 4 — Restructure `src/`
+### Phase 4 — Restructure `src/` — **DONE** (2026-09-19)
+
+All eight steps landed, one commit each (41–48), with `typecheck`, the 183 tests, `lint`
+and the production build green between every one. `src/components/`, `src/pages/`,
+`src/interfaces/`, `src/types/` and `src/services/api.service.ts` are all gone.
+
+The one plan change worth knowing is in step 4: the cross-feature component rule was
+amended to "no deep imports" with published barrels, rather than "no imports". §2 rule 3
+records why.
+
+The original plan text follows.
 
 Only after Phase 2. A rules or index bug is far harder to attribute once 106 files have
 moved — and that argument is stronger now than when it was written, because the backend
@@ -334,7 +344,13 @@ Order, one commit per step, `npm run typecheck` green between each:
    `@/features/*/components/*` globally, and a per-feature `override` re-permits a
    feature's own components with a negated pattern. Proven in both directions rather than
    assumed: a cross-feature deep import errors, an intra-feature one does not.
-8. **Reorganise docs** into `docs/` per §3, and thin `README.md` down to setup + running.
+8. ~~**Reorganise docs** into `docs/` per §3, and thin `README.md` down to setup + running.~~
+   **DONE.** `MIGRATION_PLAN.md` → `docs/migration-phase-1.md`, `phase-2-verification.md`
+   → `docs/verification.md`, the superseded PDF → `docs/`, and the data model extracted
+   to `docs/data-model.md`. `README.md` went from 252 lines to 154: setup, running,
+   tests, seeding, PWA install, deploying, then a table pointing at everything else. The
+   root now holds only `README.md` and `CLAUDE.md`, which is what the naming convention
+   in §2 reserves it for.
 
 Use `git mv` throughout so blame survives. This phase changes no behaviour — if a test
 result or a screen changes, something went wrong.
@@ -533,6 +549,5 @@ backend has the same never-run-against-a-real-project status the data layer has.
   is no fallback to reach and an absent claim simply denies. That fails safe, and it makes
   `syncRoleClaim` plus a token refresh a *prerequisite* for admin uploads rather than an
   optimisation. Worth a rules-test tier of its own if Storage use grows.
-- `MIGRATION_PLAN.md`'s status header and `README.md`'s "Still on the list" now point
-  here rather than restating it (2026-09-19). Keep it that way: this file is the one
-  place the status lives.
+- The phase-1 plan's status header and `README.md` now point here rather than restating
+  the status (2026-09-19). Keep it that way: this file is the one place it lives.

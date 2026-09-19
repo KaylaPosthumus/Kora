@@ -63,13 +63,32 @@ needs Java 21+, and the root suite needs Node 22+ (jsdom 30).
 ## Architecture
 
 A React 19 + TypeScript + Vite SPA on Firebase (Auth + Firestore + Storage),
-ported from an Electron + .NET version. `MIGRATION_PLAN.md` records the phase 1
+ported from an Electron + .NET version. `docs/migration-phase-1.md` records the phase 1
 decisions behind the data model (it is a pre-work plan, not a description of the
-code — see its status header); `NEXT_MIGRATION_PLAN.md.pdf` is the phase 2 plan;
-`README.md` covers setup, seeding and the live-project verification checklist.
+code — see its status header); `docs/migration-roadmap.md` is the forward plan.
+`README.md` covers setup and running, and points at the rest.
 
-Two files carry nearly all the non-UI logic: `src/services/api.service.ts`
-(~1500 lines) and `src/services/authService.ts`.
+### Layout
+
+`src/` is organised by feature, as of Phase 4:
+
+```
+src/app/         the shell — App, providers, router, theme, NotFound
+src/features/    auth · dashboard · employees · equipment · gatherings · leave
+                 each with api/ · components/ · pages/ as it needs them
+src/shared/      types/ (all 17 type modules) · lib/firestore.ts · components/ (9 generic)
+src/services/    firebase.ts · authService.ts · storageService.ts
+src/test/        the Firebase doubles · src/dev/ dev-only scratch pages
+```
+
+**Two import rules.** Everything uses the `@/` alias — no import climbs a directory.
+And a feature's components are reached through its `components/index.ts` barrel,
+never a file beside it; `no-restricted-imports` in `.eslintrc.json` enforces that,
+with a per-feature override so a feature can import its own directly.
+
+The non-UI logic lives in `src/services/authService.ts` and the six data modules —
+`shared/lib/firestore.ts` plus one `api/` module per feature. They were one
+1,500-line `api.service.ts` until Phase 4 step 2; that file is gone.
 
 ### The security rules are the access control
 
@@ -80,7 +99,7 @@ to a read or write path has to be checked against it. Rules resolve a caller's r
 `users/{uid}`** when the claim is absent.
 
 That fallback is load-bearing. The in-app linking actions —
-`employeeAPI.setupUserAsEmployee` and `linkUserAsAdmin` in `api.service.ts` —
+`employeeAPI.setupUserAsEmployee` and `linkUserAsAdmin` in `employeesApi.ts` —
 write `role` onto the user doc only, because a browser cannot mint claims. The
 `syncRoleClaim` Cloud Function (`functions/`) then derives the `role` /
 `employeeId` / `adminId` claims from that doc, and `onEmployeeSuspensionChanged`
@@ -100,8 +119,11 @@ keeps a deleted admin's org-wide access.
 
 ### The read layer fans out; there are no joins
 
-The old backend had page-shaped endpoints that ran SQL joins. `pageAPI` replaces
-each one with parallel reads stitched in JS (`Promise.all`), and fields that
+The old backend had page-shaped endpoints that ran SQL joins. One page-shaped read
+per screen replaces each — `getAdminEmpDetails`, `getAdminEmpManagement`,
+`getEmployeeProfile`, `getAdminDashboardData`, `getEmployeeLeaveData`, each living in
+the feature whose screen it serves — with parallel reads stitched in JS
+(`Promise.all`), and fields that
 appear in *lists* are denormalised onto the listed document (`employeeName` on a
 leave request, `fullName`/`email`/`profilePicture` copied from the user doc onto
 the employee doc). When you write to one side of a denormalised pair, mirror it —
@@ -133,7 +155,7 @@ destructured off axios, so call sites did not change during the port.
 Employee screens subscribe where data moves underneath the user
 (`subscribeToGatherings`, `subscribeToEmployeeLeave`). Everything else — all admin
 screens, plus `EmployeeProfile` and the detail card on `EmployeeHome` — still uses
-the one-shot `pageAPI` reads, so a page having a live sibling does not mean it is
+the one-shot page reads, so a page having a live sibling does not mean it is
 live itself.
 
 Both subscriptions go through `subscribePair`, which spans two sources
@@ -200,7 +222,7 @@ one reads.
 There is no emulator, so the doubles in `src/test/` replace Firebase at the
 module boundary — `firestore.ts` is an in-memory Firestore (flat path→data map,
 so subcollections work for free; supports the `==` / `in` / `orderBy` / `limit` /
-`documentId()` subset `api.service.ts` uses and throws on anything else),
+`documentId()` subset the feature API modules use and throws on anything else),
 `firebaseApp.ts` is Firebase Auth with a real account list, `navigation.ts`
 captures the `window.location.href` assignments `authService` navigates by, and
 `renderWithProviders.tsx` renders a screen under a `MemoryRouter` and the real
