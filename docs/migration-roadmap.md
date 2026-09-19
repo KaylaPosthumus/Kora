@@ -273,8 +273,14 @@ Order, one commit per step, `npm run typecheck` green between each:
    `src/shared/types/`. The `performance_reviews` snake_case folder is gone, and the 63
    files that imported them were rewritten to `@/shared/types/…`, which is the first
    real use of the alias (step 6 does the rest).
-2. **Split `api.service.ts`** per the table in §3, keeping the old path as a re-export
-   barrel. Zero call sites change.
+2. ~~**Split `api.service.ts`** per the table in §3, keeping the old path as a re-export
+   barrel.~~ **DONE.** 1,500 lines became six modules: `shared/lib/firestore.ts` (297 —
+   envelope, collection refs, converters, `subscribePair`) and one `api/` module per
+   feature. `pageAPI`'s five members moved into the feature whose screen each serves and
+   are reassembled into the `pageAPI` object by the barrel, so zero call sites changed.
+   Two modules are still over the ~400-line guide — `employeesApi.ts` (457) and
+   `gatheringsApi.ts` (413) — which is the next thing to look at if either keeps growing.
+   The barrel at `src/services/api.service.ts` is marked `@deprecated`; step 6 deletes it.
 3. **Lift the shell.** `App.tsx` is 220 lines, ~150 of which are the Ant Design token
    block. Split into `app/App.tsx`, `app/router.tsx`, `app/providers.tsx`, `app/theme.ts`.
    This is also what makes Phase 8 a one-file edit.
