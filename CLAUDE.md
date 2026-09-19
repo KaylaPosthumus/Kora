@@ -212,14 +212,28 @@ The icons are generated from `src/assets/logos/cori_logo_green.png` and still re
 
 ### Tests
 
-Two tiers, told apart by filename. **Unit tests** (`*.test.ts(x)`, in `__tests__/`
-beside the code) pin one function's decisions. **Flow tests**
+Three tiers, told apart by filename. **Unit tests** (`*.test.ts(x)`, in
+`__tests__/` beside the code) pin one function's decisions. **Flow tests**
 (`*.flow.test.ts(x)`, in `src/__tests__/flows/`) drive a whole journey across
 several modules — signup through linking through login, or a leave request from
 submission to approval and back out to the employee's live screen. The flow tier
 exists because every function it calls is already unit-tested and the seam
 between them still is not: the document one writes being the document the next
 one reads.
+
+**Contract tests** (`*.contract.test.ts`, in `src/__tests__/contracts/`) pin the
+seam between the three *packages*. Each package tests its own half against its
+own fakes, so a claim renamed in `functions/`, a collection typo in the data
+layer, or an issue code added to the backend verdict and not to the frontend type
+passes every suite and fails only in production. These import both halves —
+`functions/`'s decision modules are pure, with no Firebase imports, which is what
+makes that safe — and run the real backend function against the real frontend
+one. `firestore.rules` is read as text, because the claim keys and collection
+names in it exist nowhere else.
+
+Run them with `npm run test:contracts`. Note that **vitest does not typecheck**:
+several of these contracts are type-level (`const a: FrontendType = backendValue`)
+and are enforced by `npm run typecheck`, not by the test run.
 
 There is no emulator, so the doubles in `src/test/` replace Firebase at the
 module boundary — `firestore.ts` is an in-memory Firestore (flat path→data map,
