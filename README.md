@@ -133,6 +133,7 @@ file, so that none of it drifts in two places at once.
 | [`docs/data-model.md`](docs/data-model.md) | Collections, the two data-layer conventions, where the API modules live |
 | [`docs/migration-roadmap.md`](docs/migration-roadmap.md) | **The forward plan** — what is done, what is next, and what not to do |
 | [`docs/verification.md`](docs/verification.md) | Proving the app against a live Firebase project. Phase 2, still not done |
+| [`docs/coriander-parity.md`](docs/coriander-parity.md) | Where every part of the old Coriander app ended up, and why the gaps exist |
 | [`docs/migration-phase-1.md`](docs/migration-phase-1.md) | The phase-1 plan, kept as the record of *why* the data model looks like this |
 | [`functions/README.md`](functions/README.md) | The backend: what each of the 15 functions does, and what it inferred |
 | [`src/test/README.md`](src/test/README.md) | The test doubles, and the `vi.mock` hoisting pattern they need |

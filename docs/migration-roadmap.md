@@ -45,7 +45,11 @@ separate repo (`WolfOWI/coriander-backend`, "CoriCore"). The backend surface bel
 reconstructed from the frontend's call sites and the old README's API list — server-side
 logic that never surfaced in a frontend call (validation, cascades, computed aggregates)
 cannot be verified from what is on disk. If that repo is still reachable, one read-through
-of its controllers before Phase 5 is cheap insurance.
+of its controllers is still cheap insurance.
+
+**Frontend parity is audited and complete** — see
+[`docs/coriander-parity.md`](coriander-parity.md), which traces every Coriander file,
+API function and auth call to where it landed, or to the decision that dropped it.
 
 ---
 
