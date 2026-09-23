@@ -17,11 +17,13 @@ MARK="$(dirname "$0")/../src/assets/logos/kora_mark.png"
 BOLD="/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 LIGHT="/System/Library/Fonts/Supplemental/Arial.ttf"
 SAFFRON="#F09D1C"
+KORABLUE="#2C6FB5"   # korablue-500
+PUBLIC="$(dirname "$0")/../public"
 
 magick -size 480x528 xc:none \
   -fill "$SAFFRON" -draw "roundrectangle 0,0 479,527 88,88" \
   -fill white \
-  -font "$BOLD"  -pointsize 268 -gravity North -annotate +0+78  "K" \
+  -font "$BOLD"  -pointsize 268 -gravity North -annotate +0+100 "K" \
   -font "$LIGHT" -pointsize 58  -kerning 12 -gravity North -annotate +0+392 "KORA" \
   "$OUT"
 
@@ -31,7 +33,16 @@ magick -size 480x528 xc:none \
 magick -size 480x480 xc:none \
   -fill "$SAFFRON" -draw "roundrectangle 0,0 479,479 88,88" \
   -fill white \
-  -font "$BOLD" -pointsize 300 -gravity center -annotate +0-10 "K" \
+  -font "$BOLD" -pointsize 300 -gravity center -annotate +0+4 "K" \
   "$MARK"
 
-echo "wrote $OUT and $MARK"
+# The browser-tab icon: a saffron K on korablue, the two brand colours together.
+# Drawn at 256 and scaled down, so the favicon sizes all share one shape.
+magick -size 256x256 xc:none \
+  -fill "$KORABLUE" -draw "roundrectangle 0,0 255,255 52,52" \
+  -fill "$SAFFRON" \
+  -font "$BOLD" -pointsize 200 -gravity center -annotate +0+2 "K" \
+  "$PUBLIC/favicon.png"
+magick "$PUBLIC/favicon.png" -define icon:auto-resize=48,32,16 "$PUBLIC/favicon.ico"
+
+echo "wrote $OUT, $MARK and $PUBLIC/favicon.{png,ico}"
