@@ -1,0 +1,81 @@
+rules_version = '2';
+
+// Access control for the Kora storage bucket.
+//
+// Replaces CoriCore's Image API. Like Firestore, nothing sits in front of
+// Storage, so these rules are the access control — not a formality behind an
+// upload endpoint that already checked.
+//
+// Two prefixes, and everything else is denied:
+//   profilePictures/{userId}/…  a user's own avatar
+//   reviewDocuments/{reviewId}/… the DocUrl attached to a performance review
+//
+// The client widgets still upload to Cloudinary at the time of writing; these
+// rules are what the migration off it lands against. Permitting a path nothing
+// writes yet is harmless, and it lets the swap be a frontend-only change.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helpers ---------------------------------------------------------------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Storage rules cannot read Firestore, so the role has to come off the
+    // token. `syncRoleClaim` mirrors users/{uid}.role into that claim; before it
+    // has run (or before the client refreshes its ID token) an admin is treated
+    // as an ordinary signed-in user here. That costs an admin the ability to
+    // replace someone else's avatar until their token rotates, and never grants
+    // anything — the safe direction to fail.
+    function isAdmin() {
+      return signedIn() && request.auth.token.role == 'admin';
+    }
+
+    function isSelf(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    /** An image, and small enough that one upload cannot fill the bucket. */
+    function isImageUnder(megabytes) {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < megabytes * 1024 * 1024;
+    }
+
+    // Profile pictures ------------------------------------------------------
+    // Readable by any signed-in user: avatars appear in admin employee lists,
+    // meeting request cards and the org-wide dashboards. Not public — the
+    // bucket should not be an unauthenticated directory of staff photos.
+
+    match /profilePictures/{userId}/{fileName} {
+      allow read: if signedIn();
+
+      // A user manages their own avatar; an admin can correct any of them,
+      // which is the same authority they have over the users collection.
+      //
+      // `create, update` rather than `write`: `write` also covers `delete`, and
+      // on a delete `request.resource` is null, so the content-type check would
+      // error rather than simply not apply.
+      allow create, update: if (isSelf(userId) || isAdmin()) && isImageUnder(5);
+
+      allow delete: if isSelf(userId) || isAdmin();
+    }
+
+    // Performance review documents ------------------------------------------
+    // Only admins create and score reviews, so only admins attach documents.
+    // Employees read them: the document is the outcome of their own review.
+    //
+    // Reads are not narrowed to the employee the review belongs to — Storage
+    // rules cannot look up the review to find out who that is. The reviewId is
+    // an unguessable Firestore id, and the alternative is to deny employees the
+    // document entirely.
+
+    match /reviewDocuments/{reviewId}/{fileName} {
+      allow read: if signedIn();
+      allow create, update: if isAdmin() && request.resource.size < 10 * 1024 * 1024;
+      allow delete: if isAdmin();
+    }
+
+    // Anything not matched above is denied.
+  }
+}
