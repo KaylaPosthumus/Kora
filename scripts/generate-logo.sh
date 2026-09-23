@@ -36,11 +36,11 @@ magick -size 480x480 xc:none \
   -font "$BOLD" -pointsize 300 -gravity center -annotate +0+4 "K" \
   "$MARK"
 
-# The browser-tab icon: a saffron K on korablue, the two brand colours together.
+# The browser-tab icon: a white K on korablue.
 # Drawn at 256 and scaled down, so the favicon sizes all share one shape.
 magick -size 256x256 xc:none \
   -fill "$KORABLUE" -draw "roundrectangle 0,0 255,255 52,52" \
-  -fill "$SAFFRON" \
+  -fill white \
   -font "$BOLD" -pointsize 200 -gravity center -annotate +0+2 "K" \
   "$PUBLIC/favicon.png"
 magick "$PUBLIC/favicon.png" -define icon:auto-resize=48,32,16 "$PUBLIC/favicon.ico"
