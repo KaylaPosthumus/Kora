@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Renders the placeholder Kora mark: saffron block, white K, KORA beneath.
+# Renders the placeholder Kora mark: saffron block, white K, KORA beneath,
+# plus a blue K-only mark and favicon.
 #
 # A placeholder until real artwork exists. It is a PNG rather than an SVG because
 # the payroll PDF embeds it through pdfmake's `image:`, which needs a raster data
@@ -29,9 +30,9 @@ magick -size 480x528 xc:none \
 
 # The K on its own, for anywhere the mark renders small. Below about 40px the
 # wordmark in the full logo is a few pixels tall and reads as a smudge — the
-# mobile top bar draws it at 28.
+# mobile top bar draws it at 28. On korablue to match the browser-tab icon.
 magick -size 480x480 xc:none \
-  -fill "$SAFFRON" -draw "roundrectangle 0,0 479,479 88,88" \
+  -fill "$KORABLUE" -draw "roundrectangle 0,0 479,479 88,88" \
   -fill white \
   -font "$BOLD" -pointsize 300 -gravity center -annotate +0+4 "K" \
   "$MARK"

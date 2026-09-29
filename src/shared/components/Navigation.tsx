@@ -178,7 +178,7 @@ const Navigation: React.FC = () => {
         <div className="fixed top-4 left-4 bg-zinc-900 text-white w-[260px] rounded-3xl h-[calc(100vh-32px)] overflow-hidden">
           <div className="p-10 h-full overflow-y-auto flex flex-col justify-between">
             <div className="flex flex-col">
-              <img src={logo} alt="Kora" className="mb-4 h-16 w-auto" />
+              <img src={logo} alt="Kora" className="mb-4 h-16 w-auto self-start" />
               {renderGroups()}
             </div>
 

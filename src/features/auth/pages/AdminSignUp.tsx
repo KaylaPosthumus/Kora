@@ -74,8 +74,8 @@ const AdminSignUp: React.FC = () => {
     <>
       {contextHolder}
       <div className="relative">
-        <div className="flex w-full h-screen">
-          <div className="w-1/2">
+        <div className="flex w-full min-h-screen lg:h-screen">
+          <div className="lg:w-1/2">
             <img
               src={Logo}
               alt="Logo"
@@ -86,11 +86,11 @@ const AdminSignUp: React.FC = () => {
                 so it was the single heaviest thing between a visitor and the
                 login form. A colour costs nothing and carries the brand. */}
             <div
-              className="w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
+              className="hidden lg:block w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
               aria-hidden="true"
             />
           </div>
-          <div className="w-1/2 flex items-center justify-center mb-16">
+          <div className="w-full lg:w-1/2 flex items-center justify-center pt-32 pb-16 lg:pt-0 lg:pb-0 lg:mb-16">
             {!pendingEmail && (
               <div className="flex flex-col items-center w-[300px]">
                 <h1 className="text-3xl font-bold mb-4 text-korablue-500">

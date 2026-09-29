@@ -165,9 +165,9 @@ const Login: React.FC = () => {
     <>
       {contextHolder}
       <div className="relative">
-        <div className="flex w-full h-screen">
+        <div className="flex w-full min-h-screen lg:h-screen">
           {/* Background Image Section */}
-          <div className="w-1/2">
+          <div className="lg:w-1/2">
             <img
               src={Logo}
               alt="Kora"
@@ -179,13 +179,13 @@ const Login: React.FC = () => {
                 so it was the single heaviest thing between a visitor and the
                 login form. A colour costs nothing and carries the brand. */}
             <div
-              className="w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
+              className="hidden lg:block w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
               aria-hidden="true"
             />
           </div>
 
           {/* Form Section */}
-          <div className="w-1/2 flex items-center justify-center mb-16">
+          <div className="w-full lg:w-1/2 flex items-center justify-center pt-32 pb-16 lg:pt-0 lg:pb-0 lg:mb-16">
             {showUnlinkedMessage ? (
               <UnlinkedMessage onLogOut={() => setShowUnlinkedMessage(false)} />
             ) : (
