@@ -9,3 +9,4 @@
 export { default as ProtectedRoute } from "./ProtectedRoute";
 export { default as UnlinkedMessage } from "./UnlinkedMessage";
 export { default as SignUpComplete } from "./SignUpComplete";
+export { default as AuthPanel } from "./AuthPanel";

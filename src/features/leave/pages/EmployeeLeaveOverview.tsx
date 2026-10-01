@@ -178,14 +178,16 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
             ) : (
               <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
                 <div
-                  className={`grid gap-3 h-fit grid-cols-1 sm:grid-cols-2 ${
+                  className={`grid gap-3 grid-cols-1 sm:grid-cols-2 ${
+                    requests.length > 0 ? "h-fit" : ""
+                  } ${
                     activeTab === "All"
                       ? "lg:col-span-2"
                       : "lg:grid-cols-3 lg:col-span-3"
                   }`}
                 >
                   {requests.length === 0 ? (
-                    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                    <div className="col-span-full h-full min-h-[320px] lg:min-h-[420px] bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center p-8 text-center">
                       <Icons.EventNote className="text-zinc-400" style={{ fontSize: "48px" }} />
                       <div className="text-zinc-500 text-xl mb-2 font-semibold">
                         No Leave Requests

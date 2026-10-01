@@ -13,7 +13,7 @@ import KoraBtn from "@/shared/components/KoraBtn";
 import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import GoogleIcon from "@mui/icons-material/Google";
-import { SignUpComplete } from "@/features/auth/components";
+import { AuthPanel, SignUpComplete } from "@/features/auth/components";
 import { adminSignUp, adminGoogleSignUp } from "@/services/authService";
 import { useEffect, useState } from "react";
 import Logo from "@/assets/logos/kora_logo.png";
@@ -79,16 +79,9 @@ const AdminSignUp: React.FC = () => {
             <img
               src={Logo}
               alt="Logo"
-              className="absolute top-4 left-4 w-[76px] h-[84px] object-contain mt-4 ml-4"
+              className="absolute z-10 top-4 left-4 w-[76px] h-[84px] object-contain mt-4 ml-4"
             />
-            {/* The auth panel is a flat blue field for now. It was a 3.3 MB
-                photograph, later a 180 kB WebP, and it is on the landing route —
-                so it was the single heaviest thing between a visitor and the
-                login form. A colour costs nothing and carries the brand. */}
-            <div
-              className="hidden lg:block w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
-              aria-hidden="true"
-            />
+            <AuthPanel />
           </div>
           <div className="w-full lg:w-1/2 flex items-center justify-center px-4 pt-32 pb-16 lg:px-0 lg:pt-0 lg:pb-0 lg:mb-16">
             {!pendingEmail && (

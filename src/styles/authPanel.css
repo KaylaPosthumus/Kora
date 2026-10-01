@@ -1,0 +1,116 @@
+/* The dark left half of the auth screens — see AuthPanel.tsx. Colours are the
+   korablue / saffron ramps from tailwind.config.js. */
+
+.auth-panel {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 0 56px 64px;
+  background: #0a1826; /* korablue-900 */
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+/* The weeks run down the panel and fade out at both ends, so it reads as a
+   slice of a longer calendar rather than a boxed widget. */
+.auth-panel__calendar {
+  position: absolute;
+  top: 0;
+  /* Stops above the copy, and the fade finishes inside this box, so no day
+     ever sits behind the headline on a short screen. */
+  bottom: 300px;
+  right: 56px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-content: start;
+  gap: 8px;
+  width: min(360px, 54%);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 62%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 62%, transparent 100%);
+}
+
+.auth-panel__day {
+  aspect-ratio: 1;
+  border-radius: 9px;
+  background: #122c48; /* korablue-800 */
+}
+
+.auth-panel__day--weekend {
+  background: #0e2238;
+}
+
+.auth-panel__day--meeting {
+  background: #122c48 radial-gradient(circle, #5e97d4 0 18%, transparent 19%);
+}
+
+.auth-panel__day--leave {
+  background: #f09d1c; /* saffron-500 */
+}
+
+.auth-panel__day--today {
+  box-shadow: inset 0 0 0 2px #f5b546; /* saffron-400 */
+}
+
+.auth-panel__copy {
+  position: relative;
+  max-width: 26rem;
+}
+
+.auth-panel__headline {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 2.6vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.auth-panel__sub {
+  margin: 16px 0 0;
+  color: #92bae5; /* korablue-300 */
+  font-size: 1rem;
+  line-height: 1.55;
+  text-wrap: balance;
+}
+
+.auth-panel__legend {
+  display: flex;
+  gap: 20px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  color: #bcd5f0; /* korablue-200 */
+  font-size: 0.8125rem;
+}
+
+.auth-panel__legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-panel__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+/* The one moment of motion: leave days fill in, in calendar order. */
+@media (prefers-reduced-motion: no-preference) {
+  .auth-panel__day--leave:not(.auth-panel__swatch) {
+    animation: auth-panel-fill 420ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+    animation-delay: calc(200ms + var(--order) * 12ms);
+  }
+}
+
+@keyframes auth-panel-fill {
+  from {
+    background-color: #122c48;
+    transform: scale(0.82);
+  }
+}

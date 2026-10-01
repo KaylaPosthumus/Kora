@@ -314,27 +314,33 @@ const EmployeeHome: React.FC = () => {
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-4">
-            <div className="w-full">
+          <div className="col-span-12 md:col-span-4 flex flex-col">
+            <div className="w-full flex flex-col flex-1">
               <div className="text-zinc-500 font-semibold text-center mb-2">Meetings with HR: Overview</div>
+              {gatherings.length === 0 ? (
+                // Stretches to the bottom of the main column, so the empty state
+                // reads as a section rather than a stray line of grey text.
+                <div className="flex-1 min-h-[240px] mb-4 bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center p-8 text-center">
+                  <Icons.EventNote className="text-zinc-400" style={{ fontSize: "48px" }} />
+                  <div className="text-zinc-500 text-xl mb-2 font-semibold">No Meetings with HR</div>
+                  <div className="text-zinc-400 text-sm">
+                    Meetings and reviews HR books with you will show up here.
+                  </div>
+                </div>
+              ) : (
               <div className="relative">
                 {/* Capped and scrolled only beside the main column. On a phone it is
                     the last thing on the page, so a scroller inside the page scroll
                     would just trap the thumb. */}
                 <div className="grid gap-3 md:max-h-[700px] md:overflow-y-auto md:pr-2 md:pb-8">
-                  {gatherings.length > 0 ? (
-                    gatherings.map((gathering) => (
-                      <EmpGatheringBox key={gathering.$id} gathering={gathering} />
-                    ))
-                  ) : (
-                    <div className="text-center text-zinc-400 py-8">
-                      No meetings or reviews to show.
-                    </div>
-                  )}
+                  {gatherings.map((gathering) => (
+                    <EmpGatheringBox key={gathering.$id} gathering={gathering} />
+                  ))}
                 </div>
                 {/* Fade overlay at the bottom */}
                 <div className="hidden md:block pointer-events-none w-full absolute left-0 right-0 bottom-0 h-7 bg-gradient-to-b from-transparent to-korastone-200" />
               </div>
+              )}
             </div>
           </div>
         </div>

@@ -14,7 +14,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 import Logo from "@/assets/logos/kora_logo.png";
 
 // Child Components
-import { UnlinkedMessage } from "@/features/auth/components";
+import { AuthPanel, UnlinkedMessage } from "@/features/auth/components";
 import KoraBtn from "@/shared/components/KoraBtn";
 
 const Login: React.FC = () => {
@@ -171,17 +171,10 @@ const Login: React.FC = () => {
             <img
               src={Logo}
               alt="Kora"
-              className="cursor-pointer absolute top-4 left-4 w-[76px] h-[84px] object-contain mt-4 ml-4"
+              className="cursor-pointer absolute z-10 top-4 left-4 w-[76px] h-[84px] object-contain mt-4 ml-4"
               onDoubleClick={() => setShowAdminBtn(true)}
             />
-            {/* The auth panel is a flat blue field for now. It was a 3.3 MB
-                photograph, later a 180 kB WebP, and it is on the landing route —
-                so it was the single heaviest thing between a visitor and the
-                login form. A colour costs nothing and carries the brand. */}
-            <div
-              className="hidden lg:block w-full h-full bg-korablue-500 rounded-tr-[25px] rounded-br-[25px]"
-              aria-hidden="true"
-            />
+            <AuthPanel />
           </div>
 
           {/* Form Section */}
