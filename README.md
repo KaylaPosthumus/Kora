@@ -98,12 +98,13 @@ Vite's build assets are content-hashed, so those are cache-first — a new build
 produces new URLs. Navigations are network-first with the cached shell as a
 fallback, so a cold spot opens the app rather than a browser error page.
 
-**The icons still say "Coriander."** They are generated from
-`src/assets/logos/cori_logo_green.png`, the only logo in the repo. When the Kora
-logo arrives, regenerate them and bump `CACHE` in `public/sw.js`:
+**The icons are a placeholder.** They are generated from
+`src/assets/logos/kora_logo.png`, itself a placeholder built by
+`scripts/generate-logo.sh`. When real artwork arrives, replace that file, regenerate
+the icons and bump `CACHE` in `public/sw.js`:
 
 ```bash
-./scripts/generate-icons.sh path/to/kora-logo.png
+./scripts/generate-icons.sh
 ```
 
 ## Deploying
@@ -146,9 +147,10 @@ before commits 9–16 and `docs/migration-roadmap.md` replaced it.
 
 The port is done and the backend is written: 630 tests pass across three packages,
 `typecheck`, `lint` and `build` are clean locally. Two things are not done and both
-matter. **Nothing has ever run against the live Firebase project** — the CLI holds no
-credentials, and rules, indexes, functions and Hosting have never been deployed, so
-every query shape and every rule is still unproven; `docs/verification.md` is the
-runbook. And **CI has never passed** — the `verify` job fails at `npm ci` on the runner
+matter. **The live project is deployed but unproven** — as of 2026-09-30 rules,
+indexes, all 12 functions and Hosting (https://kora-51711.web.app) are live and the
+project is seeded, but nobody has yet clicked through every screen or proven the
+rules and the leave transaction against it; sections 4–7 of `docs/verification.md`
+are what is left. And **CI has never passed** — the `verify` job fails at `npm ci` on the runner
 while the same command succeeds locally. `docs/migration-roadmap.md` §5 has the detail
 on both.

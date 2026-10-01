@@ -287,8 +287,8 @@ package with its own Vitest config and its own `npm test`, as is `rules-tests/`
   `@typescript-eslint/utils@^8`, so `import/no-unresolved` is configured to ignore
   `^@/` instead — `tsc` already resolves those paths, so nothing is lost. Moving to
   ESLint 9 flat config means upgrading both together.
-- The rebrand is name-only so far. The components carry the Kora name (`KoraBtn`,
-  `KoraBadge`, `KoraCircleBtn`) but the Tailwind palette and the logo are still
-  Kora's own (`korablue`/`saffron`/`korastone`) as of commit 59, and the logo is a
-  Kora placeholder as of commit 61. What is still Coriander's is
-  user-facing copy in `UnlinkedMessage`.
+- The rebrand is done except for artwork. The components carry the Kora name
+  (`KoraBtn`, `KoraBadge`, `KoraCircleBtn`), the palette is Kora's own
+  (`korablue`/`saffron`/`korastone`, commit 59) in both Tailwind and `theme.ts`, and
+  no user-facing copy says Coriander. The logo, the K-only mark and the icons are
+  generated placeholders until real artwork arrives.

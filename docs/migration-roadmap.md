@@ -8,7 +8,11 @@
 > This document is the *what next*.
 >
 > **Last reconciled against the tree at commit `0be12a5` (2026-09-19.)** Phases 3 and 5
-> are done; Phase 2 is still the blocking one and has never been run.
+> are done; Phase 2 is still the blocking one.
+>
+> **Deployment status re-checked against the live project on 2026-09-30.** Everything
+> is deployed and the project is seeded; what Phase 2 still lacks is the click-through
+> and the two proofs (rules from both sides, the leave transaction). See §1.
 
 ---
 
@@ -32,11 +36,9 @@
 
 | Gap | Detail |
 | --- | --- |
-| **Nothing has run against the live project** | `firebase login:list` still reports no authorized accounts, and `serviceAccountKey.json` is absent, so `npm run seed` has never run. Rules, indexes, storage rules, **functions** and Hosting have **never been deployed**. This is unchanged since this document was first written, and it now gates more code than it did then |
-| **The backend is written but has never run** | `functions/` is complete and tested offline. Its one remaining callable, `adjustLeaveBalance`, now has a client seam and a UI (commit 49), and `onLeaveRequestWritten`'s verdict is on screen (commit 50) — but nothing has been deployed, so none of it does anything in a browser yet |
-| Deploying functions needs Blaze | Cloud Functions are not available on the Spark plan. Whether `kora-51711` is on Blaze is unverified — it cannot be checked without CLI credentials |
-| A backend verdict nothing reads | `onLeaveRequestWritten` stamps a `validation` field (overlaps, insufficient balance) onto every leave request. No type in `src/` declares it and no screen reads it |
-| Rebrand is assets-only now | Palette is Kora's (`korablue`/`saffron`/`korastone`, commit 59). What is left needs artwork, not code: `cori_logo_green.png` is referenced from 5 files and the PWA icons generated from it still read "Coriander" |
+| **Deployed, but not yet proven** | As of 2026-09-30 everything is live on `kora-51711`: Firestore and Storage rules (2026-09-19, via `scripts/deploy-rules.mjs`), all 7 indexes `READY`, all 12 functions (redeployed 2026-09-23 from `07325ab`), and Hosting (last deployed 2026-09-29 from `9e55912`). The project is on Blaze. `npm run seed` has run (2026-09-19): `admin@kora.test` has signed in, `employee@kora.test` never has. What has **not** been done is Phase 2 steps 6–8: the full click-through, the rules proven from both sides, and the leave transaction proven |
+| **The backend is live but unexercised** | The functions are deployed, and `adjustLeaveBalance` has a UI (commit 49) and `onLeaveRequestWritten`'s verdict is on screen (commit 50) — but no leave request has been approved through the deployed app yet, so none of it is proven |
+| Rebrand is assets-only now | Palette is Kora's (`korablue`/`saffron`/`korastone`, commit 59). The logo, the K-only mark and the PWA icons are a generated Kora placeholder (commits 61, 65–68). What is left needs artwork, not code |
 
 ### One blind spot, stated up front
 
@@ -175,16 +177,17 @@ module boundary. Firestore query shapes, missing composite indexes, and security
 only fail at runtime, against a real project. Everything downstream is built on the
 assumption that this works, and that assumption is currently untested.
 
-1. Fix `src/utils/pdfUtils.ts:12` **first** — it does
-   `fetch("/src/assets/logos/cori_logo_green.png")`. Vite serves `/src` in dev, but the
-   build hashes that file to `/assets/cori_logo_green-Bt0zpxRe.png`, so in production the
-   fetch hits the SPA rewrite and gets `index.html` back. Payroll PDF export is broken in
-   any deployed build. Replace with a static `import logo from "..."`.
-2. `firebase login` — the CLI currently holds no credentials.
-3. Firebase console → Project settings → Service accounts → Generate new private key →
-   save as `serviceAccountKey.json` (already gitignored; `.env.local` already points at it).
-4. `firebase deploy --only firestore:rules,firestore:indexes,storage`
-5. `npm run seed`
+Steps 1–5 and the deploy half of step 9 are **done** (as of 2026-09-30); 6–8 are what is left.
+
+1. ~~Fix `src/utils/pdfUtils.ts`'s logo fetch.~~ **Done** (commit 19) — it imports the
+   logo, so the build's hashed URL is used.
+2. ~~`firebase login`.~~ **Done** — the CLI is logged in as the owner's account. Run it
+   under Node 20; the CLI crashes on deploy under Node 26.
+3. ~~Service account key.~~ Deploys no longer need it: the rules went out through
+   `scripts/deploy-rules.mjs` and everything else through the logged-in CLI. Only
+   re-running the seed does.
+4. ~~Deploy rules, indexes, storage rules.~~ **Done** 2026-09-19.
+5. ~~`npm run seed`.~~ **Done** 2026-09-19.
 6. `npm run dev`, then click through **every** screen with the console open. A missing
    composite index throws `failed-precondition` with a link that creates it — add it to
    `firestore.indexes.json` too, or it is missing on the next project.
@@ -193,9 +196,8 @@ assumption that this works, and that assumption is currently untested.
    can. The rules are the only access control in this app.
 8. **Prove the transaction.** Approve a real leave request, confirm the balance decrements
    exactly once; move it off approved and confirm the days are refunded.
-9. `npm run deploy` — the first Hosting deploy. Then install the PWA on a real phone; the
-   service worker only registers under `import.meta.env.PROD`, so this is the first time
-   it has ever run.
+9. ~~`npm run deploy`.~~ Hosting is live at https://kora-51711.web.app (last deployed
+   2026-09-29). Still to do: install the PWA on a real phone.
 
 **Watch item:** the equality-only queries — `meetings` on `(adminId, status)`, and the
 `adminId` variants of `getGatherings`/`subscribeToGatherings` — have no index of their own
@@ -382,7 +384,7 @@ Small, and the backend is idle until it happens. Three deployed functions have n
 
 ---
 
-### Phase 5 — Add the backend (`functions/`) — **DONE** (2026-09-19), except deployment
+### Phase 5 — Add the backend (`functions/`) — **DONE** (2026-09-19), deployed 2026-09-23
 
 Landed across commits 25–38, and it grew well past the "just custom claims" trigger this
 section originally scoped. `functions/README.md` is the reference; the summary:
@@ -515,20 +517,22 @@ Blocked on brand assets, not on engineering.
 
 - ~~Tailwind palette → Kora tokens in `tailwind.config.js`.~~ **DONE** (commit 59):
   `korablue` / `saffron` / `korastone`.
-- Ant Design token block — one edit in `app/theme.ts`.
+- ~~Ant Design token block — one edit in `app/theme.ts`.~~ **DONE** (commit 59) — it
+  mirrors the Tailwind palette.
 - ~~`cori_logo_green.png` is imported from 5 files.~~ Replaced by a placeholder Kora mark in commit 61; the import sites never change, so real artwork is still a one-file swap.
-- Re-run `scripts/generate-icons.sh` — the PWA icons still render the Coriander wordmark
-  even though `manifest.webmanifest` says "Kora HR".
-- Copy sweep, starting with `UnlinkedMessage`.
+- ~~Re-run `scripts/generate-icons.sh`.~~ **Done** — the PWA icons render the placeholder
+  mark. Re-run it (and bump `CACHE` in `public/sw.js`) when real artwork lands.
+- ~~Copy sweep, starting with `UnlinkedMessage`.~~ **DONE** — no user-facing copy says
+  Coriander any more (checked 2026-09-30). The only thing left is real logo artwork.
 
 ---
 
 ## 5. Sequencing, and what not to do
 
 ```
-Phase 2  Prove it live          ██████  BLOCKING — still not done; now gates the backend too
+Phase 2  Prove it live          ██████  BLOCKING — deployed and seeded; click-through + proofs left
 Phase 3  Hygiene                  ████  DONE (2026-08-21)
-Phase 5  Backend (functions/)     ████  DONE (2026-09-19) — written and tested, not deployed
+Phase 5  Backend (functions/)     ████  DONE (2026-09-19) — deployed 2026-09-23
 Phase 4  Restructure              ████  DONE (2026-09-19)
 Phase 4.5 Wire the callables      ██    DONE (2026-09-19) — commits 49-51
 Phase 6  Performance              ████  DONE (2026-09-19) — 1,929 kB -> 395 kB gzipped
@@ -539,7 +543,7 @@ Phase 8  Rebrand                  ██    LAST ONE OPEN — needs assets, not 
 Phase 5 ran ahead of Phase 4 because bugs forced it — a leave-approval path that never
 deducted days, and a rules gap that let an employee grant themselves leave. That was the
 right call, but it means **Phase 2 now gates more code than when it was written**: the
-backend has the same never-run-against-a-real-project status the data layer has.
+backend is now deployed, but it is exactly as unproven as the data layer.
 
 - **Do not restructure before Phase 2.** Attributing a rules failure is much harder once
   106 files have moved.
@@ -548,9 +552,10 @@ backend has the same never-run-against-a-real-project status the data layer has.
   and one file after; waiting turns a sweep into an edit.
 - **Do not share one `node_modules` between `src/` and `functions/`.** Different runtimes.
   `rules-tests/` is a third tree. Each has its own lockfile and its own CI job.
-- **Do not deploy the backend before reading `functions/README.md`.** Three of its
-  functions cascade deletions and two rewrite custom claims. A first run against a seeded
-  project is the right place to watch that, not a populated one.
+- ~~**Do not deploy the backend before reading `functions/README.md`.**~~ Deployed
+  2026-09-23 against a project holding only seed data, as intended. Three of its functions
+  cascade deletions and two rewrite custom claims, so watch them during the Phase 2
+  click-through, while the data is still disposable.
 - **Do not let a second error convention in** when Phase 4.5 wires the callables. The
   data layer returns `{ data, status }` everywhere; a raw thrown `HttpsError` reaching a
   screen would be the first exception to that.

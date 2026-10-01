@@ -1,9 +1,12 @@
 # Phase 2 — verifying against the live project
 
-The data layer compiles and 43 offline tests pass, but the Vitest suite mocks the
-Firebase SDK at the module boundary. **Nothing in this app has ever spoken to
-Firestore.** Query shapes, composite indexes and security rules only fail at
-runtime, against a real project.
+The offline suites mock the Firebase SDK at the module boundary, and query shapes,
+composite indexes and security rules only fail at runtime, against a real project.
+
+**Status (2026-09-30):** sections 1–3 are done — rules, storage rules and all 7
+indexes are live on `kora-51711`, the 12 functions are deployed, and the project is
+seeded. Hosting is live too (section 7's deploy). **Sections 4–6 have not been run**,
+nor the PWA install on a phone: that is what is left of Phase 2.
 
 This runbook is the systematic version of "click through every screen". Work top to
 bottom; each section says what to do and what a failure looks like.
@@ -75,10 +78,14 @@ bite, these are what to watch for in step 4:
 ## 1. Prerequisites — these need you, not Claude
 
 ```bash
-firebase login          # the CLI currently holds no credentials
+firebase login          # done: the CLI is logged in (run it under Node 20)
 ```
 
-Then Firebase console → **Project settings → Service accounts → Generate new private
+Deploys no longer need the service account key below: the rules went out through
+`scripts/deploy-rules.mjs` and everything else through the logged-in CLI. There is no
+key on disk now; it is only needed to re-run `npm run seed`.
+
+Firebase console → **Project settings → Service accounts → Generate new private
 key**, saved at the repo root as `serviceAccountKey.json`. It is already gitignored,
 and `.env.local` already points `GOOGLE_APPLICATION_CREDENTIALS` at it.
 
@@ -109,10 +116,10 @@ employee, plus two pieces of equipment and a sample leave request. Safe to re-ru
 document ids are deterministic and merged, and auth users are looked up by email
 first.
 
-The seeded accounts are the **only** users who ever get custom claims —
-`setCustomUserClaims` is called nowhere else in the repo. Everyone created through
-the UI is authorised by the `get()` fallback on `users/{uid}`. That difference is
-worth exercising deliberately in step 5.
+The seeded accounts get their custom claims from the seed script at once. Everyone
+created through the UI gets them from the `syncRoleClaim` function, but only after
+their ID token refreshes — until then they are authorised by the `get()` fallback on
+`users/{uid}`. That difference is worth exercising deliberately in step 5.
 
 ## 4. Click through every screen with the console open
 
@@ -179,17 +186,18 @@ genuine integrity logic in the app.
 5. Approve a request for more days than remain. It goes negative on purpose —
    `OverBalanceConfirmModal` warns the admin, who may proceed.
 
-## 7. First Hosting deploy
+## 7. Hosting and the PWA
 
-```bash
-npm run deploy
-```
+Deployed — https://kora-51711.web.app, last from `9e55912` on 2026-09-29. `npm run
+deploy` does not work in one shell on this machine: the build needs Node 22+ and the
+Firebase CLI crashes on deploy under Node 26. Build under Homebrew Node, then run
+`firebase deploy --only hosting` under Node 20.
 
-Then open the Hosting URL on a real phone and install it. The service worker only
-registers under `import.meta.env.PROD`, so this is the first time it has ever run.
+Still to do: open the Hosting URL on a real phone and install it. The service worker
+only registers under `import.meta.env.PROD`, so it has not been exercised on a phone.
 Check the payroll PDF export from the admin side too — its logo path was broken in
-every production build until commit 19, and this is the first build where that fix
-is exercised.
+every production build until commit 19, and nobody has exported one from the live
+site yet.
 
 ---
 

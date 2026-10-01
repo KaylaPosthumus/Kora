@@ -6,9 +6,9 @@ import { theme } from "antd";
  *
  * Lifted out of `App.tsx`, where it was ~150 of that file's 247 lines and the
  * reason the shell was hard to read. It is also the whole of Ant's half of the
- * rebrand (Phase 8): the palette below is still Coriander's
- * `korablue`/`korastone`, and swapping it is an edit to this file plus
- * `tailwind.config.js`, rather than a sweep.
+ * rebrand (Phase 8): the palette below is Kora's `korablue`/`korastone`, and
+ * changing it is an edit to this file plus `tailwind.config.js`, rather than a
+ * sweep.
  *
  * The hex values are duplicated from the Tailwind palette rather than imported
  * from it — Ant needs literal colours at config time and Tailwind's are produced

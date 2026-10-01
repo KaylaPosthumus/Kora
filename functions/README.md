@@ -226,10 +226,11 @@ up `functions/src`. The two suites are independent and can run side by side.
 
 ## Not done yet
 
-- **None of this has been deployed.** No function here has ever run. The Firebase
-  CLI holds no credentials, and deploying needs the project on **Blaze** — Cloud
-  Functions are unavailable on Spark. Everything below assumes that step happens
-  first.
+- **Deployed, not yet exercised.** All 12 functions have been live on `kora-51711`
+  (Blaze) since 2026-09-23, redeployed from `07325ab`. The project holds only seed
+  data, and none of them has yet been triggered by a real click-through — that is
+  Phase 2 in `docs/verification.md`. Deploy with the Firebase CLI under Node 20, and
+  pass `--force` to a non-interactive deploy that removes a function.
 
 **Settled since this file was first written.** `adjustLeaveBalance` got its client
 seam and an admin UI in commit 49 (`shared/lib/callable.ts` plus

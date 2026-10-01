@@ -1,97 +1,69 @@
 # What's next
 
-Written 2026-09-19, at commit `6dd1791`. The forward *plan* is
+Written 2026-09-19, at commit `6dd1791`; the deployment status was brought up to
+date on 2026-09-30. The forward *plan* is
 [`migration-roadmap.md`](migration-roadmap.md); this is the shorter question of what
 to actually do on Monday, and who has to do it.
 
 **Where things stand.** Phases 3 through 8 are done bar the rebrand. 639 tests pass
 across three packages, `typecheck` and `lint` are clean, and the production build is
-green. **Nothing has ever run against the live Firebase project**, which is the one
-thing standing between this and being a working app.
+green. **Everything is deployed and the live project is seeded, but nobody has yet
+clicked through it or proven the rules and the leave transaction against it** —
+that is the one thing standing between this and being a working app.
 
 ---
 
 ## 1. Only you can do these
 
-### Deployment status (2026-09-19)
-
-**Done, and verified by reading it back:**
+### Deployment status (checked against the live project, 2026-09-30)
 
 | | |
 | --- | --- |
-| `firestore.rules` | live on `kora-51711`, ruleset `8f146906…` |
-| `storage.rules` | live, ruleset `a8380240…` |
-| Composite indexes | all 7 declared already exist and report `READY` |
+| `firestore.rules`, `storage.rules` | live since 2026-09-19, deployed with `scripts/deploy-rules.mjs` |
+| Composite indexes | all 7 declared exist and report `READY` |
+| Cloud Functions | all 12 live — redeployed 2026-09-23 from `07325ab`; the 3 email-verification functions were deleted |
+| Hosting | live at https://kora-51711.web.app, last deployed 2026-09-29 from `9e55912` |
+| Seed data | `npm run seed` ran 2026-09-19. `admin@kora.test` has signed in; `employee@kora.test` never has |
+| Billing | Blaze |
 
-Deployed with `scripts/deploy-rules.mjs`, not the Firebase CLI — see below.
+The Firebase CLI is logged in with the owner's Google account. The earlier failure was
+only the service-account JWT path, which nothing needs now. Two quirks on this Mac:
+run `firebase` under Node 20 (it crashes on deploy under Node 26), and build under
+Node 22+ — so `npm run deploy` has to be split into `npm run build` then
+`firebase deploy`, each under its own Node. A non-interactive deploy that removes a
+function needs `--force`.
 
-**Not done:** Cloud Functions and Hosting. Both need the CLI.
+### Prove it — the blocking one
 
-### The Firebase CLI cannot authenticate on this machine
+The data layer, the security rules, the twelve Cloud Functions and the Hosting build
+are all live, but they have only been exercised by the offline suites and the
+emulator. Query shapes, missing composite indexes and rules that deny a real write
+only fail at runtime.
 
-`firebase deploy` with `GOOGLE_APPLICATION_CREDENTIALS` set fails with
-`Invalid response body … Premature close` fetching an OAuth token. Ruled out, each
-tested directly:
+[`verification.md`](verification.md) is the runbook. Sections 1–3 (prerequisites,
+deploy, seed) are done; what is left is:
 
-- **The key** — `firebase-admin` and `google-auth-library` both get a token with it
-  in one call.
-- **The network and the endpoint** — `curl` POSTs a real JWT assertion to the same
-  legacy `oauth2/v4/token` endpoint and gets HTTP 200, with the CLI's exact scope
-  list including `openid` and `email`.
-- **The CLI version** — v15.22 and v13 fail identically.
-- **The Node version** — fails on both v26.3.1 and v24.17.0.
-- **A proxy** — none in the environment, none in npm, none in macOS system config.
-- **The sandbox** — fails outside it too.
+1. **Section 4** — a screen-by-screen click-through, as both seeded accounts, with the
+   console open. Expect to find missing indexes; that is what the exercise is for, and
+   the error message contains a link that creates each one.
+2. **Section 5** — the rules proven from both sides, including a user created through
+   the UI rather than seeded.
+3. **Section 6** — the leave transaction: approve, check the balance moved exactly once,
+   move it off approved, check the refund.
+4. **Section 7** — install the PWA on a real phone, and export a payroll PDF from the
+   live site.
 
-So it is firebase-tools' own HTTP client, and nothing upstream of it.
-
-**What to try, in order:**
-
-1. **`firebase login --no-localhost`.** Interactive login is a *completely different
-   code path* from the service-account JWT flow that is broken, so it has a real
-   chance even though the latter fails. The Sep 7 screenshot showed a rejection,
-   which may simply have been a cancelled consent screen.
-2. **Deploy from CI.** `.github/workflows/ci.yml` already exists; the CLI may work
-   fine on a Linux runner with a `FIREBASE_TOKEN` or the service account.
-3. **Not worth hand-rolling.** Functions deployment across v1 (`onUserDeleted`) and
-   v2 (the other eleven, which need Eventarc triggers) through the REST API is a
-   large, fragile job. The rules were worth scripting; functions are not.
-
-Note the service account is under-privileged for anything beyond rules: it cannot
-create indexes (`roles/datastore.indexAdmin`) or list enabled services
-(`serviceusage.services.list`). Granting Firebase Admin on it would cover both, if
-you go the service-account route.
-
-### Deploy the rest — the blocking one
-
-Everything below this is downstream. The data layer, the security rules, the twelve
-Cloud Functions and the Hosting config have never been exercised against real
-Firestore: the whole suite runs against mocks and an emulator. Query shapes, missing
-composite indexes and rules that deny a real write only fail at runtime.
-
-Three things are needed before a deploy can happen, and none of them can be done for
-you:
-
-1. **`firebase login`.** The CLI holds no credentials — `firebase login:list` reports
-   no authorized accounts.
-2. **A service account key.** Firebase console → Project settings → Service accounts
-   → Generate new private key, saved at the repo root as `serviceAccountKey.json`. It
-   is already gitignored and `.env.local` already points at it.
-3. **The Blaze plan on `kora-51711`.** Cloud Functions are not available on Spark.
-   Whether the project is already on Blaze cannot be checked without credentials.
-
-Then [`verification.md`](verification.md) is the runbook — a screen-by-screen
-click-through, the three things static analysis could not settle, and the proofs for
-the rules and the leave transaction. Expect to find missing indexes; that is what the
-exercise is for, and the error message contains a link that creates each one.
+The data is still only seed data, so this is the cheap time to watch the delete
+cascades and the claim functions fire.
 
 ### Decide the brand
 
 The rebrand is the last phase and is blocked on assets, not code:
 
-- **Real artwork.** `src/assets/logos/kora_logo.png` is a placeholder generated by
-  `scripts/generate-logo.sh` — a saffron block, white K, KORA beneath. Swap the file
-  and re-run `scripts/generate-icons.sh`; the five import sites do not change.
+- **Real artwork.** `src/assets/logos/kora_logo.png` (saffron block, white K, KORA
+  beneath) and `kora_mark.png` (the K alone, on korablue) are placeholders generated by
+  `scripts/generate-logo.sh`. Swap the file
+  and re-run `scripts/generate-icons.sh`; bump `CACHE` in `public/sw.js`; the six import sites do not change.
 - ~~A colour palette.~~ **Done** (commit 59) — `korablue` / `saffron` / `korastone`,
   in both `tailwind.config.js` and `src/app/theme.ts`.
 - The PWA icons already render the placeholder rather than the Coriander wordmark,
@@ -132,8 +104,8 @@ Phase 4 was done partly so this is a two-file edit rather than a sweep.
 
 ## 4. The order I would go in
 
-1. **Deploy and click through.** Nothing else is real until this happens, and it is
-   the only item with unknown unknowns in it.
+1. **Click through and prove it.** The deploy is done; nothing else is real until
+   the click-through happens, and it is the only item with unknown unknowns in it.
 2. **Fix whatever that turns up** — missing indexes, most likely, and possibly the
    three watch items in the verification runbook.
 3. **Rebrand**, once you have the assets. It is cosmetic and isolated.
