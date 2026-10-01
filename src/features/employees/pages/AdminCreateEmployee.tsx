@@ -63,6 +63,7 @@ const AdminCreateEmployee: React.FC = () => {
             fullName: u.fullName,
             profilePicture: u.profilePicture,
             signupMethod: u.googleId ? "google" : "email",
+            requestedRole: u.requestedRole,
           }))
         );
       } catch (err) {
