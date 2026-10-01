@@ -119,22 +119,33 @@ const EmployeeProfile: React.FC = () => {
 
   const { empUser, empUserRatingMetrics, equipment } = profileData;
 
+  // Top right on desktop. On a phone they sit at the bottom of the page instead,
+  // after the details they act on, rather than above the profile picture.
+  const actions = (className: string) => (
+    <>
+      <KoraBtn
+        secondary
+        style="black"
+        className={className}
+        onClick={() => setShowEditDetailsModal(true)}
+      >
+        <Icons.Edit />
+        Edit Details
+      </KoraBtn>
+      <KoraBtn style="black" className={className} onClick={() => generatePayrollPDF(empUser)}>
+        <Icons.Download />
+        Payroll PDF
+      </KoraBtn>
+    </>
+  );
+
   return (
     <>
       {contextHolder}
       <div className="max-w-7xl mx-auto m-4">
         {/* Top buttons */}
-        <div className="flex justify-end items-center">
-          <div className="flex gap-2 z-10">
-            <KoraBtn secondary style="black" onClick={() => setShowEditDetailsModal(true)}>
-              <Icons.Edit />
-              Edit Details
-            </KoraBtn>
-            <KoraBtn style="black" onClick={() => generatePayrollPDF(empUser)}>
-              <Icons.Download />
-              Payroll PDF
-            </KoraBtn>
-          </div>
+        <div className="hidden lg:flex justify-end items-center">
+          <div className="flex gap-2 z-10">{actions("")}</div>
         </div>
         {/* Page Content */}
         <div className="flex flex-col items-center gap-3 z-0">
@@ -299,7 +310,7 @@ const EmployeeProfile: React.FC = () => {
             </div>
 
             {/* Equipment */}
-            <div className="w-full flex flex-col gap-2 items-center mb-8">
+            <div className="w-full flex flex-col gap-2 items-center lg:mb-8">
               <div className="flex gap-2 items-center">
                 <h2 className="text-zinc-500 font-semibold">Equipment</h2>
               </div>
@@ -312,6 +323,11 @@ const EmployeeProfile: React.FC = () => {
                   <p className="text-zinc-500 py-4">No Equipment Assigned</p>
                 )}
               </div>
+            </div>
+
+            {/* Bottom buttons, phone and tablet only */}
+            <div className="lg:hidden grid grid-cols-2 gap-2 w-full mb-4">
+              {actions("w-full flex items-center justify-center gap-2")}
             </div>
           </div>
         </div>
