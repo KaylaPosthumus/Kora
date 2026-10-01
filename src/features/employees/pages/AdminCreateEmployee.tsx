@@ -205,9 +205,15 @@ const AdminCreateEmployee: React.FC = () => {
       {contextHolder}
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Icons.DirectionsWalk fontSize="large" />
-          <h1 className="text-2xl sm:text-3xl font-bold">Approve Users</h1>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <Icons.DirectionsWalk fontSize="large" />
+            <h1 className="text-2xl sm:text-3xl font-bold">Approve Users</h1>
+          </div>
+          <p className="text-zinc-500 max-w-xl">
+            To add a new employee, ask them to sign up on the Kora login page with their
+            own email. They wait here until you approve them as an employee or an admin.
+          </p>
         </div>
         {selectedUser && (
           /* Two full-width buttons stacked on a phone beat two cramped ones. */
@@ -233,8 +239,20 @@ const AdminCreateEmployee: React.FC = () => {
       {!selectedUser && (
         <div className="pt-32 text-center text-gray-500">
           <Icons.PersonAdd className="text-korablue-500" style={{ fontSize: 64 }} />
-          <h2 className="text-xl font-semibold mt-2">No User Selected</h2>
-          <p className="mt-2">Please select a user above to begin.</p>
+          {unlinkedUsers.length === 0 ? (
+            <>
+              <h2 className="text-xl font-semibold mt-2">No one is waiting</h2>
+              <p className="mt-2 max-w-md mx-auto">
+                A new employee signs up from the login page, under "New employee? Sign
+                up". Once they have, they appear here for you to approve.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-semibold mt-2">No User Selected</h2>
+              <p className="mt-2">Select a user above to approve them.</p>
+            </>
+          )}
         </div>
       )}
 

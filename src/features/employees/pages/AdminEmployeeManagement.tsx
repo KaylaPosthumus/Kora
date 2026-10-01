@@ -429,10 +429,18 @@ const AdminEmployeeManagement: React.FC = () => {
             value={searchValue}
             onChange={(e) => handleSearch(e.target.value)}
           />
-          <KoraBtn style="black" onClick={() => navigate("/admin/create-employee")}>
-            New
-            <Icons.Add />
-          </KoraBtn>
+          {/* Not "New": an admin cannot create an employee outright. The person
+              signs up first, and is linked to an employee record on that page. */}
+          <Tooltip title="New employees sign up themselves, then you approve them here.">
+            <KoraBtn
+              style="black"
+              className="flex items-center gap-2 whitespace-nowrap"
+              onClick={() => navigate("/admin/create-employee")}
+            >
+              <Icons.PersonAddAlt fontSize="small" />
+              Approve Users
+            </KoraBtn>
+          </Tooltip>
         </div>
       </div>
       {allData.length === 0 ? (
