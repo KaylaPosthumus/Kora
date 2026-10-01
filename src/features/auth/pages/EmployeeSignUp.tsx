@@ -75,7 +75,7 @@ const EmployeeSignUp: React.FC = () => {
     <>
       {contextHolder}
       <div className="relative">
-        <div className="flex w-full min-h-screen lg:h-screen">
+        <div className="flex w-full min-h-dvh lg:h-screen">
           <div className="lg:w-1/2">
             <img
               src={Logo}
@@ -91,9 +91,9 @@ const EmployeeSignUp: React.FC = () => {
               aria-hidden="true"
             />
           </div>
-          <div className="w-full lg:w-1/2 flex items-center justify-center pt-32 pb-16 lg:pt-0 lg:pb-0 lg:mb-16">
+          <div className="w-full lg:w-1/2 flex items-center justify-center px-4 pt-32 pb-16 lg:px-0 lg:pt-0 lg:pb-0 lg:mb-16">
             {!pendingEmail && (
-              <div className="flex flex-col items-center w-[300px]">
+              <div className="flex flex-col items-center w-full sm:w-[300px]">
                 <h1 className="text-3xl font-bold mb-4 text-korablue-500 ">
                   Employee{" "}
                   <span className="text-zinc-900 font-light">Signup</span>
@@ -189,7 +189,7 @@ const EmployeeSignUp: React.FC = () => {
                   secondary
                   style="black"
                   onClick={handleGoogleSignUp}
-                  className="w-[300px] mt-3 flex items-center justify-center gap-2"
+                  className="w-full mt-3 flex items-center justify-center gap-2"
                 >
                   <GoogleIcon fontSize="small" />
                   Sign up with Google

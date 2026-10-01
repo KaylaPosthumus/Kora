@@ -165,7 +165,7 @@ const Login: React.FC = () => {
     <>
       {contextHolder}
       <div className="relative">
-        <div className="flex w-full min-h-screen lg:h-screen">
+        <div className="flex w-full min-h-dvh lg:h-screen">
           {/* Background Image Section */}
           <div className="lg:w-1/2">
             <img
@@ -185,11 +185,11 @@ const Login: React.FC = () => {
           </div>
 
           {/* Form Section */}
-          <div className="w-full lg:w-1/2 flex items-center justify-center pt-32 pb-16 lg:pt-0 lg:pb-0 lg:mb-16">
+          <div className="w-full lg:w-1/2 flex items-center justify-center px-4 pt-32 pb-16 lg:px-0 lg:pt-0 lg:pb-0 lg:mb-16">
             {showUnlinkedMessage ? (
               <UnlinkedMessage onLogOut={() => setShowUnlinkedMessage(false)} />
             ) : (
-              <div className="flex flex-col items-center w-[300px]">
+              <div className="flex flex-col items-center w-full sm:w-[300px]">
                 <h1 className="text-3xl font-bold mb-4 text-korablue-500 ">
                   Welcome <span className="text-zinc-900 font-light">Back</span>
                 </h1>

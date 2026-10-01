@@ -16,7 +16,7 @@ import KoraBtn from "@/shared/components/KoraBtn";
  */
 function SignUpComplete({ email, onBack }: { email: string; onBack: () => void }) {
   return (
-    <div className="flex flex-col items-center w-[320px] gap-4">
+    <div className="flex flex-col items-center w-full sm:w-[320px] gap-4">
       <HowToRegIcon className="text-korablue-500" style={{ fontSize: "96px" }} />
 
       <div className="flex flex-col gap-2 items-center">

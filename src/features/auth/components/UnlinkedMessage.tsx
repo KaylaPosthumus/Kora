@@ -31,7 +31,7 @@ function UnlinkedMessage({ onLogOut }: { onLogOut: () => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center w-4/12 gap-4">
+    <div className="flex flex-col items-center w-full sm:w-[320px] gap-4">
       {contextHolder}
       <PendingActionsIcon
         className="text-korastone-600"
