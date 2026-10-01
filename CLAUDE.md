@@ -204,8 +204,11 @@ The service worker ignores cross-origin requests entirely, which is what keeps
 Firestore's own persistence and Storage downloads out of a second cache. Build assets are
 content-hashed so they are cache-first; navigations are network-first with the cached
 shell as fallback. **If you change `public/sw.js`, bump the `CACHE` constant** or
-clients keep the old worker's cache. `firebase.json` marks `/sw.js` and
-`/manifest.webmanifest` `no-cache` so Hosting cannot pin an old shell after a deploy.
+clients keep the old worker's cache. `firebase.json` marks every path `no-cache`
+except the hashed `/assets/**` (a year, `immutable`). Hosting's default is an hour, and
+the worker's network-first `fetch` goes through the HTTP cache, so without that a
+browser kept the previous `index.html` — and the previous build — for up to an hour
+after a deploy.
 
 The icons are generated from `src/assets/logos/kora_logo.png` by
 `scripts/generate-icons.sh`, which pads it out in saffron so the icon is saffron edge
