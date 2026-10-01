@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import KoraBtn from "@/shared/components/KoraBtn";
 import { Icons } from "@/constants/icons";
 import { logout, navbarUserStatus } from "@/services/authService";
+import { subscribeToUnlinkedUserCount } from "@/features/employees/api/employeesApi";
 import logo from "@/assets/logos/kora_logo.png";
 // The K alone. Below ~40px the full logo's wordmark is a few pixels tall and
 // reads as a smudge; the top bar and drawer header both draw it at 28.
@@ -33,6 +34,8 @@ type NavLink = {
   primary?: boolean;
   /** Shorter label for the bottom nav, where width is tight. */
   shortLabel?: string;
+  /** A pending-items count, drawn as a pill after the label when above zero. */
+  count?: number;
 };
 
 type NavGroup = { heading?: string; links: NavLink[] };
@@ -67,16 +70,21 @@ const employeeGroup: NavGroup = {
   ],
 };
 
-const adminGroup: NavGroup = {
+const adminGroup = (unlinkedCount: number): NavGroup => ({
   links: [
     { to: "/admin/dashboard", label: "Dashboard", icon: Icons.Dashboard },
     { to: "/admin/employees", label: "Employees", icon: Icons.Group },
-    { to: "/admin/create-employee", label: "Create Employee", icon: Icons.PersonAddAlt },
+    {
+      to: "/admin/create-employee",
+      label: "Approve Users",
+      icon: Icons.PersonAddAlt,
+      count: unlinkedCount,
+    },
     { to: "/admin/equipment", label: "Equipment", icon: Icons.Construction },
     { to: "/admin/leave-requests", label: "Leave Requests", icon: Icons.Assignment },
     { to: "/admin/meetings", label: "Meetings", icon: Icons.MeetingRoom },
   ],
-};
+});
 
 const referenceGroup: NavGroup = {
   heading: "Reference",
@@ -93,6 +101,7 @@ const Navigation: React.FC = () => {
   const [userStatus, setUserStatus] = useState<number | null>(null); // -1, 0, 1, 2
   const [devMode] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [unlinkedCount, setUnlinkedCount] = useState(0);
   const location = useLocation();
 
   const isActiveLink = (path: string) => location.pathname === path;
@@ -118,6 +127,15 @@ const Navigation: React.FC = () => {
     };
     checkStatus();
   }, []);
+
+  // Admins only: the users query is admin-readable, and the count is live so it
+  // drops as soon as someone is linked on the Approve Users page.
+  useEffect(() => {
+    if (userStatus !== 2) return;
+    return subscribeToUnlinkedUserCount(setUnlinkedCount, (error) =>
+      console.error("Unlinked user count failed:", error)
+    );
+  }, [userStatus]);
 
   // Tapping a link navigates; leaving the drawer open over the new page would
   // hide it.
@@ -147,7 +165,7 @@ const Navigation: React.FC = () => {
   const groups: NavGroup[] = [];
   if (userStatus === -1 || userStatus === 0) groups.push(authGroup);
   if (userStatus === 1) groups.push(employeeGroup);
-  if (userStatus === 2) groups.push(adminGroup);
+  if (userStatus === 2) groups.push(adminGroup(unlinkedCount));
   if (devMode) groups.push(referenceGroup);
 
   const primaryLinks = groups.flatMap((group) => group.links.filter((link) => link.primary));
@@ -160,7 +178,7 @@ const Navigation: React.FC = () => {
           {group.heading && (
             <small className="text-korablue-500 text-uppercase">{group.heading}</small>
           )}
-          {group.links.map(({ to, label, icon: Icon }) => (
+          {group.links.map(({ to, label, icon: Icon, count }) => (
             <Link
               key={to}
               to={to}
@@ -169,6 +187,16 @@ const Navigation: React.FC = () => {
             >
               {Icon && <Icon fontSize="small" />}
               {label}
+              {Boolean(count) && (
+                <span
+                  aria-label={`${count} waiting`}
+                  className={`ml-auto min-w-[1.5rem] rounded-full px-2 text-center text-xs font-semibold leading-6 ${
+                    tone === "dark" ? "bg-saffron-500 text-zinc-900" : "bg-korablue-500 text-white"
+                  }`}
+                >
+                  {count}
+                </span>
+              )}
             </Link>
           ))}
         </div>

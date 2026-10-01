@@ -176,6 +176,8 @@ const AdminCreateEmployee: React.FC = () => {
       const res = await employeeAPI.setupUserAsEmployee(payload);
       console.log("✅ [DEBUG] Response from API:", res.status, res.data);
       form.resetFields();
+      // They're linked now, so drop them from the unlinked list.
+      setUnlinkedUsers((prev) => prev.filter((user) => user.userId !== selectedUser.userId));
       setSelectedUser(null);
       messageApi.open({
         key: messageKey,
@@ -204,7 +206,7 @@ const AdminCreateEmployee: React.FC = () => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div className="flex items-center gap-2">
           <Icons.DirectionsWalk fontSize="large" />
-          <h1 className="text-2xl sm:text-3xl font-bold">Create Employee</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Approve Users</h1>
         </div>
         {selectedUser && (
           /* Two full-width buttons stacked on a phone beat two cramped ones. */

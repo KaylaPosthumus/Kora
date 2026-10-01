@@ -12,12 +12,14 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  onSnapshot,
   query,
   where,
   orderBy,
   writeBatch,
   serverTimestamp,
 } from "firebase/firestore";
+import type { FirestoreError, Unsubscribe } from "firebase/firestore";
 import {
   GatheringType,
   ReviewStatus,
@@ -249,6 +251,20 @@ export const userAPI = {
     return ok(snapshot.docs.map((d) => withId<any>(d)).map((u) => ({ ...u, userId: u.id })));
   },
 };
+
+/**
+ * Live count of signed-up users still waiting for an admin to link them — the
+ * same query as `getUnlinkedUsers`, so the nav badge and the page agree.
+ */
+export const subscribeToUnlinkedUserCount = (
+  onCount: (count: number) => void,
+  onError?: (error: FirestoreError) => void
+): Unsubscribe =>
+  onSnapshot(
+    query(usersCol, where("isLinked", "==", false)),
+    (snapshot) => onCount(snapshot.size),
+    onError
+  );
 
 export const adminAPI = {
   getAllAdmins: async (): Promise<ApiResponse<AdminUser[]>> => {
