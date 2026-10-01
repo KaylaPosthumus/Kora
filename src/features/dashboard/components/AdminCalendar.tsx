@@ -4,9 +4,11 @@ import 'react-calendar/dist/Calendar.css';
 import "@/styles/adminDash.css"; 
 
 const AdminCalendar = ({ value, onChange }: { value: Date; onChange: (date: Date) => void }) => (
-  <div className="px-2 text-zinc-700">
+  <div className="bg-korastone-50 rounded-2xl shadow-sm p-3">
     <Calendar
-      className="bg-transparent border-2 border-korastone-400"
+      className="kora-calendar"
+      prev2Label={null}
+      next2Label={null}
       onChange={(date) => onChange(date as Date)}
       value={value}
     />

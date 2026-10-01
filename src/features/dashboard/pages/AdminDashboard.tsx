@@ -220,7 +220,7 @@ const AdminDashboard: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="max-w-7xl mx-auto m-4 mb-4 px-1 sm:px-0">
+    <div className="max-w-7xl mx-auto m-4 mb-4">
       {/* Heading */}
       <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-zinc-900">
         Welcome, {dashboardData?.adminUser?.fullName || "Admin"}
@@ -243,7 +243,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="text-zinc-500 font-semibold text-center mb-2">
                     Employee Ratings: Top 5
                   </div>
-                  <div className="bg-korastone-50 pt-2 rounded-2xl shadow-sm">
+                  <div className="bg-korastone-50 pt-2 rounded-2xl shadow-sm min-h-[300px]">
                     <BarChartCard empUserRatingMetrics={empUserRatingMetrics} />
                   </div>
                 </div>
@@ -327,6 +327,21 @@ const AdminDashboard: React.FC = () => {
                       Top 3 Employees
                     </div>
                     <div className="bg-korastone-50 p-2 rounded-2xl flex flex-col shadow-sm">
+                      {topRatedEmployees.length === 0 && (
+                        <div className="flex items-center gap-3 p-3 min-h-[72px]">
+                          <div className="w-11 h-11 rounded-full bg-korastone-200 flex items-center justify-center flex-shrink-0">
+                            <Icons.Person className="text-zinc-400" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-zinc-700 text-sm font-semibold">
+                              No rated employees yet
+                            </span>
+                            <span className="text-zinc-500 text-xs">
+                              Your top performers will show here after their first review.
+                            </span>
+                          </div>
+                        </div>
+                      )}
                       {topRatedEmployees.map((entry: any) => {
                         const employeeData = entry.employee;
                         const ratingData = entry.rating;

@@ -87,14 +87,15 @@ const AppRoutes: React.FC = () => {
     <div className="flex h-screen lg:mr-4">
       {!isAuthPage && <Navigation />}
       {/* Below lg the nav is a fixed top bar plus a bottom nav, so the page has
-          to leave room for both. On lg and up the sidebar is in flow and the
-          padding goes away. */}
+          to leave room for both, and <main> owns the 16px side gutter (the top
+          bar's own px-4) so no page sets its own. On lg and up the sidebar is in
+          flow and the wrapper's lg:mr-4 is the gutter, so the padding goes away. */}
       {/* `grow`, not `flex-grow-1`. The latter is Bootstrap's and produced no CSS
           once Bootstrap was dropped in commit 56, so <main> stopped growing and
           every page collapsed to the width of its own content. */}
       <main
         className={`grow min-w-0 ${
-          isAuthPage ? "" : "pt-14 pb-16 lg:pt-0 lg:pb-0"
+          isAuthPage ? "" : "pt-14 pb-16 px-4 lg:p-0"
         }`}
       >
         <ErrorBoundary>

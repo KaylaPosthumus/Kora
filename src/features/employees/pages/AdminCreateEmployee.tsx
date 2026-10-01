@@ -198,7 +198,7 @@ const AdminCreateEmployee: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto m-4 p-3">
+    <div className="max-w-7xl mx-auto m-4 py-3 lg:px-3">
       {contextHolder}
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">

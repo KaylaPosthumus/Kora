@@ -1,5 +1,6 @@
 import React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { Icons } from "@/constants/icons";
 
   interface BarChartCardProps {
     empUserRatingMetrics: Array<{
@@ -12,7 +13,18 @@ import { BarChart } from "@mui/x-charts/BarChart";
   // Conditional rendering for the BarChartCard component
   const BarChartCard: React.FC<BarChartCardProps> = ({ empUserRatingMetrics }) => {
     if (!empUserRatingMetrics || empUserRatingMetrics.length === 0) {
-      return <div className="text-center text-zinc-500">No data available</div>;
+      // Same footprint as the chart plus its legend, so an empty card holds the row's height.
+      return (
+        <div className="h-[300px] flex flex-col items-center justify-center gap-2 px-6 text-center">
+          <div className="w-12 h-12 rounded-full bg-korablue-50 flex items-center justify-center">
+            <Icons.StarRounded className="text-korablue-400" />
+          </div>
+          <p className="text-zinc-700 font-semibold">No ratings yet</p>
+          <p className="text-zinc-500 text-sm max-w-[260px]">
+            Ratings appear here once performance reviews have been completed.
+          </p>
+        </div>
+      );
     }
 
   // Transform the empUserRatingMetrics data into chartData
@@ -55,7 +67,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
       ]}
       series={chartData.series.map((s, i) => ({
         ...s,
-        color: i === 0 ? "#CEDBC0" : "#2C6FB5", 
+        color: i === 0 ? "#BCD5F0" : "#2C6FB5", 
       }))}
       width={440}
       height={260}
@@ -69,7 +81,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
     {/* Custom Legend Row */}
     <div className="flex justify-center items-center gap-3 pb-3">
       <div className="flex items-center gap-1">
-        <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#CEDBC0" }}></span>
+        <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#BCD5F0" }}></span>
         <span className="text-zinc-700 text-sm">Average Rating</span>
       </div>
       <div className="flex items-center gap-1">

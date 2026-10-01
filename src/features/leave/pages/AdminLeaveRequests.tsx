@@ -302,7 +302,7 @@ const AdminLeaveRequests: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
+      <div className="max-w-7xl mx-auto m-4">
         {/* Title & Edit Policy */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div className="flex items-center gap-2">

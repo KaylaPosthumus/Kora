@@ -189,7 +189,7 @@ const AdminMeetings: React.FC = () => {
     );
 
   return (
-    <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
+    <div className="max-w-7xl mx-auto m-4">
       {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
         <div className="flex items-center gap-4">

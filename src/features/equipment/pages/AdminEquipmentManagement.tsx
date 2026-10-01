@@ -425,7 +425,7 @@ const AdminEquipmentManagement: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div className="max-w-7xl mx-auto m-4 px-1 sm:px-0">
+      <div className="max-w-7xl mx-auto m-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4">
           <div className="flex items-center gap-2">
             <Icons.Construction fontSize="large" className="text-zinc-900" />

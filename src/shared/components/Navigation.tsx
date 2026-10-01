@@ -97,10 +97,15 @@ const Navigation: React.FC = () => {
 
   const isActiveLink = (path: string) => location.pathname === path;
 
-  const getLinkClassName = (path: string, hasIcon = true) => {
-    const baseClasses = hasIcon
-      ? "nav-link flex items-center gap-2 hover:text-saffron-300"
-      : "nav-link";
+  /** `dark` is the desktop sidebar; `light` is the mobile drawer. */
+  const getLinkClassName = (path: string, hasIcon = true, tone: "dark" | "light" = "dark") => {
+    const hover = tone === "dark" ? "hover:text-saffron-300" : "hover:text-korablue-500";
+    const baseClasses = hasIcon ? `nav-link flex items-center gap-2 ${hover}` : "nav-link";
+    if (tone === "light") {
+      return isActiveLink(path)
+        ? `${baseClasses} text-korablue-500 font-semibold focus:text-korablue-500`
+        : `${baseClasses} text-korastone-800 focus:text-korastone-800`;
+    }
     return isActiveLink(path)
       ? `${baseClasses} text-saffron-500 font-semibold focus:text-saffron-500`
       : `${baseClasses} text-white font-light focus:text-white`;
@@ -148,7 +153,7 @@ const Navigation: React.FC = () => {
   const primaryLinks = groups.flatMap((group) => group.links.filter((link) => link.primary));
 
   /** The link list, shared by the sidebar and the drawer. */
-  const renderGroups = () => (
+  const renderGroups = (tone: "dark" | "light" = "dark") => (
     <div className="flex flex-col">
       {groups.map((group, index) => (
         <div key={group.heading ?? index} className="mt-4 flex flex-col gap-4">
@@ -159,7 +164,7 @@ const Navigation: React.FC = () => {
             <Link
               key={to}
               to={to}
-              className={getLinkClassName(to, Boolean(Icon))}
+              className={getLinkClassName(to, Boolean(Icon), tone)}
               aria-current={isActiveLink(to) ? "page" : undefined}
             >
               {Icon && <Icon fontSize="small" />}
@@ -189,15 +194,16 @@ const Navigation: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile top bar. */}
-      <header className="lg:hidden fixed top-0 inset-x-0 h-14 z-30 bg-zinc-900 text-white flex items-center justify-between px-4">
+      {/* Mobile top bar. Light, like the page under it — the dark chrome is the
+          desktop sidebar's alone. */}
+      <header className="lg:hidden fixed top-0 inset-x-0 h-14 z-30 bg-white/90 backdrop-blur border-b border-korastone-300 text-korastone-900 flex items-center justify-between px-4">
         <img src={mark} alt="Kora" className="h-7 w-auto" />
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
           aria-label="Open menu"
           aria-expanded={drawerOpen}
-          className="p-2 -mr-2 text-white"
+          className="p-2 -mr-2 text-korastone-900"
         >
           <MenuRoundedIcon />
         </button>
@@ -207,7 +213,7 @@ const Navigation: React.FC = () => {
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-40">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/30"
             onClick={() => setDrawerOpen(false)}
             aria-hidden="true"
           />
@@ -215,7 +221,7 @@ const Navigation: React.FC = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Navigation"
-            className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] bg-zinc-900 text-white flex flex-col"
+            className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] bg-white text-korastone-900 shadow-xl flex flex-col"
           >
             <div className="flex items-center justify-between p-4">
               <img src={mark} alt="Kora" className="h-7 w-auto" />
@@ -223,16 +229,16 @@ const Navigation: React.FC = () => {
                 type="button"
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close menu"
-                className="p-2 -mr-2 text-white"
+                className="p-2 -mr-2 text-korastone-900"
               >
                 <CloseRoundedIcon />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 pb-6">{renderGroups()}</div>
+            <div className="flex-1 overflow-y-auto px-6 pb-6">{renderGroups("light")}</div>
 
             <div className="p-6 pt-0">
-              <KoraBtn style="black" className="w-full" onClick={logout}>
+              <KoraBtn secondary className="w-full" onClick={logout}>
                 Logout
               </KoraBtn>
             </div>
@@ -244,7 +250,7 @@ const Navigation: React.FC = () => {
       {primaryLinks.length > 0 && (
         <nav
           aria-label="Primary"
-          className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-zinc-900 text-white flex justify-around pb-[env(safe-area-inset-bottom)]"
+          className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/90 backdrop-blur border-t border-korastone-300 flex justify-around pb-[env(safe-area-inset-bottom)]"
         >
           {primaryLinks.map(({ to, label, shortLabel, icon: Icon }) => {
             const active = isActiveLink(to);
@@ -255,7 +261,7 @@ const Navigation: React.FC = () => {
                 aria-label={label}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] ${
-                  active ? "text-saffron-500 font-semibold" : "text-white font-light"
+                  active ? "text-korablue-500 font-semibold" : "text-korastone-700"
                 }`}
               >
                 {Icon && <Icon fontSize="small" />}
