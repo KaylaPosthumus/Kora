@@ -166,7 +166,7 @@ const EmployeeHome: React.FC = () => {
         <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-zinc-900">Welcome, {empUser.fullName}</h1>
       )}
       <h4 className="text-zinc-900 mb-3">Stay informed and manage your tasks effortlessly.</h4>
-      <div className="line-horisontal mb-4 bg-black" style={{ height: "1px" }}></div>
+      <div className="h-px mb-4 bg-korastone-300" />
 
       <div>
         <div className="grid grid-cols-12 gap-3">
@@ -232,7 +232,7 @@ const EmployeeHome: React.FC = () => {
                   Your Remaining Leave
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 w-full">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 w-full">
                     {leaveBalances?.slice(0, 6).map((balance: any) => (
                       <LeaveBalanceBlock
                         key={balance.leaveBalanceId}
@@ -318,14 +318,10 @@ const EmployeeHome: React.FC = () => {
             <div className="w-full">
               <div className="text-zinc-500 font-semibold text-center mb-2">Meetings with HR: Overview</div>
               <div className="relative">
-                <div
-                  className="grid gap-3 pr-2"
-                  style={{
-                    maxHeight: 700,
-                    overflowY: "auto",
-                    paddingBottom: 32, 
-                  }}
-                >
+                {/* Capped and scrolled only beside the main column. On a phone it is
+                    the last thing on the page, so a scroller inside the page scroll
+                    would just trap the thumb. */}
+                <div className="grid gap-3 md:max-h-[700px] md:overflow-y-auto md:pr-2 md:pb-8">
                   {gatherings.length > 0 ? (
                     gatherings.map((gathering) => (
                       <EmpGatheringBox key={gathering.$id} gathering={gathering} />
@@ -337,12 +333,7 @@ const EmployeeHome: React.FC = () => {
                   )}
                 </div>
                 {/* Fade overlay at the bottom */}
-                <div
-                  className="pointer-events-none w-full absolute left-0 right-0 bottom-0 h-7"
-                  style={{
-                    background: "linear-gradient(to bottom, rgba(244,244,242,0), #E7E5E4 100%)",
-                  }}
-                />
+                <div className="hidden md:block pointer-events-none w-full absolute left-0 right-0 bottom-0 h-7 bg-gradient-to-b from-transparent to-korastone-200" />
               </div>
             </div>
           </div>

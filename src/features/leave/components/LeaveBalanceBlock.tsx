@@ -123,7 +123,9 @@ function LeaveBalanceBlock({
             </>
           )}
         </div>
-        <p className="text-zinc-900 font-semibold text-[0px] group-hover:text-[12px] transition-all duration-300">
+        {/* Revealed on hover where there is one; a touch screen has no hover, so
+            there it is always shown. */}
+        <p className="text-zinc-900 font-semibold text-[12px] [@media(hover:hover)]:text-[0px] [@media(hover:hover)]:group-hover:text-[12px] transition-all duration-300">
           out of {totalDays} days
         </p>
         <p className="text-zinc-500 text-[12px]">

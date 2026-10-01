@@ -495,8 +495,8 @@ const EmployeeMeetings: React.FC = () => {
               secondary
               className={`btn kora-btn flex-shrink-0 ${
                 activeTab === tab
-                  ? "bg-zinc-900 text-white border-none"
-                  : "border-zinc-900 text-zinc-900"
+                  ? "!bg-korablue-500 !text-white"
+                  : ""
               }`}
             >
               {tab}

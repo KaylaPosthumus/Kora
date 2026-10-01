@@ -161,8 +161,8 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
                   secondary
                   className={`btn kora-btn flex-shrink-0 ${
                     activeTab === tab
-                      ? "bg-zinc-900 text-white border-none"
-                      : "border-zinc-900 text-zinc-900"
+                      ? "!bg-korablue-500 !text-white"
+                      : ""
                   }`}
                 >
                   {tab}
@@ -201,8 +201,10 @@ Unauthorized absences may impact benefits. Check your balance before applying.`;
                   )}
                 </div>
 
+                {/* On a phone the balances lead: what is left matters more than
+                    scrolling past every past request to find it. */}
                 {activeTab === "All" && (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 order-first lg:order-none">
                     <div className="text-zinc-500 font-semibold text-center">Total Remaining</div>
                     <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center">
                       <Tooltip

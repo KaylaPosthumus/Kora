@@ -187,8 +187,8 @@ const EmployeeProfile: React.FC = () => {
                   )}
                 </div>
               )}
-              <div className="flex gap-3 items-center">
-                <h2 className="text-zinc-900 font-bold text-2xl sm:text-3xl break-words">{empUser.fullName}</h2>
+              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 items-center">
+                <h2 className="text-zinc-900 font-bold text-2xl sm:text-3xl break-words text-center">{empUser.fullName}</h2>
                 {empUserRatingMetrics && (
                   <div className="flex items-center gap-1">
                     <Icons.StarRounded className="text-yellow-500" />
