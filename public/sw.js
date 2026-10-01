@@ -18,7 +18,8 @@
 // build asset — /icons/icon-192.png keeps its URL, so an existing install would
 // otherwise serve the old Coriander icon from cache forever. Bumping the key is
 // what makes "activate" drop the previous cache.
-const CACHE = "kora-v4";
+// v5: the icons went saffron edge to edge, with no zinc-900 border.
+const CACHE = "kora-v5";
 const SHELL = "/index.html";
 
 self.addEventListener("install", (event) => {

@@ -208,7 +208,8 @@ clients keep the old worker's cache. `firebase.json` marks `/sw.js` and
 `/manifest.webmanifest` `no-cache` so Hosting cannot pin an old shell after a deploy.
 
 The icons are generated from `src/assets/logos/kora_logo.png` by
-`scripts/generate-icons.sh`. That logo is a **placeholder** — a saffron block with a
+`scripts/generate-icons.sh`, which pads it out in saffron so the icon is saffron edge
+to edge (the OS rounds the corners itself). That logo is a **placeholder** — a saffron block with a
 white K, built by `scripts/generate-logo.sh` — so re-run both when real artwork
 arrives. Bump `CACHE` in `public/sw.js` when the icons change: they are served from
 `/icons/` and keep their URLs, so an install would otherwise serve the old ones.
