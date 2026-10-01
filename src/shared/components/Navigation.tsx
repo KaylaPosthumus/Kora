@@ -209,42 +209,50 @@ const Navigation: React.FC = () => {
         </button>
       </header>
 
-      {/* Mobile drawer. */}
-      {drawerOpen && (
-        <div className="lg:hidden fixed inset-0 z-40">
-          <div
-            className="absolute inset-0 bg-black/30"
-            onClick={() => setDrawerOpen(false)}
-            aria-hidden="true"
-          />
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Navigation"
-            className="absolute inset-y-0 left-0 w-[280px] max-w-[85vw] bg-white text-korastone-900 shadow-xl flex flex-col"
-          >
-            <div className="flex items-center justify-between p-4">
-              <img src={mark} alt="Kora" className="h-7 w-auto" />
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                aria-label="Close menu"
-                className="p-2 -mr-2 text-korastone-900"
-              >
-                <CloseRoundedIcon />
-              </button>
-            </div>
+      {/* Mobile drawer. Always mounted so it can slide out as well as in; when
+          closed, `invisible` takes it out of the tab order and the a11y tree, and
+          the visibility transition holds that back until the slide has finished. */}
+      <div
+        className={`lg:hidden fixed inset-0 z-40 transition-[visibility] duration-300 motion-reduce:duration-0 ${
+          drawerOpen ? "visible" : "invisible"
+        }`}
+      >
+        <div
+          className={`absolute inset-0 bg-black/30 transition-opacity duration-300 motion-reduce:transition-none ${
+            drawerOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+          className={`absolute inset-y-0 right-0 w-[280px] max-w-[85vw] bg-white text-korastone-900 shadow-xl flex flex-col transition-transform duration-300 ease-out motion-reduce:transition-none ${
+            drawerOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between p-4">
+            <img src={mark} alt="Kora" className="h-7 w-auto" />
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close menu"
+              className="p-2 -mr-2 text-korastone-900"
+            >
+              <CloseRoundedIcon />
+            </button>
+          </div>
 
-            <div className="flex-1 overflow-y-auto px-6 pb-6">{renderGroups("light")}</div>
+          <div className="flex-1 overflow-y-auto px-6 pb-6">{renderGroups("light")}</div>
 
-            <div className="p-6 pt-0">
-              <KoraBtn secondary className="w-full" onClick={logout}>
-                Logout
-              </KoraBtn>
-            </div>
+          <div className="p-6 pt-0">
+            <KoraBtn secondary className="w-full" onClick={logout}>
+              Logout
+            </KoraBtn>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Employee bottom nav. Sits above the home indicator on iOS. */}
       {primaryLinks.length > 0 && (
