@@ -62,8 +62,14 @@ const UnlinkedUserDropdown: React.FC<UnlinkedUserDropdownProps> = ({
     onClick: () => onSelectUser(user),
   }));
 
+  const countPill = (
+    <span className="rounded-full bg-korablue-500 px-2 text-xs font-semibold leading-5 text-white whitespace-nowrap">
+      {users.length} waiting
+    </span>
+  );
+
   return (
-    <Dropdown menu={{ items }} trigger={["click"]}>
+    <Dropdown menu={{ items }} trigger={["click"]} disabled={users.length === 0}>
       <div className="cursor-pointer border rounded-2xl px-2 py-2 w-full max-w-sm hover:shadow-sm bg-white">
         <Space className="flex justify-between">
           {selectedUser ? (
@@ -74,6 +80,7 @@ const UnlinkedUserDropdown: React.FC<UnlinkedUserDropdownProps> = ({
               </div>
               <div className="flex gap-2 items-center">
                 <RequestedRoleTag role={selectedUser.requestedRole} />
+                {countPill}
                 {selectedUser.signupMethod === "google" ? (
                   <GoogleOutlined className="text-[#4285F4]" />
                 ) : (
@@ -83,11 +90,16 @@ const UnlinkedUserDropdown: React.FC<UnlinkedUserDropdownProps> = ({
               </div>
             </>
           ) : (
-            <div className="w-full flex itmes-center justify-between gap-4 px-2">
-              <div>
-                <span className="text-zinc-500">Select an unlinked user</span>
-              </div>
-              <div></div>
+            <div className="w-full flex items-center justify-between gap-4 px-2">
+              <span className="text-zinc-500">
+                {users.length === 0 ? "No users waiting" : "Select an unlinked user"}
+              </span>
+              {users.length > 0 && (
+                <div className="flex gap-2 items-center">
+                  {countPill}
+                  <DownOutlined />
+                </div>
+              )}
             </div>
           )}
         </Space>

@@ -223,8 +223,10 @@ const Navigation: React.FC = () => {
       </div>
 
       {/* Mobile top bar. Light, like the page under it — the dark chrome is the
-          desktop sidebar's alone. */}
-      <header className="lg:hidden fixed top-0 inset-x-0 h-[calc(3.5rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] z-30 bg-white/90 backdrop-blur border-b border-korastone-300 text-korastone-900 flex items-center justify-between px-4">
+          desktop sidebar's alone. Solid white, not translucent: iOS Safari tints
+          the status bar from a fixed top bar only when its background is opaque,
+          and otherwise falls back to the grey page ground above the bar. */}
+      <header className="lg:hidden fixed top-0 inset-x-0 h-[calc(3.5rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] z-30 bg-white border-b border-korastone-300 text-korastone-900 flex items-center justify-between px-4">
         <img src={mark} alt="Kora" className="h-7 w-auto" />
         <button
           type="button"
