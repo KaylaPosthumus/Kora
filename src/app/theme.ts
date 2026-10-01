@@ -135,7 +135,7 @@ export const koraTheme: ThemeConfig = {
           Table: {
             colorBgSolidHover: "#F4F4F2",
             borderRadiusLG: 16,
-            headerBg: "#F4F4F2",
+            headerBg: "#FFFFFF",
             headerBorderRadius: 16,
             headerSplitColor: "transparent",
             headerColor: "#71717a",

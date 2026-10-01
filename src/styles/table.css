@@ -2,13 +2,13 @@
 
 /* Main Table */
 .ant-table-wrapper .ant-table {
-  background-color: transparent;
+  background-color: #ffffff;
 }
 
 /* Table Body */
 .ant-table-tbody {
   border-radius: 16px;
-  background-color: transparent;
+  background-color: #ffffff;
 }
 
 /* First Row, First Column (Rounded Corner) */
@@ -22,7 +22,7 @@
 
 /* All Rows, All Columns */
 .ant-table-tbody > tr > td {
-  background-color: #f8f7f4;
+  background-color: #ffffff;
 }
 
 /* Table Header */
