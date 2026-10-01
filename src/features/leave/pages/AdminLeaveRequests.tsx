@@ -324,8 +324,8 @@ const AdminLeaveRequests: React.FC = () => {
               disabled={loading}
               className={`btn kora-btn ${
                 activeTab === tab
-                  ? "bg-zinc-900 text-white border-none"
-                  : "border-zinc-900 text-zinc-900"
+                  ? "!bg-korablue-500 !text-white"
+                  : ""
               }`}
             >
               {tab}
