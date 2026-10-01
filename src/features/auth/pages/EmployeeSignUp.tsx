@@ -173,7 +173,7 @@ const EmployeeSignUp: React.FC = () => {
                       },
                     ]}
                   >
-                    <Input type="password" />
+                    <Input.Password />
                   </Form.Item>
                   <KoraBtn
                     type="submit"
