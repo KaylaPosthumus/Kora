@@ -224,7 +224,7 @@ const Navigation: React.FC = () => {
 
       {/* Mobile top bar. Light, like the page under it — the dark chrome is the
           desktop sidebar's alone. */}
-      <header className="lg:hidden fixed top-0 inset-x-0 h-14 z-30 bg-white/90 backdrop-blur border-b border-korastone-300 text-korastone-900 flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 inset-x-0 h-[calc(3.5rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] z-30 bg-white/90 backdrop-blur border-b border-korastone-300 text-korastone-900 flex items-center justify-between px-4">
         <img src={mark} alt="Kora" className="h-7 w-auto" />
         <button
           type="button"
@@ -260,7 +260,7 @@ const Navigation: React.FC = () => {
             drawerOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between p-4">
+          <div className="flex items-center justify-between p-4 pt-[calc(1rem+env(safe-area-inset-top))]">
             <img src={mark} alt="Kora" className="h-7 w-auto" />
             <button
               type="button"

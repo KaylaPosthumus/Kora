@@ -95,7 +95,7 @@ const AppRoutes: React.FC = () => {
           every page collapsed to the width of its own content. */}
       <main
         className={`grow min-w-0 ${
-          isAuthPage ? "" : "pt-14 pb-16 px-4 lg:p-0"
+          isAuthPage ? "" : "pt-[calc(3.5rem+env(safe-area-inset-top))] pb-[calc(4rem+env(safe-area-inset-bottom))] px-4 lg:p-0"
         }`}
       >
         <ErrorBoundary>
