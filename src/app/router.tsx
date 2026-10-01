@@ -84,8 +84,11 @@ const AppRoutes: React.FC = () => {
     location.pathname === "/admin/signup";
 
   return (
-    <div className="flex h-screen lg:mr-4">
+    <div className="flex min-h-screen lg:h-screen lg:mr-4">
       {!isAuthPage && <Navigation />}
+      {/* min-h, not h, below lg. A fixed-height wrapper let a long page spill
+          past <main>, so main's bottom padding stopped at the viewport and the
+          end of the page sat under the fixed bottom nav, out of scroll reach. */}
       {/* Below lg the nav is a fixed top bar plus a bottom nav, so the page has
           to leave room for both, and <main> owns the 16px side gutter (the top
           bar's own px-4) so no page sets its own. On lg and up the sidebar is in
