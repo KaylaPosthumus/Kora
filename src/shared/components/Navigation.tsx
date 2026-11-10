@@ -1,0 +1,316 @@
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import KoraBtn from "@/shared/components/KoraBtn";
+import { Icons } from "@/constants/icons";
+import { logout, navbarUserStatus } from "@/services/authService";
+import { subscribeToUnlinkedUserCount } from "@/features/employees/api/employeesApi";
+import logo from "@/assets/logos/kora_logo.png";
+// The K alone. Below ~40px the full logo's wordmark is a few pixels tall and
+// reads as a smudge; the top bar and drawer header both draw it at 28.
+import mark from "@/assets/logos/kora_mark.png";
+
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+
+/**
+ * Navigation renders three shells over one set of links.
+ *
+ * Desktop (lg and up) keeps the fixed sidebar the app has always had. Below that
+ * the sidebar is gone — 296px of permanent chrome is most of a phone — and is
+ * replaced by a top bar with a slide-over drawer. Employees additionally get a
+ * bottom nav, because they are the ones actually on a phone and their four
+ * destinations fit the pattern exactly; admins reach their six links through the
+ * drawer.
+ *
+ * The links are data rather than markup so the three shells cannot drift apart.
+ */
+
+type NavLink = {
+  to: string;
+  label: string;
+  /** Absent for the auth links, which render as plain text like before. */
+  icon?: React.ElementType;
+  /** Shown in the employee bottom nav. */
+  primary?: boolean;
+  /** Shorter label for the bottom nav, where width is tight. */
+  shortLabel?: string;
+  /** A pending-items count, drawn as a pill after the label when above zero. */
+  count?: number;
+};
+
+type NavGroup = { heading?: string; links: NavLink[] };
+
+const authGroup: NavGroup = {
+  heading: "Authentication",
+  links: [
+    { to: "/", label: "Login" },
+    { to: "/employee/signup", label: "Employee Sign Up" },
+    { to: "/admin/signup", label: "Admin Sign Up" },
+  ],
+};
+
+const employeeGroup: NavGroup = {
+  links: [
+    { to: "/employee/home", label: "Home", icon: Icons.Home, primary: true },
+    {
+      to: "/employee/leave-overview",
+      label: "My Leave",
+      shortLabel: "Leave",
+      icon: Icons.EventNote,
+      primary: true,
+    },
+    {
+      to: "/employee/meetings",
+      label: "My Meetings",
+      shortLabel: "Meetings",
+      icon: Icons.MeetingRoom,
+      primary: true,
+    },
+    { to: "/employee/profile", label: "Profile", icon: Icons.AccountCircle, primary: true },
+  ],
+};
+
+const adminGroup = (unlinkedCount: number): NavGroup => ({
+  links: [
+    { to: "/admin/dashboard", label: "Dashboard", icon: Icons.Dashboard },
+    { to: "/admin/employees", label: "Employees", icon: Icons.Group },
+    {
+      to: "/admin/create-employee",
+      label: "Approve Users",
+      icon: Icons.PersonAddAlt,
+      count: unlinkedCount,
+    },
+    { to: "/admin/equipment", label: "Equipment", icon: Icons.Construction },
+    { to: "/admin/leave-requests", label: "Leave Requests", icon: Icons.Assignment },
+    { to: "/admin/meetings", label: "Meetings", icon: Icons.MeetingRoom },
+  ],
+});
+
+const referenceGroup: NavGroup = {
+  heading: "Reference",
+  links: [
+    { to: "/reference", label: "Custom Stuffies" },
+    { to: "/temp-modals/leave-overview", label: "Modals: Leave Overv" },
+    { to: "/temp-modals/admin-dash", label: "Modals: Admin Dash" },
+    { to: "/apiplayground", label: "API Playground - do not remove" },
+    { to: "/temp-new-gathering-box", label: "New Meeting / Gathering Box" },
+  ],
+};
+
+const Navigation: React.FC = () => {
+  const [userStatus, setUserStatus] = useState<number | null>(null); // -1, 0, 1, 2
+  const [devMode] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [unlinkedCount, setUnlinkedCount] = useState(0);
+  const location = useLocation();
+
+  const isActiveLink = (path: string) => location.pathname === path;
+
+  /** `dark` is the desktop sidebar; `light` is the mobile drawer. */
+  const getLinkClassName = (path: string, hasIcon = true, tone: "dark" | "light" = "dark") => {
+    const hover = tone === "dark" ? "hover:text-saffron-300" : "hover:text-korablue-500";
+    const baseClasses = hasIcon ? `nav-link flex items-center gap-2 ${hover}` : "nav-link";
+    if (tone === "light") {
+      return isActiveLink(path)
+        ? `${baseClasses} text-korablue-500 font-semibold focus:text-korablue-500`
+        : `${baseClasses} text-korastone-800 focus:text-korastone-800`;
+    }
+    return isActiveLink(path)
+      ? `${baseClasses} text-saffron-500 font-semibold focus:text-saffron-500`
+      : `${baseClasses} text-white font-light focus:text-white`;
+  };
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const status = await navbarUserStatus();
+      setUserStatus(status);
+    };
+    checkStatus();
+  }, []);
+
+  // Admins only: the users query is admin-readable, and the count is live so it
+  // drops as soon as someone is linked on the Approve Users page.
+  useEffect(() => {
+    if (userStatus !== 2) return;
+    return subscribeToUnlinkedUserCount(setUnlinkedCount, (error) =>
+      console.error("Unlinked user count failed:", error)
+    );
+  }, [userStatus]);
+
+  // Tapping a link navigates; leaving the drawer open over the new page would
+  // hide it.
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [location.pathname]);
+
+  // A drawer that traps the page behind it should close on Escape, and the page
+  // behind it should not scroll while it is open.
+  useEffect(() => {
+    if (!drawerOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDrawerOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [drawerOpen]);
+
+  const groups: NavGroup[] = [];
+  if (userStatus === -1 || userStatus === 0) groups.push(authGroup);
+  if (userStatus === 1) groups.push(employeeGroup);
+  if (userStatus === 2) groups.push(adminGroup(unlinkedCount));
+  if (devMode) groups.push(referenceGroup);
+
+  const primaryLinks = groups.flatMap((group) => group.links.filter((link) => link.primary));
+
+  /** The link list, shared by the sidebar and the drawer. */
+  const renderGroups = (tone: "dark" | "light" = "dark") => (
+    <div className="flex flex-col">
+      {groups.map((group, index) => (
+        <div key={group.heading ?? index} className="mt-4 flex flex-col gap-4">
+          {group.heading && (
+            <small className="text-korablue-500 text-uppercase">{group.heading}</small>
+          )}
+          {group.links.map(({ to, label, icon: Icon, count }) => (
+            <Link
+              key={to}
+              to={to}
+              className={getLinkClassName(to, Boolean(Icon), tone)}
+              aria-current={isActiveLink(to) ? "page" : undefined}
+            >
+              {Icon && <Icon fontSize="small" />}
+              {label}
+              {Boolean(count) && (
+                <span
+                  aria-label={`${count} waiting`}
+                  className={`ml-auto min-w-[1.5rem] rounded-full px-2 text-center text-xs font-semibold leading-6 ${
+                    tone === "dark" ? "bg-saffron-500 text-zinc-900" : "bg-korablue-500 text-white"
+                  }`}
+                >
+                  {count}
+                </span>
+              )}
+            </Link>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar — unchanged from the original layout. */}
+      <div className="hidden lg:block w-[296px] flex-shrink-0 z-10">
+        <div className="fixed top-4 left-4 bg-zinc-900 text-white w-[260px] rounded-3xl h-[calc(100vh-32px)] overflow-hidden">
+          <div className="p-10 h-full overflow-y-auto flex flex-col justify-between">
+            <div className="flex flex-col">
+              <img src={logo} alt="Kora" className="mb-4 h-16 w-auto self-start" />
+              {renderGroups()}
+            </div>
+
+            <KoraBtn style="black" className="w-full" onClick={logout}>
+              Logout
+            </KoraBtn>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile top bar. Light, like the page under it — the dark chrome is the
+          desktop sidebar's alone. Solid white, not translucent: iOS Safari tints
+          the status bar from a fixed top bar only when its background is opaque,
+          and otherwise falls back to the grey page ground above the bar. */}
+      <header className="lg:hidden fixed top-0 inset-x-0 h-[calc(3.5rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] z-30 bg-white border-b border-korastone-300 text-korastone-900 flex items-center justify-between px-4">
+        <img src={mark} alt="Kora" className="h-7 w-auto" />
+        <button
+          type="button"
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={drawerOpen}
+          className="p-2 -mr-2 text-korastone-900"
+        >
+          <MenuRoundedIcon />
+        </button>
+      </header>
+
+      {/* Mobile drawer. Always mounted so it can slide out as well as in; when
+          closed, `invisible` takes it out of the tab order and the a11y tree, and
+          the visibility transition holds that back until the slide has finished. */}
+      <div
+        className={`lg:hidden fixed inset-0 z-40 transition-[visibility] duration-300 motion-reduce:duration-0 ${
+          drawerOpen ? "visible" : "invisible"
+        }`}
+      >
+        <div
+          className={`absolute inset-0 bg-black/30 transition-opacity duration-300 motion-reduce:transition-none ${
+            drawerOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+          className={`absolute inset-y-0 right-0 w-[280px] max-w-[85vw] bg-white text-korastone-900 shadow-xl flex flex-col transition-transform duration-300 ease-out motion-reduce:transition-none ${
+            drawerOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between p-4 pt-[calc(1rem+env(safe-area-inset-top))]">
+            <img src={mark} alt="Kora" className="h-7 w-auto" />
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(false)}
+              aria-label="Close menu"
+              className="p-2 -mr-2 text-korastone-900"
+            >
+              <CloseRoundedIcon />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-6 pb-6">{renderGroups("light")}</div>
+
+          <div className="p-6 pt-0">
+            <KoraBtn secondary className="w-full" onClick={logout}>
+              Logout
+            </KoraBtn>
+          </div>
+        </div>
+      </div>
+
+      {/* Employee bottom nav. Sits above the home indicator on iOS. */}
+      {primaryLinks.length > 0 && (
+        <nav
+          aria-label="Primary"
+          className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/90 backdrop-blur border-t border-korastone-300 flex justify-around pb-[env(safe-area-inset-bottom)]"
+        >
+          {primaryLinks.map(({ to, label, shortLabel, icon: Icon }) => {
+            const active = isActiveLink(to);
+            return (
+              <Link
+                key={to}
+                to={to}
+                aria-label={label}
+                aria-current={active ? "page" : undefined}
+                className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] ${
+                  active ? "text-korablue-500 font-semibold" : "text-korastone-700"
+                }`}
+              >
+                {Icon && <Icon fontSize="small" />}
+                {shortLabel ?? label}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
+    </>
+  );
+};
+
+export default Navigation;

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.idea/
+.vscode/
+.DS_Store
+
+# Local env files (Firebase config + service account)
+.env
+.env.local
+.env.*.local
+serviceAccountKey.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Old source archive kept out of the new repo history
+old-coriander-code/
