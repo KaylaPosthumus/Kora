@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { empLeaveRequestsAPI } from "@/features/leave/api/leaveApi";
+import { empLeaveRequestsAPI, getAdminLeaveRequests } from "@/features/leave/api/leaveApi";
 import dayjs from "dayjs";
 import { calculateDurationInDays } from "@/utils/dateUtils";
+import { LeaveStatus } from "@/shared/types/common";
 
 // Import Components
 import { Tooltip, message } from "antd";
@@ -42,7 +43,7 @@ const AdminLeaveRequests: React.FC = () => {
   const fetchPending = async () => {
     try {
       setLoading(true);
-      const res = await empLeaveRequestsAPI.getPendingLeaveRequests();
+      const res = await getAdminLeaveRequests(LeaveStatus.Pending);
       setDisplayingLeaveRequests(res.data);
     } catch (error) {
       console.error("Error fetching pending leave requests:", error);
@@ -54,7 +55,7 @@ const AdminLeaveRequests: React.FC = () => {
   const fetchApproved = async () => {
     try {
       setLoading(true);
-      const res = await empLeaveRequestsAPI.getApprovedLeaveRequests();
+      const res = await getAdminLeaveRequests(LeaveStatus.Approved);
       setDisplayingLeaveRequests(res.data);
     } catch (error) {
       console.error("Error fetching approved leave requests:", error);
@@ -66,7 +67,7 @@ const AdminLeaveRequests: React.FC = () => {
   const fetchRejected = async () => {
     try {
       setLoading(true);
-      const res = await empLeaveRequestsAPI.getRejectedLeaveRequests();
+      const res = await getAdminLeaveRequests(LeaveStatus.Rejected);
       setDisplayingLeaveRequests(res.data);
     } catch (error) {
       console.error("Error fetching rejected leave requests:", error);
@@ -257,7 +258,7 @@ const AdminLeaveRequests: React.FC = () => {
       className: "text-end",
       render: (_: any, r: any) => (
         <div className="flex justify-end gap-2">
-          {r.status === 0 && (
+          {r.status === LeaveStatus.Pending && (
             <>
               <KoraBtn iconOnly disabled={loading} onClick={() => handleApprove(r.leaveRequestId)}>
                 <CheckOutlined />
@@ -273,7 +274,7 @@ const AdminLeaveRequests: React.FC = () => {
               </KoraBtn>
             </>
           )}
-          {r.status === 1 && (
+          {r.status === LeaveStatus.Approved && (
             <KoraBtn
               secondary
               iconOnly
@@ -283,7 +284,7 @@ const AdminLeaveRequests: React.FC = () => {
               <Icons.Undo />
             </KoraBtn>
           )}
-          {r.status === 2 && (
+          {r.status === LeaveStatus.Rejected && (
             <KoraBtn
               secondary
               style="red"

@@ -176,6 +176,29 @@ export const subscribeToEmployeeLeave = (
 
 // Page-shaped reads ------------------------------------------------------------------------------
 
+/**
+ * The admin's Leave Requests screen: the requests in one status, each with what
+ * the employee has left of that leave type. A request with no balance to draw on
+ * counts as zero, so approving it still raises the over-balance warning.
+ */
+export const getAdminLeaveRequests = async (
+  status: LeaveStatus
+): Promise<ApiResponse<Array<LeaveRequest & { remainingDays: number }>>> => {
+  const { data: requests } = await getLeaveRequestsByStatus(status);
+  const balances = await Promise.all(
+    requests.map((request) =>
+      getDoc(doc(db, "employees", request.employeeId, "leaveBalances", request.leaveTypeId))
+    )
+  );
+
+  return ok(
+    requests.map((request, index) => ({
+      ...request,
+      remainingDays: balances[index].data()?.remainingDays ?? 0,
+    }))
+  );
+};
+
 /** The employee's leave screen: their balances plus their own requests. */
 export const getEmployeeLeaveData = async (id: string): Promise<ApiResponse<any>> => {
   const [balancesSnapshot, requestsSnapshot] = await Promise.all([
