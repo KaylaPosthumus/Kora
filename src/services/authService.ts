@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
+  sendPasswordResetEmail,
   signOut,
   updateProfile,
   onAuthStateChanged,
@@ -213,6 +214,26 @@ export const employeeGoogleSignUp = (): Promise<AuthResult> =>
   googleSignUpWithRole(UserRole.Employee);
 
 export const adminGoogleSignUp = (): Promise<AuthResult> => googleSignUpWithRole(UserRole.Admin);
+
+// Password reset ---------------------------------------------------------------------------------
+
+/**
+ * Emails a link to Firebase's own page for choosing a new password.
+ *
+ * An unknown address gets the same answer as a known one, so this form cannot be
+ * used to find out who has an account. The project's email enumeration protection
+ * already does that; the check here keeps it true if the setting is ever turned off.
+ */
+export const requestPasswordReset = async (email: string): Promise<AuthResult> => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    if ((error as { code?: string })?.code !== "auth/user-not-found") {
+      return toAuthResult(error, "The reset email could not be sent");
+    }
+  }
+  return { errorCode: 200, message: "Reset email sent" };
+};
 
 // Log in -----------------------------------------------------------------------------------------
 

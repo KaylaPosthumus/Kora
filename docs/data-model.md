@@ -6,7 +6,7 @@ Moved out of `README.md`; `CLAUDE.md` covers the architecture around it, and
 
 Top-level collections: `users`, `employees` (with a `leaveBalances` subcollection),
 `admins`, `equipment`, `equipmentCategories`, `leaveTypes`, `leaveRequests`, `meetings`,
-`performanceReviews`.
+`performanceReviews`, `settings` (one document, `leavePolicy`).
 
 Two conventions worth knowing before you touch the data layer:
 

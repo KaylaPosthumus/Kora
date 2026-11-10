@@ -54,6 +54,7 @@ export const leaveTypesCol = collection(db, "leaveTypes");
 export const leaveRequestsCol = collection(db, "leaveRequests");
 export const meetingsCol = collection(db, "meetings");
 export const performanceReviewsCol = collection(db, "performanceReviews");
+export const settingsCol = collection(db, "settings");
 
 /** Leave balances live under the employee they belong to. */
 export const leaveBalancesCol = (employeeId: string) =>

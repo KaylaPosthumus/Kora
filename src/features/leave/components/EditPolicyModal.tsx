@@ -1,28 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Button, Form, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { leavePolicyAPI } from "@/features/leave/api/leaveApi";
 
 interface EditPolicyModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;
 }
 
-const DEFAULT_POLICY = `Employees must submit leave requests in advance for approval. Leave is subject to company policies and availability.
-Unauthorized absences may impact benefits. Check your balance before applying.`;
-
 const EditPolicyModal: React.FC<EditPolicyModalProps> = ({ showModal, setShowModal }) => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
 
+  useEffect(() => {
+    if (!showModal) return;
+
+    leavePolicyAPI
+      .get()
+      .then(({ data }) => form.setFieldsValue({ policyText: data }))
+      .catch((error) => {
+        console.error("Error loading the leave policy:", error);
+        messageApi.error("Could not load the current policy");
+      });
+  }, [showModal, form, messageApi]);
+
   const handleSubmit = async () => {
+    let policyText: string;
     try {
-      const { policyText } = await form.validateFields();
-      localStorage.setItem("leavePolicy", policyText);
+      ({ policyText } = await form.validateFields());
+    } catch {
+      // validation errors handled by Form.Item
+      return;
+    }
+
+    try {
+      await leavePolicyAPI.save(policyText);
       messageApi.success("Policy updated successfully");
       setShowModal(false);
       form.resetFields();
-    } catch {
-      // validation errors handled by Form.Item
+    } catch (error) {
+      console.error("Error saving the leave policy:", error);
+      messageApi.error("The policy was not saved. Please try again.");
     }
   };
 
@@ -70,9 +88,6 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({ showModal, setShowMod
           layout="vertical"
           variant="filled"
           className="flex flex-col"
-          initialValues={{
-            policyText: localStorage.getItem("leavePolicy") || DEFAULT_POLICY,
-          }}
         >
           <Form.Item
             name="policyText"

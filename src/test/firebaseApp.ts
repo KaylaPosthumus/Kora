@@ -41,6 +41,9 @@ interface AuthState {
   currentUser: FakeUser | null;
   observers: Array<(user: FakeUser | null) => void>;
   verificationsSent: string[];
+  passwordResetsSent: string[];
+  /** Set to make the next password reset fail with this Firebase error code. */
+  passwordResetError: string | null;
   uidCounter: number;
   /** Set to make the next popup sign-in fail with this Firebase error code. */
   popupError: string | null;
@@ -58,6 +61,8 @@ const state = (): AuthState => {
       currentUser: null,
       observers: [],
       verificationsSent: [],
+      passwordResetsSent: [],
+      passwordResetError: null,
       uidCounter: 0,
       popupError: null,
       popupAccount: null,
@@ -174,6 +179,18 @@ export const firebaseAuthModule = () => ({
     state().verificationsSent.push(user.uid);
   },
 
+  // Resolves for an unknown address too: the live project has email enumeration
+  // protection on, so Firebase does not say whether an account exists.
+  sendPasswordResetEmail: async (_auth: unknown, email: string) => {
+    const auth = state();
+    if (auth.passwordResetError) {
+      const code = auth.passwordResetError;
+      auth.passwordResetError = null;
+      throw authError(code);
+    }
+    auth.passwordResetsSent.push(email);
+  },
+
   updateProfile: async (user: FakeUser, profile: { displayName?: string; photoURL?: string }) => {
     const account = state().accounts.get(user.uid);
     if (!account) return;
@@ -201,6 +218,8 @@ export const authMock = {
     auth.currentUser = null;
     auth.observers = [];
     auth.verificationsSent = [];
+    auth.passwordResetsSent = [];
+    auth.passwordResetError = null;
     auth.uidCounter = 0;
     auth.popupError = null;
     auth.popupAccount = null;
@@ -248,5 +267,15 @@ export const authMock = {
   /** Uids that were sent a verification email. */
   verificationsSent(): string[] {
     return [...state().verificationsSent];
+  },
+
+  /** Addresses that were sent a password reset email. */
+  passwordResetsSent(): string[] {
+    return [...state().passwordResetsSent];
+  },
+
+  /** Makes the next `sendPasswordResetEmail` reject, e.g. "auth/too-many-requests". */
+  nextPasswordResetError(code: string): void {
+    state().passwordResetError = code;
   },
 };

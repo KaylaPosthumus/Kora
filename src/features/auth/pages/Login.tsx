@@ -14,7 +14,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 import Logo from "@/assets/logos/kora_logo.png";
 
 // Child Components
-import { AuthPanel, UnlinkedMessage } from "@/features/auth/components";
+import { AuthPanel, ForgotPassword, UnlinkedMessage } from "@/features/auth/components";
 import KoraBtn from "@/shared/components/KoraBtn";
 
 const Login: React.FC = () => {
@@ -23,6 +23,7 @@ const Login: React.FC = () => {
   const messageKey = "login";
 
   const [showUnlinkedMessage, setShowUnlinkedMessage] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [loading, setLoading] = useState(true); // Start in loading state
   const [showAdminBtn, setShowAdminBtn] = useState(false);
 
@@ -181,6 +182,8 @@ const Login: React.FC = () => {
           <div className="w-full lg:w-1/2 flex items-center justify-center px-4 pt-32 pb-16 lg:px-0 lg:pt-0 lg:pb-0 lg:mb-16">
             {showUnlinkedMessage ? (
               <UnlinkedMessage onLogOut={() => setShowUnlinkedMessage(false)} />
+            ) : showForgotPassword ? (
+              <ForgotPassword onBack={() => setShowForgotPassword(false)} />
             ) : (
               <div className="flex flex-col items-center w-full sm:w-[300px]">
                 <h1 className="text-3xl font-bold mb-4 text-korablue-500 ">
@@ -226,6 +229,14 @@ const Login: React.FC = () => {
                   <GoogleIcon fontSize="small" />
                   Log In with Google
                 </KoraBtn>
+
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="mt-4 text-korablue-500 hover:text-korablue-300 transition-colors font-bold"
+                >
+                  Forgot your password?
+                </button>
 
                 <p className="mt-4 text-zinc-500">
                   New employee?{" "}

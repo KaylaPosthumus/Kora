@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { LeaveStatus } from "@/shared/types/common";
-import { subscribeToEmployeeLeave } from "@/features/leave/api/leaveApi";
+import {
+  STANDARD_LEAVE_POLICY,
+  leavePolicyAPI,
+  subscribeToEmployeeLeave,
+} from "@/features/leave/api/leaveApi";
 // Icons
 import { ClockCircleOutlined } from "@ant-design/icons";
 import { Icons } from "@/constants/icons";
@@ -47,6 +51,7 @@ const EmployeeLeaveOverview: React.FC = () => {
   const [contentLoading, setContentLoading] = useState(false);
   const [employeeId, setEmployeeId] = useState<string | null>(null);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
+  const [policy, setPolicy] = useState("");
   const tabOptions: TabOption[] = ["All", "Approved", "Pending", "Rejected"];
 
   // Define a palette of Tailwind color classes for balance bars
@@ -124,11 +129,17 @@ const EmployeeLeaveOverview: React.FC = () => {
     setRequests(status ? allRequests.filter((r: any) => r.status === status) : allRequests);
   }, [activeTab, allRequests]);
 
-  // Read editable policy or fallback
-  const policy =
-    localStorage.getItem("leavePolicy") ||
-    `Employees must submit leave requests in advance for approval. Leave is subject to company policies and availability.
-Unauthorized absences may impact benefits. Check your balance before applying.`;
+  // A one-shot read: the policy rarely changes, and a failed read should cost the
+  // employee nothing more than seeing the standard wording.
+  useEffect(() => {
+    leavePolicyAPI
+      .get()
+      .then(({ data }) => setPolicy(data))
+      .catch((error) => {
+        console.error("Error loading the leave policy:", error);
+        setPolicy(STANDARD_LEAVE_POLICY);
+      });
+  }, []);
 
   // Show full page spinner only on initial load
   if (initialLoading)

@@ -279,6 +279,83 @@ describe("an already signed-in visitor", () => {
   });
 });
 
+describe("a forgotten password", () => {
+  const openResetForm = async () => {
+    await renderLogin();
+    await userEvent.setup().click(screen.getByRole("button", { name: "Forgot your password?" }));
+    await screen.findByRole("button", { name: "Send Reset Link" });
+  };
+
+  const requestReset = async (email: string) => {
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("Email"), email);
+    await user.click(screen.getByRole("button", { name: "Send Reset Link" }));
+  };
+
+  it("emails a reset link to the address typed in", async () => {
+    seedLinkedEmployee();
+    await openResetForm();
+
+    await requestReset("eli@kora.test");
+
+    await waitFor(() => expect(authMock.passwordResetsSent()).toEqual(["eli@kora.test"]));
+  });
+
+  it("lowercases and trims the address, as the login form does", async () => {
+    await openResetForm();
+
+    await requestReset("  Eli@Kora.TEST ");
+
+    await waitFor(() => expect(authMock.passwordResetsSent()).toEqual(["eli@kora.test"]));
+  });
+
+  it("tells them to check their email", async () => {
+    await openResetForm();
+
+    await requestReset("eli@kora.test");
+
+    expect(await screen.findByText(/Check your/)).toBeInTheDocument();
+    expect(screen.getByText("eli@kora.test")).toBeInTheDocument();
+  });
+
+  it("gives the same answer for an address with no account", async () => {
+    // Otherwise this form tells anyone who works here.
+    authMock.nextPasswordResetError("auth/user-not-found");
+    await openResetForm();
+
+    await requestReset("nobody@kora.test");
+
+    expect(await screen.findByText(/Check your/)).toBeInTheDocument();
+  });
+
+  it("says what went wrong when the email cannot be sent", async () => {
+    authMock.nextPasswordResetError("auth/too-many-requests");
+    await openResetForm();
+
+    await requestReset("eli@kora.test");
+
+    expect(await screen.findByText(/Too many attempts/)).toBeInTheDocument();
+    expect(screen.queryByText(/Check your/)).not.toBeInTheDocument();
+  });
+
+  it("will not send without an address", async () => {
+    await openResetForm();
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "Send Reset Link" }));
+
+    expect(await screen.findByText("Please enter an email")).toBeInTheDocument();
+    expect(authMock.passwordResetsSent()).toEqual([]);
+  });
+
+  it("can go back to the login form", async () => {
+    await openResetForm();
+
+    await userEvent.setup().click(screen.getByRole("button", { name: "Back to Log In" }));
+
+    expect(await screen.findByRole("button", { name: "Log In" })).toBeInTheDocument();
+  });
+});
+
 describe("the hidden admin signup link", () => {
   it("is not offered by default", async () => {
     await renderLogin();

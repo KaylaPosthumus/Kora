@@ -13,10 +13,12 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  setDoc,
   query,
   where,
   orderBy,
   runTransaction,
+  serverTimestamp,
   type FirestoreError,
 } from "firebase/firestore";
 import {
@@ -30,6 +32,7 @@ import {
   leaveTypesCol,
   leaveRequestsCol,
   leaveBalancesCol,
+  settingsCol,
   toLeaveBalance,
   toLeaveRequest,
   subscribePair,
@@ -45,6 +48,25 @@ export const leaveTypesAPI = {
   getAllLeaveTypes: async (): Promise<ApiResponse<any[]>> => {
     const snapshot = await getDocs(query(leaveTypesCol, orderBy("leaveTypeName")));
     return ok(snapshot.docs.map((d) => ({ leaveTypeId: d.id, ...d.data() })));
+  },
+};
+
+/** What employees see until an admin has saved a policy of their own. */
+export const STANDARD_LEAVE_POLICY = `Employees must submit leave requests in advance for approval. Leave is subject to company policies and availability.
+Unauthorized absences may impact benefits. Check your balance before applying.`;
+
+const leavePolicyRef = doc(settingsCol, "leavePolicy");
+
+/** The wording on every employee's leave screen. One document, because there is one policy. */
+export const leavePolicyAPI = {
+  get: async (): Promise<ApiResponse<string>> => {
+    const snapshot = await getDoc(leavePolicyRef);
+    return ok(snapshot.data()?.text ?? STANDARD_LEAVE_POLICY);
+  },
+
+  save: async (text: string): Promise<ApiResponse<null>> => {
+    await setDoc(leavePolicyRef, { text, updatedAt: serverTimestamp() });
+    return ok(null);
   },
 };
 

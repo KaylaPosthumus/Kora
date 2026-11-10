@@ -180,6 +180,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Settings --------------------------------------------------------------
+    // Wording an admin sets once for everyone. Today only the leave policy, which
+    // every employee's leave screen reads. It can be replaced but not deleted.
+
+    match /settings/{settingId} {
+      allow read: if signedIn();
+      allow create, update: if isAdmin()
+        && settingId == 'leavePolicy'
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0;
+    }
+
     // Equipment -------------------------------------------------------------
     // Assigning and unassigning kit is an admin action, so writes are admin-only.
 

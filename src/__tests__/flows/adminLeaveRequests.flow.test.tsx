@@ -66,12 +66,7 @@ const findUndoButton = async () =>
   (await cards().findByTestId("UndoRoundedIcon")).closest("button") as HTMLButtonElement;
 
 describe("the admin Leave Requests screen", () => {
-  beforeEach(() => {
-    firestoreMock.reset();
-    // EditPolicyModal reads this while rendering, and Vitest's environment does
-    // not always provide it.
-    vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => undefined });
-  });
+  beforeEach(() => firestoreMock.reset());
 
   it("offers approve and reject on a pending request", async () => {
     seed();
